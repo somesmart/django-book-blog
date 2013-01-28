@@ -1,0 +1,105 @@
+{% extends "zinnia/base.html" %}
+{% load i18n comments zinnia_tags %}
+{% load url from future %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block meta-description %}{% if object.excerpt %}{{ object.excerpt|striptags }}{% else %}{{ object.content|striptags|truncatewords:100 }}{% endif %}{% endblock %}
+
+{% block meta-keywords %}{% if object.tags %}{{ object.tags }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block link %}
+  {{ block.super }}
+  {% with previous_entry=object.previous_entry %}{% if previous_entry %}
+  <link rel="prev" title="{{ previous_entry.title }}" href="{{ previous_entry.get_absolute_url }}" />
+  {% endif %}{% endwith %}
+  {% with next_entry=object.next_entry %}{% if next_entry %}
+  <link rel="next" title="{{ next_entry.title }}" href="{{ next_entry.get_absolute_url }}" />
+  {% endif %}{% endwith %}
+  <link rel="shortlink" href="{{ object.short_url }}" />
+  <link rel="canonical" href="{{ object.get_absolute_url }}" />
+  {% with year=object.creation_date|date:"Y" month=object.creation_date|date:"m" day=object.creation_date|date:"d" %}
+  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of discussions on" %} '{{ object.title }}'"
+        href="{% url 'zinnia_entry_discussion_feed' year month day object.slug %}" />
+  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of comments on" %} '{{ object.title }}'"
+        href="{% url 'zinnia_entry_comment_feed' year month day object.slug %}" />
+  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of pingbacks on" %} '{{ object.title }}'"
+        href="{% url 'zinnia_entry_pingback_feed' year month day object.slug %}" />
+  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of trackbacks on" %} '{{ object.title }}'"
+        href="{% url 'zinnia_entry_trackback_feed' year month day object.slug %}" />
+  {% endwith %}
+{% endblock %}
+
+{% block body-class %}entry entry-{{ object.pk }}{% if object.featured %} featured{% endif %}{% endblock %}
+
+{% block content %}
+  {% block entry-content %}
+    {% with object_content=object.html_content|safe %}
+    {% include "zinnia/_entry_detail.html" %}
+    {% endwith %}
+  {% endblock %}
+
+  {% block entry-comments %}
+  <div id="comments">
+    <h3>{% trans "Comments" %}</h3>
+    {% with comment_list=object.comments %}
+    {% if comment_list.count %}
+      {% for comment in comment_list %}
+        <div id="comment_{{ comment.pk }}" class="media comment vcard {% cycle box1,box2 %}{% if comment.user in object.authors.all %} post-author{% endif %}">
+          <a class="pull-left" href="">
+          <img src="{% get_gravatar comment.email 60 "G" %}" class="gravatar photo media-object" alt="{{ comment.user_name }}"/>
+          <div class="media-body comment-info">
+          	{% if comment.url %}
+          	<a href="{{ comment.url }}" rel="external nofollow"
+                     class="fn url">{{ comment.user_name }}</a>
+          	{% else %}
+          	<h4 class="media-heading">{{ comment.user_name }}</h4>
+          	{% endif %}
+    	      {% trans "on" %}
+            <abbr class="comment-published" title="{{ comment.submit_date|date:"c" }}Z">
+              {{ comment.submit_date|date:"SHORT_DATETIME_FORMAT" }}
+            </abbr>
+            {{ comment.comment|linebreaks }}
+          </div>
+        </div>
+      {% endfor %}
+      {% if not object.comments_are_open %}
+        <p>{% trans "Comments are closed." %}</p>
+      {% endif %}
+    {% else %}
+      {% if object.comments_are_open %}
+        <p>{% trans "No comments yet." %}</p>
+      {% else %}
+        <p>{% trans "Comments are closed." %}</p>
+      {% endif %}
+    {% endif %}
+    {% endwith %}
+  </div>
+  {% endblock %}
+
+  {% block entry-comments-form %}
+  {% if object.comments_are_open %}
+    {% render_comment_form for object %}
+  {% endif %}
+  {% endblock %}
+
+  {% block admin_tools %}
+  {% if perms.zinnia.change_entry %}
+    <a href="{% url 'admin:zinnia_entry_change' object.pk %}" title="{% trans "Edit the entry" %}" class="btn pull-right"><i class="icon-wrench"></i> {% trans "Edit the entry" %}</a>
+  {% endif %}
+  {% endblock %}
+
+{% endblock content %}
+{% block right-content %}
+  {% with object.book as book %}
+    {% include "somesmart/include_book_data.html" %}
+    <h4>Recent Reviews:</h4>
+    <ul class="unstyled">
+    {% for edition in book.edition_set.all %}
+      {% for review in edition.review_set.all %}
+        <li><a href="{% url 'review-view' review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a>{% if review.recommend %} <i class="icon-thumbs-up"></i>{% else %} <i class="icon-thumbs-down"></i>{% endif %}</li>
+      {% endfor %}
+    {% endfor %}
+    </ul>
+  {% endwith %}
+{% endblock right-content %}

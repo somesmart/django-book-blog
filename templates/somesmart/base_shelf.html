@@ -1,0 +1,7 @@
+{% extends "somesmart/base.html" %}
+{% block title %}{{ shelf.name }}{% endblock title %}
+{% block content %}
+   <div class="page-header">
+    <h1>{{ shelf.name }} <small>{{ shelf.reader }}</small></h1>
+  </div>
+{% endblock content %}

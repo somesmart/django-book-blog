@@ -1,0 +1,20 @@
+{% extends "somesmart/base.html" %}
+{% load zinnia_tags %}
+{% block title %} Welcome to some smart, some don't {% endblock title %}
+{% block content %}
+	{% get_recent_entries 5 "zinnia/home_excerpts.html" %}
+{% endblock content %}
+{% block right-content %}
+<h3>Recent Reviews:</h3>
+    {% if recent_reads %}
+        <ul class="unstyled">
+        {% for review in recent_reads %}
+            {% if review.reviewed > 0 %}
+            <li><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition.book.title }}</a> - {{ review.finished|date }}{% if review.recommend %} <i class="icon-thumbs-up"></i>{% else %} <i class="icon-thumbs-down"></i>{% endif %}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews.</p>
+    {% endif %}
+{% endblock %}

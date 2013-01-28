@@ -1,0 +1,23 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Browse Reviews{% endblock title %}
+{% block top-content %}{% endblock %}
+{% block content %}
+<h3>Browse Recent reviews</h3>
+   {% if review_list %}
+   		<dl>
+		{% for review in review_list %}
+			<dt><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a> - {% if review.recommend %} <i class="icon-thumbs-up"></i>{% else %} <i class="icon-thumbs-down"></i>{% endif %}</dt>
+			<dd>{% if review.one_sentence %}{{ review.one_sentence }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
+		{% endfor %}
+		</dl>
+	{% endif %}
+	{% include "somesmart/include_pagination.html" %}
+{% endblock content %}
+{% block right-content %}
+<h3>Reviews by Genre</h3>
+	<ul>
+	{% for genre in genre_list %}
+		<li><a href="{% url review-genre-list genre.slug %}">{{ genre.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% endblock %}

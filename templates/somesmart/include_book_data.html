@@ -1,0 +1,14 @@
+<h3><a href="{% url book-view book.id %}">{{ book.title }}</a> <br><small>by {{ book.author }}</small></h4>
+<table class="table table-striped">
+	<tr>
+		<td>Originally Published: </td>
+		<td>{{ book.original_publication|date }}</td>
+	</tr>
+	{% for edition in book.edition_set.all %}
+	{% if forloop.first %}{% if edition.cover %}<center><img src="{{ edition.cover.url }}"></center>{% endif %}{% endif %}
+	<tr>
+		<td>{{ edition.get_format_display }} edition:</td>
+		<td>{{ edition.pages }} pages - {{ edition.published|date }}</td>
+	</tr>
+	{% endfor %}
+</table>

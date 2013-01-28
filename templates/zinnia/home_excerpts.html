@@ -1,0 +1,17 @@
+{% for entry in entries %} 
+	<h2 class="blog-title"><a href="{{ entry.get_absolute_url }}" title="{{ entry.title }}" rel="bookmark">{{ entry.title }}</a></h2>  
+	<p class="text-info">by 
+	{% if entry.authors.count %}
+    	{% for author in entry.authors.all %}
+     		<span class="vcard author">{{ author }}</a>
+    		</span>{% if not forloop.last %}, {% endif %}
+    	{% endfor %}
+    	on 
+	{% endif %}
+    <abbr class="published" title="{{ entry.creation_date|date:"c" }}Z">{{ entry.creation_date|date:"DATE_FORMAT" }}</abbr> in {% for category in entry.categories.all %}<a href="{{ category.get_absolute_url }}">{{ category }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+	{# update so that the most recent entry shows the entire post #}
+    {% if forloop.first %}{% if entry.image %}
+    <div class="entry-image">
+      <p><img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="pull-right" /></p>
+    </div>{% endif %}{{ entry.html_content|safe }}{% else %}{{ entry.html_content|truncatewords_html:100|safe }} <p><a class="btn btn-primary" href="{{ entry.get_absolute_url }}" title="{{ entry.title }}" rel="bookmark">Read more &raquo;</a></p>{% endif %}
+{% endfor %} 

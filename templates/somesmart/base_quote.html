@@ -1,0 +1,18 @@
+{% extends "somesmart/base.html" %}
+{% load somesmart_extras %}
+{% block title %}{{ quote.edition.book.author }} Quote{% endblock title %}
+{% block top-content %}{% endblock %}
+{% block content %}
+<p class="well well-small">This is a permanent link for this quote. It can safely be shared or bookmarked for future use.</p>
+   {% include "somesmart/include_quote.html" %}
+   {% with quote.quote|length|add:-1 as quote_len %}
+   <a href="https://twitter.com/share" class="twitter-share-button" data-related="jasoncosta" data-lang="en" data-size="large" data-count="horizontal" data-text="{% if quote_len > 117 %}{{ quote.quote|safe|truncchar:115 }}...{% else %}{{ quote.quote|safe|truncchar:quote_len }}{% endif %}&quot;">Tweet</a>
+   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+   {% endwith %}
+{% endblock content %}
+{% block top-right-content %}{% endblock %}
+{% block right-content %}
+{% with quote.edition.book as book %}
+	{% include "somesmart/include_book_data.html" %}
+{% endwith %}
+{% endblock %}

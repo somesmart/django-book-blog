@@ -1,0 +1,74 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Browse Quotes{% endblock title %}
+{% block top-content %}{% endblock %}
+{% block content %}
+	<h3>Search for Quotes</h3>
+	<div class="btn-group" data-toggle="buttons-radio">
+		<p><button id="byAuthor" type="button" name="byAuthor" class="btn active">By Author</button>
+		<button id="byTitle" type="button" name="byTitle" class="btn">By Title</button></p>
+	</div>
+	<form>
+      <div class="input-prepend input-append">
+        <input id="quote_search_url" type="hidden" name="quote_search_url">
+        <span class="add-on"><i class="icon-search"></i></span>
+        <input id="quote_author_search" type="text" class="span5" placeholder="Search by author's name">
+        <input id="quote_title_search" type="text" class="span5" style="display:none" placeholder="Search by book title">
+	  </div>
+    </form>
+	<hr>
+   {% if type_list %}
+	   {% regroup type_list by quote_type as type_header %}
+		  {% for type in type_header %}
+			<h3>{{ type.grouper }} Quotes</h3>
+		  {% endfor %}
+		{% for quote in type_list %}
+			{% include "somesmart/include_quote.html" %}
+		{% endfor %}
+	{% endif %}
+	{% if search_list %}
+		{% regroup search_list by edition.book as edition_header %}
+		{% for book in edition_header %}
+			<h3>{{ book.grouper }}</h3>
+			{% for quote in search_list %}
+				{% include "somesmart/include_quote.html" %}
+			{% endfor %}
+		{% endfor %}
+	{% endif %}
+	{% include "somesmart/include_pagination.html" %}
+{% endblock content %}
+{% block right-content %}
+<h3>Browse Quotes by Type</h3>
+	{% if quote_stats %}
+	   {% for type in quote_stats %}
+		<p>{{ type.quote_count }} - <a href="{% url quote-type-list type.quote_type__id %}">{{ type.quote_type__name }} Quotes</a></p>
+	   {% endfor %}
+	{% endif %}
+{% endblock right-content %}
+{% block app.scripts %}
+<script type="text/javascript">
+    $(function() {	
+    $("#byAuthor").click(function() {
+			$("#quote_title_search").hide();
+			$("#quote_author_search").show();
+		});
+	$("#byTitle").click(function() {
+			$("#quote_author_search").hide();
+			$("#quote_title_search").show();
+		});
+	$("#quote_author_search").autocomplete({
+	  source: "{% url autocomplete %}?search=author",
+	  minLength: 3,
+	  select: function(event, ui) {
+	    window.location.href = "/quote/author/" + ui.item.id;
+	  }
+	});
+	$("#quote_title_search").autocomplete({
+	  source: "{% url autocomplete %}?search=title",
+	  minLength: 3,
+	  select: function(event, ui) {
+	    window.location.href = "/quote/book/" + ui.item.id;
+	  }
+	});
+    })
+</script>
+{% endblock %}
