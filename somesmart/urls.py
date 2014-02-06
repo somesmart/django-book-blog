@@ -19,7 +19,9 @@ urlpatterns = patterns('',
     url(r'^book/(?P<pk>\d+)/', BookView.as_view(), name='book-view'),
     url(r'^author/(?P<pk>\d+)/', AuthorView.as_view(), name='author-view'),
     url(r'^my-books/$', direct_to_template, { 'template': 'somesmart/base_mybooks.html'}, name='my-books'),
-    url(r'^charts/$', direct_to_template, { 'template': 'somesmart/base_charts.html'}, name='charts'),
+    #charts
+    url(r'^charts/$', GlobalStats.as_view(), name='charts'),
+    url(r'^charts/(?P<chart>[-\w]+)/(?P<option>[\s\w\d]+)$', ChartGenerate.as_view(), name='chart-generate'),
     #quote pages
     url(r'^quote/list/$', QuoteList.as_view(), name='quote-list'),
     url(r'^quote/type/(?P<type>\d+)/$',QuoteTypeList.as_view(), name='quote-type-list'),
@@ -50,10 +52,16 @@ urlpatterns = patterns('',
     url(r'^blog/', include('zinnia.urls.quick_entry')),
     url(r'^comments/', include('django.contrib.comments.urls')),
     (r'^contact/', include('contact_form.urls')),
+    url(r'noresults/', direct_to_template, { 'template': 'somesmart/base_noresults.html' }, name='no-results'),
     #legacy urls
     url(r'^books/bookinfo\.php$', 'sssd.somesmart.views.bookinfo_php', name='bookinfo-php'),
     url(r'^bookinfo\.php$', 'sssd.somesmart.views.bookinfo_php', name='bookinfo-php'),
     url(r'^reviews/$', 'sssd.somesmart.views.bookinfo_php', name='review-old'),
+    #malformatted archive links go to the homepage
+    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/', ListView.as_view(
+            queryset=Review.objects.select_related().annotate(reviewed=Count('id')).order_by('-finished')[:10],
+            context_object_name='recent_reads',
+            template_name='somesmart/base_index.html')),
     url(r'^(?P<year>\d+)/(?P<slug>[-\w]+)/', 'sssd.somesmart.views.zinnia_entry_detail', name='custom-zinnia'),
     url(r'^feeds/$', 'sssd.somesmart.views.zinnia_latest_feeds', name='custom-zinnia-latest')
 )

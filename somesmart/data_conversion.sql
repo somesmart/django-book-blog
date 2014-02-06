@@ -197,9 +197,129 @@ where post_status = 'publish' and post_type = 'post'
 order by category_id;
 
 -- zinnia_entry table
-SELECT `ID` as id, `post_title` as title, '' image, post_content content, `post_excerpt` as excerpt,
+--insert mission_django.zinnia_entry
+SELECT distinct wp_posts.`ID` as id, `post_title` as title, '' image, post_content content, `post_excerpt` as excerpt,
 '' tags, post_name as slug, 2 as status, 0 as featured, 1 as comment_enabled, 1 as pingback_enabled,`post_date` creation_date,
 `post_modified` as last_update, 'post_date' start_publication, '2042-03-15' end_publication, 0 login_required, '' password,
-'zinnia/entry_detail.html' template
-FROM `wp_posts`
-where post_status='publish' and post_type = 'post';
+'zinnia/entry_detail.html' template, case when wp_posts.id = 560 then 122 when wp_posts.id = 777 then 123 else somesmart_book.id end book_id 
+FROM `wp_posts` 
+left outer join mission_django.somesmart_book
+on somesmart_book.title like concat('%',post_title,'%') COLLATE utf8_unicode_ci
+where post_status='publish' and post_type = 'post' and wp_posts.id not in (1,5,12,17,19,48)
+order by post_title
+
+--second batch of posts I forgot to import the first time:
+SELECT distinct wp_posts.`ID` as id, `post_title` as title, '' image, post_content content, `post_excerpt` as excerpt,
+'' tags, post_name as slug, 2 as status, 0 as featured, 1 as comment_enabled, 1 as pingback_enabled,`post_date` creation_date,
+`post_modified` as last_update, post_date start_publication, '2042-03-15' end_publication, 0 login_required, '' password,
+'zinnia/entry_detail.html' template, case when wp_posts.id = 560 then 122 when wp_posts.id = 777 then 123 else somesmart_book.id end book_id 
+FROM `wp_posts` 
+left outer join mission_django.somesmart_book
+on post_title like concat('%',somesmart_book.title,'%') COLLATE utf8_unicode_ci
+where post_status = 'publish' and post_type = 'post' and wp_posts.ID not in (select id from mission_django.zinnia_entry) and wp_posts.id not in (3,12,17,19,48)
+
+-- zinnia_entry_authors
+--insert zinnia_entry_authors
+select @curRow := @curRow + 1 AS id
+      ,entry_id
+      ,user_id
+      FROM (select zinnia_entry.id as entry_id, 2 as user_id
+from zinnia_entry where zinnia_entry.id not in (select distinct entry_id from zinnia_entry_authors)) authors
+      JOIN (SELECT @curRow := 17) r;
+
+-- zinnia_entry_categories
+select @curRow := @curRow + 1 AS id
+      ,entry_id
+      ,category_id
+      FROM (select zinnia_entry.id as entry_id, 4 as category_id
+from zinnia_entry where zinnia_entry.id not in (select distinct entry_id from zinnia_entry_categories)) categories
+      JOIN (SELECT @curRow := 36) r;
+
+
+-- zinnia_entry_sites
+select @curRow := @curRow + 1 AS id
+      ,entry_id
+      ,site_id
+      FROM (select zinnia_entry.id as entry_id, 2 as site_id
+from zinnia_entry where zinnia_entry.id not in (select distinct entry_id from zinnia_entry_sites)) sites
+      JOIN (SELECT @curRow := 17) r;
+
+--some data cleanup
+update `zinnia_entry` 
+set content = replace(replace(content,'<em>','*'),'</em>','*')
+where content like '%<em>%'
+
+--bringing over comments
+--look into using https://github.com/HonzaKral/django-threadedcomments
+SELECT * FROM mission_wdps3.`wp_comments`where comment_type != 'pingback' and comment_approved = 1
+SELECT `id`
+     ,`content_type_id`
+     ,`object_pk`
+     ,`site_id`
+     ,`user_id`
+     ,`user_name`
+     ,`user_email`
+     ,`user_url`
+     ,`comment`
+     ,`submit_date`
+     ,`ip_address`
+     ,`is_public`
+     ,`is_removed` 
+     FROM `django_comments` WHERE
+
+
+SELECT @curRow := @curRow + 1 AS id
+	,content_type_id
+	,object_pk
+	,site_id
+	,user_id
+	,user_name
+	,user_email
+	,user_url
+	,comment
+	,submit_date
+	,ip_address
+	,is_public
+	,is_removed
+FROM (select 49 content_type_id
+      ,zinnia_entry.id object_pk
+      ,2 site_id
+      ,case when comment_author_email='sf1179@gmail.com' then 2 else NULL end user_id
+      ,comment_author user_name
+      ,comment_author_email user_email
+      ,comment_author_url user_url
+      ,comment_content comment
+      ,comment_date submit_date
+      ,comment_author_ip ip_address
+      ,1 is_public
+      ,0 is_removed
+FROM mission_wdps3.`wp_comments`
+left outer join mission_wdps3.wp_posts
+on wp_posts.ID = wp_comments.comment_post_id
+left outer join mission_django.zinnia_entry
+on zinnia_entry.title = wp_posts.post_title COLLATE utf8_unicode_ci
+where comment_type != 'pingback' and comment_approved = 1
+and comment_id not in (20)) comments
+JOIN (SELECT @curRow := 9) r;
+
+
+SELECT `id`
+     ,`content_type_id`
+     ,`object_pk`
+     ,`site_id`
+     ,`user_id`
+     ,`user_name`
+     ,`user_email`
+     ,`user_url`
+     ,`comment`
+     ,`submit_date`
+     ,`ip_address`
+     ,`is_public`
+     ,`is_removed` 
+FROM `django_comments` 
+left outer join (SELECT wp_comments.comment_ID as old_id
+      ,django_comments.id as new_id
+FROM  mission_wdps3.`wp_comments` 
+INNER JOIN mission_django.django_comments 
+ON django_comments.comment = comment_content COLLATE utf8_unicode_ci) cmt_lookup
+on cmt_lookup.new_id = django_comments.id

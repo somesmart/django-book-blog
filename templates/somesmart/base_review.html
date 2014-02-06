@@ -13,7 +13,7 @@
   </div>
   <h4>A Review by {{ review.reader }} <small>finished {{ review.finished|date }}</small></h4>
   {% if review.one_sentence %}
-  <p><strong>In one sentence:</strong> {{ review.one_sentence }}</p>
+  <p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
   {% endif %}
   <span class="label label-important">This review will contain spoilers!</span>
   <p><strong>In many sentences:</strong></p>

@@ -1,11 +1,74 @@
 {% extends "somesmart/base.html" %}
 {% block title %}some smart, some don't stats and charts{% endblock title %}
+{% block top-content %}
+<div class="row-fluid">
+	<div class="span8 offset2 random-quote"></div>
+	<div class="span2"></div>
+</div>
+<div class="row-fluid">
+	<div class="span10 offset1">
+		<div class="row-fluid">
+			<div class="stats_container">	
+				<div class="stats">
+					<div id="stats_table">
+						<div class="stat">
+							<span>Books</span>
+							<h3>{{ global_stats.book_count }}</h3>
+						</div>
+						<div class="stat">
+							<span>Pages</span>
+							<h3>{{ page_total.page_count }}</h3>
+						</div>
+						<div class="stat">
+							<span>Quotes</span>
+							<h3>{{ quote_total.quote_count }}</h3>
+						</div>
+						<div class="stat">
+							<span>Recommendations</span>
+							<h3>{{ rec_total.rec_count }}</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="span1">
+	</div>
+</div>
+{% endblock top-content %}
 {% block content %}
-	<p>Coming soon!</p>
+<div class="row-fluid">
+	<div class="span12">
+		<p class="well">The Geek Quotient shows the variety of novels I read, as measured by the uniqueness of the world they are set in (compared to the real world) combined with the reality of the events in the book. Lower values are more realistic and are set in a world more like our own. A Geek Quotient of 0 would be a novel set in our world, and consisting only of completely realistic events, while a score of 20 would be the opposite.</p>
+		<div class="row-fluid">
+			<iframe id="books-chart" name="books-chart" src="/charts/GeekQuotient/0" frameborder="0" class="span12" height="450" onLoad=autoResize("books-chart");></iframe>
+		</div>
+	</div>
+</div>
+<hr>
+<div class="row-fluid">
+	<div class="span12">
+		<p class="well">A simple look at the number of books read by genre.</p>
+		<div class="row-fluid">
+			<iframe id="books-chart" name="books-chart" src="/charts/BooksByGenre/0" frameborder="0" class="span12" height="450" onLoad=autoResize("books-chart");></iframe>
+		</div>
+	</div>
+</div>
+<hr>
 {% endblock content %}
 {% block top-right-content %}{% endblock top-right-content %}
 {% block right-content %}
-	<div class="span10 offset1">
-      <p>Have additional questions or comments? Contact me on <a href="http://twitter.com/somesmart/">twitter.</a></p>
-    </div>
+  <div class="span10 offset1">
+      {% include "somesmart/include_contact.html" %}
+  </div>
 {% endblock %}
+{% block footer-content %}
+<div class="row-fluid">
+	<div class="span10 offset1">
+		<p class="well">A Timeline of the books I read in 2012, split between recommended (True) and not (False)</p>
+		<div class="row-fluid">
+			<iframe id="books-chart" name="books-chart" src="/charts/Timeline/2012" frameborder="0" class="span12" height="250" onLoad=autoResize("books-chart");></iframe>
+		</div>
+	</div>
+</div>
+{% endblock footer-content %}

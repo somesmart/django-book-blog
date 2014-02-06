@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.utils import simplejson
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
@@ -25,20 +25,22 @@ def autocomplete(request):
     if request.method == "GET":
         if request.GET.has_key(u'term'):
             value = request.GET[u'term']
-            search = request.GET[u'search']            
+            search = request.GET[u'search']
+            results = []
             if search == "title":
                 # Ignore queries shorter than length 3
                 if len(value) > 2:
                     model_results = Book.objects.filter(title__icontains=value)
-                    # Default return list
-                    results = []
                     for book in model_results:
                         data = {'id': book.id, 'label': book.title }
                         results.append(data)
+                    json = simplejson.dumps(results)
+                    return HttpResponse(json, mimetype='application/json')
+                else:
+                    return HttpResponseRedirect('/noresults/')
             elif search == "primary_search":
                 if len(value) > 3:
                     model_results = Book.objects.select_related().filter(Q(title__icontains=value) | Q(author__last_name__icontains=value) | Q(author__first_name__icontains=value))
-                    results = []
                     data = None
                     for book in model_results:
                         try:
@@ -46,26 +48,109 @@ def autocomplete(request):
                         except:
                             data = {'id': '/author/' + str(book.author.id) + '/', 'label': book.author.first_name + ' ' + book.author.last_name }                             
                         results.append(data)
+                    json = simplejson.dumps(results)
+                    return HttpResponse(json, mimetype='application/json')
+                else:
+                    return HttpResponseRedirect('/noresults/')
             elif search == "author":
                 # Ignore queries shorter than length 4
                 if len(value) > 3:
                     model_results = Author.objects.filter(Q(last_name__icontains=value) | Q(first_name__icontains=value))
-                    # Default return list
-                    results = []
                     for author in model_results:
                         data = {'id': author.id, 'label': author.first_name + ' ' + author.last_name }
                         results.append(data)
-    json = simplejson.dumps(results)
-    return HttpResponse(json, mimetype='application/json')
+                    json = simplejson.dumps(results)
+                    return HttpResponse(json, mimetype='application/json')
+                else:
+                    return HttpResponseRedirect('/noresults/')
+        else:
+            return HttpResponseRedirect('/noresults/')
 
 class BookView(DetailView):
     queryset=Book.objects.select_related()
     template_name='somesmart/base_book.html'
 
 def bookinfo_php(request):
-    isbn = request.GET[u'bookid']
-    book = Book.objects.select_related().get(edition__isbn=isbn)
-    return redirect('book-view', pk=book.id)
+    if request.GET.has_key(u'term'):
+        isbn = request.GET[u'bookid']
+        book = Book.objects.select_related().get(edition__isbn=isbn)
+        return redirect('book-view', pk=book.id)
+    else:
+        return HttpResponseRedirect('/review/list/')
+
+class GlobalStats(ListView):
+    template_name='somesmart/base_charts.html'
+    context_object_name = 'global_stats'
+
+    def get_queryset(self):
+        return Book.objects.aggregate(book_count=Count('id'))
+
+    def get_context_data(self, **kwargs):
+        context = super(GlobalStats, self).get_context_data(**kwargs)
+        context ['page_total'] = Edition.objects.aggregate(page_count=Sum('pages'))
+        context ['quote_total'] = Quote.objects.aggregate(quote_count=Count('id'))
+        context ['rec_total'] = Review.objects.filter(recommend=True).aggregate(rec_count=Count('id'))
+        return context
+
+class ChartGenerate(ListView):
+    template_name='somesmart/include_charts_generate.html'
+    context_object_name = 'chart_data'
+
+    def get_queryset(self):
+        chart_name = self.kwargs['chart']
+        if self.kwargs['option']:
+            option = self.kwargs['option']
+        if chart_name == 'PagesByGenre':
+            return Review.objects.select_related().values('edition__book__genre__slug').annotate(chart_count=Sum('edition__pages')).order_by()
+        elif chart_name == 'BooksByGenre':
+            return Review.objects.select_related().values('edition__book__genre__slug').annotate(chart_count=Count('id')).order_by()
+        elif chart_name == 'GeekQuotient':
+            return Radar.objects.select_related().values('world', 'realism', 'book__edition__review__finished', 'book__title').order_by('book__edition__review__finished')
+        elif chart_name == 'GenreTransitions':
+            return Review.objects.select_related().values('edition__book__genre__id','finished').order_by('finished')
+        elif chart_name == 'BookAgeHist':
+            return Review.objects.select_related().extra(select={'age_read': "FLOOR(DATEDIFF(finished,original_publication) / 365)", 'title': "title"}).order_by('age_read')
+        elif chart_name == 'Timeline':
+            return Review.objects.select_related().values('edition__book__title','started','recommend','finished').filter(finished__year=option).order_by('finished')
+
+    def get_context_data(self, **kwargs):
+        context = super(ChartGenerate, self).get_context_data(**kwargs)
+        chart_name = self.kwargs['chart']
+        if chart_name == 'PagesByGenre':
+            context ['chart_title'] = "Pages by Genre"
+            context ['chart_legend'] = "Pages"
+            context ['chart_type'] = "BarChart"
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'BooksByGenre':
+            context ['chart_title'] = "Books by Genre"
+            context ['chart_legend'] = 'Books'
+            context ['chart_type'] = "BarChart"
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'GeekQuotient':
+            context ['chart_title'] = "Geek Quotient"
+            context ['v_axis'] = 'Geek Quotient'
+            context ['chart_type'] = 'SteppedAreaChart'
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'GenreTransitions':
+            context ['chart_title'] = "Genre Transitions"
+            context ['v_axis'] = 'Genre Transitions'
+            context ['chart_type'] = 'SteppedAreaChart'
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'BookAgeHist':
+            context ['chart_title'] = 'Book Age When Read'
+            context ['chart_type'] = 'Histogram'
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'Timeline':
+            context ['chart_title'] = 'Reading Timeline by Recommendation'
+            context ['chart_type'] = 'Timeline'
+            context ['chart_name'] = chart_name
+            return context
+
 
 class QuoteView(DetailView):
     queryset=Quote.objects.select_related()
@@ -135,6 +220,7 @@ class ReviewGenreList(ListView):
     def get_context_data(self, **kwargs):
         context = super(ReviewGenreList, self).get_context_data(**kwargs)
         context['genre_list'] = Genre.objects.values('name', 'slug').order_by('name')
+        context['genre_value'] = Genre.objects.filter(slug=self.kwargs['genre'])
         return context
 
 class ReviewByBook(ListView):
@@ -173,6 +259,16 @@ def get_random_quote(request):
     return render_to_response('somesmart/include_quote.html', {'quote' : random})
 
 def zinnia_entry_detail(request, year, slug):
+    #fixing an annoying typo for legacy urls
+    if slug == 'beyond-the-blue-event-horizon-hechee-saga':
+        slug = 'beyond-the-blue-event-horizon-heechee-saga'
+    elif slug == 'first-line-extremely':
+        slug = 'first-line-extremely-loud-and-incredibly-close'
+    elif slug == 'how-to-read-literature':
+        slug = 'how-to-read-literature-like-a-professor'
+    elif slug == 'the-moon-is-a-harsh':
+        slug = 'the-moon-is-a-harsh-mistress'
+
     entry = Entry.published.on_site().get(slug=slug)
     return redirect('zinnia_entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
     #return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})

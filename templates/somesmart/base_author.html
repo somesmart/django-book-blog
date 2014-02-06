@@ -5,9 +5,24 @@
     <h3>{{ author.first_name }} {{ author.last_name }}</h3>
   </div>
   <h3>Books by {{ author.last_name }}:</h3>
-  <ul class="unstyled">
-  {% for book in author.book_set.all %}
-  	<li><a href="{% url book-view book.id %}{{ book.title|slugify }}">{{ book.title }}</a></li>
-  {% endfor %}
-  </ul>
+	{% for book in author.book_set.all %}
+		{% if forloop.counter0|divisibleby:"3" %}<div class="row-fluid"><ul class="thumbnails">{% endif %}
+			<li class="span4">
+			  	{% for edition in book.edition_set.all %}
+					{% if forloop.first %}
+						<div class="thumbnail">
+							{% if edition.cover %}<img src="{{ edition.cover.url }}" max-height="300px">{% else %}<img data-src="holder.js/200x300/auto">{% endif %}
+						</div>
+					{% endif %}
+				{% endfor %}
+				<div class="caption">
+					<h5><center><a href="{% url book-view book.id %}{{ book.title|slugify }}">{{ book.title }}</a></center></h5>
+				</div>
+			</li>
+		{% if forloop.last or forloop.counter|divisibleby:"3" %}</ul></div>{% endif %} 
+	{% endfor %}
+	</ul>
 {% endblock content %}
+{% block app.scripts %}
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/holder/holder.js"></script>
+{% endblock %}

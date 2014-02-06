@@ -24,18 +24,37 @@ class BookAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
 	list_display = (
 		'edition',
+        'reader',
 		'started',
 		'finished',
-	)    
+	)
+
+class QuoteAdmin(admin.ModelAdmin):
+    list_display = (
+        'edition',
+        'quote_type',
+        'reader',
+    )
+
+class RadarAdmin(admin.ModelAdmin):
+    list_display = (
+        'book',
+    )    
+
+class NoteAdmin(admin.ModelAdmin):
+    list_display = (
+        'quote',
+        'reader',
+    )
 
 admin.site.register(Book, BookAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Genre)
 admin.site.register(Author)
 admin.site.register(Keyword)
-admin.site.register(Quote)
-admin.site.register(Radar)
-admin.site.register(Note)
+admin.site.register(Quote, QuoteAdmin)
+admin.site.register(Radar, RadarAdmin)
+admin.site.register(Note, NoteAdmin)
 admin.site.register(Shelf)
 admin.site.register(ShelfDetail)
 admin.site.register(QuoteType)

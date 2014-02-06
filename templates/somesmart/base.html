@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% block head %}
   <head>
     <meta charset="utf-8">
     <title>{% block title %}Some Smart, Some Don't{% endblock %}</title>
@@ -27,10 +28,11 @@
 
     <!-- Fav and touch icons -->
 </head>
+{% endblock head %}
 <html>
 <body>
 {% block body %}
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -78,6 +80,7 @@
       </div>
     </div>
   </div>
+  {% block footer-content %}{% endblock %}
   <hr>
   <footer>
     <div class="container">
@@ -93,6 +96,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/comment-reply.js"></script>
     {% block app.scripts %}{% endblock %}
     {% block base.scripts %}
     <script type="text/javascript">
@@ -132,6 +136,17 @@
           get_gr_current();
           get_random_quote();
         })
+    </script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-1169821-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
     </script>
     {% endblock %}
 </body>

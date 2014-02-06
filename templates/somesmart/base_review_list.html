@@ -2,7 +2,7 @@
 {% block title %}Browse Reviews{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
-<h3>Browse Recent reviews</h3>
+<h3>Browse Recent {% if genre_value %}{% for genre in genre_value %}{{ genre.name }}{% endfor %} {% endif %}Reviews</h3>
    {% if review_list %}
    		<dl>
 		{% for review in review_list %}

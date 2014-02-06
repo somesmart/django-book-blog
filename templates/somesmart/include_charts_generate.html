@@ -1,0 +1,91 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+		
+			// Load the Visualization API and the piechart package.
+			google.load('visualization', '1.0', {'packages':[{% if chart_name == "Timeline" %}'timeline'{% else %}'corechart'{% endif %}]});
+			
+			// Set a callback to run when the Google Visualization API is loaded.
+			google.setOnLoadCallback(drawChart);
+
+			// Callback that creates and populates a data table, 
+			// instantiates the pie chart, passes in the data and
+			// draws it.
+			function drawChart() {
+
+			// Create the data table.
+				{% if chart_type == "BarChart" %}
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Genres');
+					data.addColumn('number', '{{ chart_legend }}');
+					data.addRows([
+						{% if chart_data %}
+							{% for slug in chart_data %}
+							['{{ slug.edition__book__genre__slug }}', {{ slug.chart_count }}]{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						{% endif %}
+						]);
+				{% endif %}
+				{% if chart_name == "GeekQuotient" %}
+					var data = google.visualization.arrayToDataTable([
+	          {% if chart_data %}
+	          	['Date Read', 'Geek Quotient', 'Tooltip'],
+							{% for book in chart_data %}
+							['{{ book.book__edition__review__finished|date:"M j Y" }}', {{ book.world|add:book.realism  }}, "{{ book.world|add:book.realism  }} - {{ book.book__title|safe }}"]{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						{% endif %}
+        	]);
+        	data.setColumnProperty(2, 'role', 'tooltip');
+				{% endif %}
+				{% if chart_name == "GenreTransitions" %}
+					var data = google.visualization.arrayToDataTable([
+	          {% if chart_data %}
+	          	['Date Read', 'Genre'],
+							{% for book in chart_data %}
+							['{{ book.finished|date:"M j Y" }}', {{ book.edition__book__genre__id  }}]{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						{% endif %}
+        	]);
+				{% endif %}
+				{% if chart_name == "BookAgeHist" %}
+					var data = google.visualization.arrayToDataTable([
+	          {% if chart_data %}
+	          	['Title', 'Age When Read'],
+							{% for book in chart_data %}
+							["{{ book.title|safe }}", {{ book.age_read }}]{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						{% endif %}
+        	]);
+				{% endif %}
+				{% if chart_name == "Timeline" %}
+					var data = new google.visualization.DataTable();
+					data.addColumn({ type: 'string', id: 'Recommended' });
+					data.addColumn({ type: 'string', id: 'Title' });
+					data.addColumn({ type: 'date', id: 'Start' });
+					data.addColumn({ type: 'date', id: 'End' });
+					data.addRows([
+						{% if chart_data %}
+							{% for book in chart_data %}
+							['{{ book.recommend }}', "{{ book.edition__book__title|safe }}", new Date({{ book.started|date:"Y"}}, {{ book.started|date:"m"}}, {{ book.started|date:"d"}}), new Date({{ book.finished|date:"Y"}}, {{ book.finished|date:"m"}}, {{ book.finished|date:"d"}})]{% if not forloop.last %}, {% endif %}
+							{% endfor %}
+						{% endif %}
+						]);
+				{% endif %}
+
+
+			// Set chart options
+			var options = {'title':'{{ chart_title }}',
+										'chartArea': {'width': {% if chart_type == "GeekQuotient" %}'90%'{% else %}'75%'{% endif %}, 'height': '90%'},
+										'legend': 'none',
+										//'width':'100%',
+										'height': {% if chart_name == "Timeline" %}'100%'{% else %}400{% endif %}};
+
+			// Instantiate and draw our chart, passing in some options.
+			var chart = new google.visualization.{{ chart_type }}(document.getElementById('div_chart'));
+			chart.draw(data, options);
+			// png_chart.innerHTML = '<img src="' + chart.getImageURI() + '">';
+		}
+		</script>
+		<!--Div that will hold the chart-->
+		<div id="div_chart" style="width:100%;"></div>
+		<!--Div that will hold the png chart-->
+		<!--<div id="png_chart"></div>-->
