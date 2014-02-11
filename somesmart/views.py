@@ -106,6 +106,8 @@ class ChartGenerate(ListView):
             return Review.objects.select_related().values('edition__book__genre__slug').annotate(chart_count=Count('id')).order_by()
         elif chart_name == 'GeekQuotient':
             return Radar.objects.select_related().values('world', 'realism', 'book__edition__review__finished', 'book__title').order_by('book__edition__review__finished')
+        elif chart_name == 'GeekHist':
+            return Radar.objects.select_related().values('world', 'realism', 'book__title', 'book__edition__review__recommend')
         elif chart_name == 'GenreTransitions':
             return Review.objects.select_related().values('edition__book__genre__id','finished').order_by('finished')
         elif chart_name == 'BookAgeHist':
@@ -142,6 +144,11 @@ class ChartGenerate(ListView):
             return context
         if chart_name == 'BookAgeHist':
             context ['chart_title'] = 'Book Age When Read'
+            context ['chart_type'] = 'Histogram'
+            context ['chart_name'] = chart_name
+            return context
+        if chart_name == 'GeekHist':
+            context ['chart_title'] = 'Geek Quotient Spread'
             context ['chart_type'] = 'Histogram'
             context ['chart_name'] = chart_name
             return context

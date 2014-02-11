@@ -46,12 +46,12 @@
 						{% endif %}
         	]);
 				{% endif %}
-				{% if chart_name == "BookAgeHist" %}
+				{% if chart_name == "GeekHist" %}
 					var data = google.visualization.arrayToDataTable([
 	          {% if chart_data %}
-	          	['Title', 'Age When Read'],
+	          	['Title', 'GeekQuotient'],
 							{% for book in chart_data %}
-							["{{ book.title|safe }}", {{ book.age_read }}]{% if not forloop.last %}, {% endif %}
+							["{{ book.book__title|safe }}", {{ book.world|add:book.realism }}]{% if not forloop.last %}, {% endif %}
 							{% endfor %}
 						{% endif %}
         	]);
