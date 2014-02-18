@@ -39,6 +39,15 @@ urlpatterns = patterns('',
     #automplete all pass to the same view
     url(r'autocomplete/$','sssd.somesmart.views.autocomplete', name='autocomplete'),
     url(r'gr/current/$', 'sssd.somesmart.views.get_gr_current', name='get-gr-current'),
+    #lists
+    url(r'^list/(?P<pk>\d+)/', login_required(ListDetailView.as_view()), name='list-view'),
+    url(r'^list/$', login_required(ListSummary.as_view()), name='list-summary'),
+    url(r'^add/list/$', login_required(ListCreateView.as_view(template_name='somesmart/base_list_create.html')), name='list-add'),
+    url(r'^add/list/(?P<list>\d+)/item/(?P<book>\d+)/$', 'sssd.somesmart.views.add_list_item'),
+    url(r'^copy/list/(?P<list>\d+)/$', 'sssd.somesmart.views.copy_list', name='list-copy'),
+    url(r'^edit/list/(?P<pk>\d+)/$', login_required(ListUpdate.as_view(template_name='somesmart/base_course_update.html'))),
+    url(r'^delete/list/item/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list_item'),
+    url(r'^delete/list/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list'),
     #the blog
     url(r'^blog/', include('zinnia.urls')),
     url(r'^blog/tags/', include('zinnia.urls.tags')),
