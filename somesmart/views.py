@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 # from tagging.models import Tag, TaggedItem
 from sssd.somesmart.models import *
 from zinnia.models import Entry
-#from sssd.somesmart.forms import *
+from sssd.somesmart.forms import *
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -282,3 +282,134 @@ def zinnia_entry_detail(request, year, slug):
 
 def zinnia_latest_feeds(request):
     return redirect('zinnia_entry_latest_feed')
+
+# ****************************************************************** #
+# ********************* list related views *********************** #
+# ****************************************************************** #
+
+class ListDetailView(DetailView):
+    template_name='somesmart/base_list.html'
+    queryset = List.objects.order_by('list_name')  
+
+    def get_context_data(self, **kwargs):
+        context = super(ListDetailView, self).get_context_data(**kwargs)
+        self.list_id = self.kwargs['pk']
+        self.list = List.objects.get(id=self.list_id)
+        #all the books in the list
+        self.book_ids = ListDetail.objects.select_related().filter(list=self.list_id).values('book')
+        #all the books in the list that have been read
+        self.read_ids = Review.objects.select_related().filter(edition__book__in=self.book_ids).values('edition__book').distinct()
+        #all the reads that have been read by the current user
+        self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, reader=self.request.user).values('edition__book').distinct()
+        #all the reads that OTHERS have read, but not those the user has read
+        self.others_read_ids = Review.objects.filter(edition__book__in=self.book_ids).exclude(edition__book__in=self.user_read_ids).values('edition__book').distinct()
+        #distinct reads from the list the current user has read
+        self.distinct_user_read = ListDetail.objects.select_related().filter(book__in=self.user_read_ids, list=self.list_id).order_by('book__title')
+        #amount read by the user
+        self.total_read_user = len(self.distinct_user_read)
+        #count of the list
+        self.list_total = len(self.book_ids)
+        #pull the books in the list that have been read by the user
+        context['user_read'] = self.distinct_user_read     
+        #those read by other users
+        context['others_read'] = ListDetail.objects.select_related().filter(book__in=self.others_read_ids, list=self.list_id).order_by('book__title').distinct()
+        #those orgs not ever found
+        context['never_read'] = ListDetail.objects.select_related().filter(list=self.list_id).exclude(book__in=self.read_ids).distinct().order_by('book__title').distinct()
+        #percent complete stats
+        getcontext().prec = 2
+        context['completion'] = {'total': self.list_total, 'total_user': self.total_read_user}
+        return context
+
+class ListSummary(ListView):
+    template_name='somesmart/base_list_summary.html'
+    context_object_name = 'list_summary'
+    def get_queryset(self):
+        return List.objects.filter(user = self.request.user)
+
+class ListCreateView(CreateView):
+    template_name = 'somesmart/base_list_create.html'
+    model = List #Must keep this
+    form_class = ListForm
+
+    def form_valid (self, form):
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = self.request.user
+            obj.save()
+        #add the option here to define a group if "is_group == True"    
+        context = self.get_context_data()
+        listdetail_form = context['listdetail_form']
+        if listdetail_form.is_valid():
+            self.object = form.save()
+            listdetail_form.instance = self.object
+            listdetail_form.save()
+            return HttpResponseRedirect('/list/')
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(ListCreateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['listdetail_form'] = ListDetailFormSet(self.request.POST, instance=self.object)
+        else:
+            context['listdetail_form'] = ListDetailFormSet(instance=self.object)
+        return context
+
+def delete_list(request, pk):
+    list_user = List.objects.select_related().get(id=pk)
+    if request.user.id == list_user.user.id:
+        List.objects.filter(id=pk).delete()
+        return HttpResponse("success")
+    else:
+        return HttpResponse("you shouldn't be here")
+
+class ListUpdate(UpdateView):
+    template_name = 'somesmart/base_list_update.html'
+    model = List #Must keep this
+    form_class = ListForm
+
+    def form_valid (self, form):
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            return HttpResponseRedirect('/list/')
+
+    def get_context_data(self, **kwargs):
+        context = super(ListUpdate, self).get_context_data(**kwargs)
+        self.list_id = self.kwargs['pk']
+        context['detail_list'] = ListDetail.objects.select_related().filter(list=self.list_id).order_by('book__title')  
+        return context        
+
+def delete_list_item(request, pk):
+    list_user = List.objects.select_related().get(list_details__id=pk)
+    if request.user.id == list_user.user.id:
+        ListDetail.objects.filter(id=pk).delete()
+        return HttpResponse("success")
+    else:
+        return HttpResponse("you shouldn't be here")
+
+def add_list_item(request, list, book):
+    list_user = List.objects.select_related().get(id=list)
+    book = Book.objects.get(id=book)
+    if request.user.id == list_user.user.id:
+        new_item = ListDetail(list=list_user, book=book)
+        new_item.save()
+        return HttpResponse(new_item.id)
+    else:
+        return HttpResponse("you shouldn't be here")
+
+def copy_list(request, list):
+    list = List.objects.get(id=list)
+    if list:
+        new_user = User.objects.get(id=request.user.id)
+        new_list = List(list_name=list.list_name, list_descr=list.list_descr, user=new_user, is_group=False)
+        new_list.save()
+    list_detail = ListDetail.objects.filter(list=list)
+    if list_detail:
+        for detail in list_detail:
+            new_list_detail = ListDetail(list=new_list, book=detail.book)
+            new_list_detail.save()
+    return HttpResponseRedirect('/list/')

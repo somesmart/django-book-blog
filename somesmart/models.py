@@ -153,3 +153,31 @@ class Currently(models.Model):
 	edition = models.ForeignKey(Edition)
 	reader = models.ForeignKey(User, related_name='+')
 	page = models.IntegerField()
+
+
+# ************************************************************** #
+# ************************ list data *************************** #
+# ************************************************************** #
+
+#stores the list master data
+class List(models.Model):
+	list_name = models.CharField(max_length=200)
+	list_descr = models.CharField(max_length=200)
+	user = models.ForeignKey(User, related_name="+") #this is the person who created it, and it will always be here
+	def __unicode__(self):
+		return self.list_name
+	def __unicode__(self):
+		return self.list_descr
+	def get_absolute_url(self):
+		return "/list/%i/" % self.id 	
+	def get_edit_url(self):
+		return "/edit/list/%i/" % self.id
+	def get_delete_url(self):
+		return "/delete/list/%i/" % self.id	
+	def get_add_url(self):
+		return "/add/list/"
+
+#stores the list detail (books in a list)
+class ListDetail(models.Model):
+	list = models.ForeignKey(List, related_name="list_details")
+	book = models.ForeignKey(Book)

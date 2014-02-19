@@ -1,0 +1,45 @@
+{% extends "somesmart/base.html" %}
+{% block title %}{{ list.list_name }}{% endblock title %}
+{% block content %}
+  <h2>{{ list.list_name }}: <a class="btn btn-small note_copy pull-right" href="{% url list-copy list.id %}">Copy this List <i class="icon-share"></i></a></h1>
+  <h3>{{ list.list_descr }}</h3>
+  <div id="book_list">
+    {% if completion %}
+      <div class="completion progress">     
+        <div class="bar" style="{% widthratio completion.total_user completion.total 100 %}%;">{% widthratio completion.total_user completion.total 100 %}% complete</div>
+      </div>
+    {% endif %}
+    {% if user_read %}
+    <h3>What you've read:</h3>
+        <ul class="large_list">
+          {% for read in user_read %}
+            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if others_read %}
+      <h3>Read by Others:</h3>
+        <ul class="large_list">
+          {% for read in others_read %}
+            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if never_read %}
+      <h3>To Read:</h3>
+        <ul class="large_list">
+          {% for read in never_read %}
+            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+  </div>
+  {% if list.user.id == user.id %} 
+  <a class="btn pull-right" href="{{ list.get_edit_url }}"><i class="icon-wrench"></i> Edit List</a>
+  {% endif %}
+{% endblock content %}
+{% block top-right-content %}{% endblock %}
+{% block right-content %}
+  {% include "somesmart/include_book_data.html" %}
+  {% include "somesmart/include_recent_posts.html" %}
+{% endblock %}
