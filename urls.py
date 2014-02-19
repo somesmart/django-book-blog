@@ -9,4 +9,5 @@ admin.autodiscover()
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
 	url(r'^', include('sssd.somesmart.urls')),
+	url(r'^', include('sssd.adventure.urls')),
 )
