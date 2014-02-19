@@ -1,7 +1,6 @@
 {% extends "somesmart/base.html" %}
-{% block title %}Create new list{% endblock title %}
 {% block app.css %}
-<link rel="stylesheet" href="{{ STATIC_URL }}nature/css/colorbox/colorbox.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox/colorbox.css">
 {% endblock %}
 {% block title %}Create Your List {% endblock title %}
 {% block app.scripts %}
@@ -73,11 +72,10 @@ $(function() {
       <input type="submit" value="Create List" class="submit btn btn-primary pull-right" />
     </div>
     </form>
-  {% endblock %}
+  {% endblock content %}
 {% else %}
   <p>I'm sorry, you are not authorized to update this list. Please contact the administrator for more information.</p>
 {% endif %}
-{% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
   {% include "somesmart/include_book_data.html" %}

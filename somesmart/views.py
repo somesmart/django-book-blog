@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 # from tagging.models import Tag, TaggedItem
 from sssd.somesmart.models import *
 from zinnia.models import Entry
-#from sssd.somesmart.forms import *
+from sssd.somesmart.forms import *
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -298,11 +298,11 @@ class ListDetailView(DetailView):
         #all the books in the list
         self.book_ids = ListDetail.objects.select_related().filter(list=self.list_id).values('book')
         #all the books in the list that have been read
-        self.read_ids = Review.objects.select_related().filter(edition__book__in=self.book_ids).values('book').distinct()
+        self.read_ids = Review.objects.select_related().filter(edition__book__in=self.book_ids).values('edition__book').distinct()
         #all the reads that have been read by the current user
-        self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, user=self.request.user).values('book').distinct()
+        self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, reader=self.request.user).values('edition__book').distinct()
         #all the reads that OTHERS have read, but not those the user has read
-        self.others_read_ids = Review.objects.filter(edition__book__in=self.book_ids).exclude(edition__book__in=self.user_read_ids).values('book').distinct()
+        self.others_read_ids = Review.objects.filter(edition__book__in=self.book_ids).exclude(edition__book__in=self.user_read_ids).values('edition__book').distinct()
         #distinct reads from the list the current user has read
         self.distinct_user_read = ListDetail.objects.select_related().filter(book__in=self.user_read_ids, list=self.list_id).order_by('book__title')
         #amount read by the user
@@ -335,8 +335,6 @@ class ListCreateView(CreateView):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = self.request.user
-            if obj.is_group:
-                obj.group = Group.objects.get(id=form.data['group'])
             obj.save()
         #add the option here to define a group if "is_group == True"    
         context = self.get_context_data()

@@ -46,7 +46,7 @@ urlpatterns = patterns('',
     url(r'^add/list/(?P<list>\d+)/item/(?P<book>\d+)/$', 'sssd.somesmart.views.add_list_item'),
     url(r'^copy/list/(?P<list>\d+)/$', 'sssd.somesmart.views.copy_list', name='list-copy'),
     url(r'^edit/list/(?P<pk>\d+)/$', login_required(ListUpdate.as_view(template_name='somesmart/base_course_update.html'))),
-    url(r'^delete/list/item/(?P<pk>\d+)/$', 'sssd.somesmart..views.delete_list_item'),
+    url(r'^delete/list/item/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list_item'),
     url(r'^delete/list/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list'),
     #the blog
     url(r'^blog/', include('zinnia.urls')),

@@ -1,0 +1,488 @@
+From d25432746e0f1047bc86989a5857caee189b3230 Mon Sep 17 00:00:00 2001
+From: Scott Forbes <sf1179@gmail.com>
+Date: Wed, 19 Feb 2014 10:38:24 -0600
+Subject: [PATCH] list items
+
+---
+ somesmart/forms.py                         |  26 ++++++
+ somesmart/models.py                        |  30 ++++++-
+ somesmart/urls.py                          |   9 ++
+ somesmart/views.py                         | 135 ++++++++++++++++++++++++++++-
+ templates/somesmart/base.html              |   2 +-
+ templates/somesmart/base_list.html         |  45 ++++++++++
+ templates/somesmart/base_list_create.html  |  85 ++++++++++++++++++
+ templates/somesmart/base_list_summary.html |  52 +++++++++++
+ urls.py                                    |   1 +
+ 9 files changed, 382 insertions(+), 3 deletions(-)
+ create mode 100644 somesmart/forms.py
+ create mode 100644 templates/somesmart/base_list.html
+ create mode 100644 templates/somesmart/base_list_create.html
+ create mode 100644 templates/somesmart/base_list_summary.html
+
+diff --git a/somesmart/forms.py b/somesmart/forms.py
+new file mode 100644
+index 0000000..a235604
+--- /dev/null
++++ b/somesmart/forms.py
+@@ -0,0 +1,26 @@
++from django import forms
++from django.forms import ModelForm, Textarea
++from django.forms.models import inlineformset_factory
++from sssd.somesmart.models import *
++
++# ****************************************************************** #
++# ********************* course related forms *********************** #
++# ****************************************************************** #        
++
++class ListForm(ModelForm):
++    list_descr = forms.CharField(widget=forms.TextInput(attrs={'size':'60'}))
++        
++    class Meta:
++        model = List
++        exclude = ('user')
++
++    def __init__(self, *args, **kwargs):
++        super(ListForm, self).__init__(*args, **kwargs)
++        self.fields['list_name'].label = "List Name"
++        self.fields['list_descr'].label = "List Description"
++
++class ListDetailForm(ModelForm):
++    class Meta:
++        model = ListDetail 
++
++ListDetailFormSet = inlineformset_factory(List, ListDetail, form=ListDetailForm)
+\ No newline at end of file
+diff --git a/somesmart/models.py b/somesmart/models.py
+index cc71336..76ebe8d 100644
+--- a/somesmart/models.py
++++ b/somesmart/models.py
+@@ -152,4 +152,32 @@ class ShelfDetail(models.Model):
+ class Currently(models.Model):
+ 	edition = models.ForeignKey(Edition)
+ 	reader = models.ForeignKey(User, related_name='+')
+-	page = models.IntegerField()
+\ No newline at end of file
++	page = models.IntegerField()
++
++
++# ************************************************************** #
++# ************************ list data *************************** #
++# ************************************************************** #
++
++#stores the list master data
++class List(models.Model):
++	list_name = models.CharField(max_length=200)
++	list_descr = models.CharField(max_length=200)
++	user = models.ForeignKey(User, related_name="+") #this is the person who created it, and it will always be here
++	def __unicode__(self):
++		return self.list_name
++	def __unicode__(self):
++		return self.list_descr
++	def get_absolute_url(self):
++		return "/list/%i/" % self.id 	
++	def get_edit_url(self):
++		return "/edit/list/%i/" % self.id
++	def get_delete_url(self):
++		return "/delete/list/%i/" % self.id	
++	def get_add_url(self):
++		return "/add/list/"
++
++#stores the list detail (books in a list)
++class ListDetail(models.Model):
++	list = models.ForeignKey(List, related_name="list_details")
++	book = models.ForeignKey(Book)
+\ No newline at end of file
+diff --git a/somesmart/urls.py b/somesmart/urls.py
+index c1b76e9..8f87320 100644
+--- a/somesmart/urls.py
++++ b/somesmart/urls.py
+@@ -39,6 +39,15 @@ urlpatterns = patterns('',
+     #automplete all pass to the same view
+     url(r'autocomplete/$','sssd.somesmart.views.autocomplete', name='autocomplete'),
+     url(r'gr/current/$', 'sssd.somesmart.views.get_gr_current', name='get-gr-current'),
++    #lists
++    url(r'^list/(?P<pk>\d+)/', login_required(ListDetailView.as_view()), name='list-view'),
++    url(r'^list/$', login_required(ListSummary.as_view()), name='list-summary'),
++    url(r'^add/list/$', login_required(ListCreateView.as_view(template_name='somesmart/base_list_create.html')), name='list-add'),
++    url(r'^add/list/(?P<list>\d+)/item/(?P<book>\d+)/$', 'sssd.somesmart.views.add_list_item'),
++    url(r'^copy/list/(?P<list>\d+)/$', 'sssd.somesmart.views.copy_list', name='list-copy'),
++    url(r'^edit/list/(?P<pk>\d+)/$', login_required(ListUpdate.as_view(template_name='somesmart/base_course_update.html'))),
++    url(r'^delete/list/item/(?P<pk>\d+)/$', 'sssd.somesmart..views.delete_list_item'),
++    url(r'^delete/list/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list'),
+     #the blog
+     url(r'^blog/', include('zinnia.urls')),
+     url(r'^blog/tags/', include('zinnia.urls.tags')),
+diff --git a/somesmart/views.py b/somesmart/views.py
+index 3129df2..6f18561 100644
+--- a/somesmart/views.py
++++ b/somesmart/views.py
+@@ -281,4 +281,137 @@ def zinnia_entry_detail(request, year, slug):
+     #return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
+ 
+ def zinnia_latest_feeds(request):
+-    return redirect('zinnia_entry_latest_feed')
+\ No newline at end of file
++    return redirect('zinnia_entry_latest_feed')
++
++# ****************************************************************** #
++# ********************* list related views *********************** #
++# ****************************************************************** #
++
++class ListDetailView(DetailView):
++    template_name='somesmart/base_list.html'
++    queryset = List.objects.order_by('list_name')  
++
++    def get_context_data(self, **kwargs):
++        context = super(ListDetailView, self).get_context_data(**kwargs)
++        self.list_id = self.kwargs['pk']
++        self.list = List.objects.get(id=self.list_id)
++        #all the books in the list
++        self.book_ids = ListDetail.objects.select_related().filter(list=self.list_id).values('book')
++        #all the books in the list that have been read
++        self.read_ids = Review.objects.select_related().filter(edition__book__in=self.book_ids).values('book').distinct()
++        #all the reads that have been read by the current user
++        self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, user=self.request.user).values('book').distinct()
++        #all the reads that OTHERS have read, but not those the user has read
++        self.others_read_ids = Review.objects.filter(edition__book__in=self.book_ids).exclude(edition__book__in=self.user_read_ids).values('book').distinct()
++        #distinct reads from the list the current user has read
++        self.distinct_user_read = ListDetail.objects.select_related().filter(book__in=self.user_read_ids, list=self.list_id).order_by('book__title')
++        #amount read by the user
++        self.total_read_user = len(self.distinct_user_read)
++        #count of the list
++        self.list_total = len(self.book_ids)
++        #pull the books in the list that have been read by the user
++        context['user_read'] = self.distinct_user_read     
++        #those read by other users
++        context['others_read'] = ListDetail.objects.select_related().filter(book__in=self.others_read_ids, list=self.list_id).order_by('book__title').distinct()
++        #those orgs not ever found
++        context['never_read'] = ListDetail.objects.select_related().filter(list=self.list_id).exclude(book__in=self.read_ids).distinct().order_by('book__title').distinct()
++        #percent complete stats
++        getcontext().prec = 2
++        context['completion'] = {'total': self.list_total, 'total_user': self.total_read_user}
++        return context
++
++class ListSummary(ListView):
++    template_name='somesmart/base_list_summary.html'
++    context_object_name = 'list_summary'
++    def get_queryset(self):
++        return List.objects.filter(user = self.request.user)
++
++class ListCreateView(CreateView):
++    template_name = 'somesmart/base_list_create.html'
++    model = List #Must keep this
++    form_class = ListForm
++
++    def form_valid (self, form):
++        if form.is_valid():
++            obj = form.save(commit=False)
++            obj.user = self.request.user
++            if obj.is_group:
++                obj.group = Group.objects.get(id=form.data['group'])
++            obj.save()
++        #add the option here to define a group if "is_group == True"    
++        context = self.get_context_data()
++        listdetail_form = context['listdetail_form']
++        if listdetail_form.is_valid():
++            self.object = form.save()
++            listdetail_form.instance = self.object
++            listdetail_form.save()
++            return HttpResponseRedirect('/list/')
++        else:
++            return self.render_to_response(self.get_context_data(form=form))
++
++    def form_invalid(self, form):
++        return self.render_to_response(self.get_context_data(form=form))
++
++    def get_context_data(self, **kwargs):
++        context = super(ListCreateView, self).get_context_data(**kwargs)
++        if self.request.POST:
++            context['listdetail_form'] = ListDetailFormSet(self.request.POST, instance=self.object)
++        else:
++            context['listdetail_form'] = ListDetailFormSet(instance=self.object)
++        return context
++
++def delete_list(request, pk):
++    list_user = List.objects.select_related().get(id=pk)
++    if request.user.id == list_user.user.id:
++        List.objects.filter(id=pk).delete()
++        return HttpResponse("success")
++    else:
++        return HttpResponse("you shouldn't be here")
++
++class ListUpdate(UpdateView):
++    template_name = 'somesmart/base_list_update.html'
++    model = List #Must keep this
++    form_class = ListForm
++
++    def form_valid (self, form):
++        if form.is_valid():
++            obj = form.save(commit=False)
++            obj.save()
++            return HttpResponseRedirect('/list/')
++
++    def get_context_data(self, **kwargs):
++        context = super(ListUpdate, self).get_context_data(**kwargs)
++        self.list_id = self.kwargs['pk']
++        context['detail_list'] = ListDetail.objects.select_related().filter(list=self.list_id).order_by('book__title')  
++        return context        
++
++def delete_list_item(request, pk):
++    list_user = List.objects.select_related().get(list_details__id=pk)
++    if request.user.id == list_user.user.id:
++        ListDetail.objects.filter(id=pk).delete()
++        return HttpResponse("success")
++    else:
++        return HttpResponse("you shouldn't be here")
++
++def add_list_item(request, list, book):
++    list_user = List.objects.select_related().get(id=list)
++    book = Book.objects.get(id=book)
++    if request.user.id == list_user.user.id:
++        new_item = ListDetail(list=list_user, book=book)
++        new_item.save()
++        return HttpResponse(new_item.id)
++    else:
++        return HttpResponse("you shouldn't be here")
++
++def copy_list(request, list):
++    list = List.objects.get(id=list)
++    if list:
++        new_user = User.objects.get(id=request.user.id)
++        new_list = List(list_name=list.list_name, list_descr=list.list_descr, user=new_user, is_group=False)
++        new_list.save()
++    list_detail = ListDetail.objects.filter(list=list)
++    if list_detail:
++        for detail in list_detail:
++            new_list_detail = ListDetail(list=new_list, book=detail.book)
++            new_list_detail.save()
++    return HttpResponseRedirect('/list/')
+diff --git a/templates/somesmart/base.html b/templates/somesmart/base.html
+index 91710e8..69d1e60 100644
+--- a/templates/somesmart/base.html
++++ b/templates/somesmart/base.html
+@@ -67,7 +67,7 @@
+ {% endblock top-content %}
+ <div class="container-fluid">
+   <div class="row-fluid">
+-    <div class="span6 offset1">
++    <div class="span7 offset1">
+     {% block content %}{% endblock %}
+     </div>
+     <div class="span4">
+diff --git a/templates/somesmart/base_list.html b/templates/somesmart/base_list.html
+new file mode 100644
+index 0000000..1a13827
+--- /dev/null
++++ b/templates/somesmart/base_list.html
+@@ -0,0 +1,45 @@
++{% extends "somesmart/base.html" %}
++{% block title %}{{ list.list_name }}{% endblock title %}
++{% block content %}
++  <h2>{{ list.list_name }}: <a class="btn btn-small note_copy pull-right" href="{% url list-copy list.id %}">Copy this List <i class="icon-share"></i></a></h1>
++  <h3>{{ list.list_descr }}</h3>
++  <div id="book_list">
++    {% if completion %}
++      <div class="completion progress">     
++        <div class="bar" style="{% widthratio completion.total_user completion.total 100 %}%;">{% widthratio completion.total_user completion.total 100 %}% complete</div>
++      </div>
++    {% endif %}
++    {% if user_read %}
++    <h3>What you've read:</h3>
++        <ul class="large_list">
++          {% for read in user_read %}
++            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a> - <a class="btn btn-mini note" href="{% url add-read %}?org={{ read.book.id }}"><i class="icon-plus"></i></a></li>
++          {% endfor %}
++        </ul>
++      {% endif %}
++      {% if others_read %}
++      <h3>Read by Others:</h3>
++        <ul class="large_list">
++          {% for read in others_read %}
++            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a> - <a class="btn btn-mini note" href="{% url add-read %}?org={{ read.book.id }}"><i class="icon-plus"></i></a></li>
++          {% endfor %}
++        </ul>
++      {% endif %}
++      {% if never_read %}
++      <h3>To Read:</h3>
++        <ul class="large_list">
++          {% for read in never_read %}
++            <li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a> - <a class="btn btn-mini note" href="{% url add-read %}?org={{ read.book.id }}"><i class="icon-plus"></i></a></li>
++          {% endfor %}
++        </ul>
++      {% endif %}
++  </div>
++  {% if list.user.id == user.id %} 
++  <a class="btn pull-right" href="{{ list.get_edit_url }}"><i class="icon-wrench"></i> Edit List</a>
++  {% endif %}
++{% endblock content %}
++{% block top-right-content %}{% endblock %}
++{% block right-content %}
++  {% include "somesmart/include_book_data.html" %}
++  {% include "somesmart/include_recent_posts.html" %}
++{% endblock %}
+\ No newline at end of file
+diff --git a/templates/somesmart/base_list_create.html b/templates/somesmart/base_list_create.html
+new file mode 100644
+index 0000000..702f311
+--- /dev/null
++++ b/templates/somesmart/base_list_create.html
+@@ -0,0 +1,85 @@
++{% extends "somesmart/base.html" %}
++{% block title %}Create new list{% endblock title %}
++{% block app.css %}
++<link rel="stylesheet" href="{{ STATIC_URL }}nature/css/colorbox/colorbox.css">
++{% endblock %}
++{% block title %}Create Your List {% endblock title %}
++{% block app.scripts %}
++<script type="text/javascript" src="{{ MEDIA_URL }}js/colorbox/jquery.colorbox.js"></script>
++<script type="text/javascript">
++$(function() {
++    $("#selector").autocomplete({
++      source: "{% url autocomplete %}?search=title",
++      minLength: 3,
++      select: function(event, ui) {
++        $('#book_id').val(ui.item.id);
++        $('#title').val(ui.item.label);
++      }
++    });
++    var rowID;
++    //set the starting value at 0
++    rowID = 0;
++
++    $("#add_book").click(function(e){ 
++      //get the autocomplete values for use below
++      var book_id = $('#book_id').val();
++      var title = $('#title').val();
++      //generate the new formset html
++      var htmlData = "<tr><th><label for='id_list_details-" + rowID +"-book'>Book:</label></th><td><input type='hidden' name='list_details-" + rowID + "-book' id='id_list_details-" + rowID + "-book' value='" + book_id + "'>" + title + "</td><td><label for='id_list_details-" + rowID + "-DELETE'>Delete:</label><input type='checkbox' name='list_details-" + rowID + "-DELETE' id='id_list_details-" + rowID + "-DELETE' /><input type='hidden' name='list_details-" + rowID + "-list' id='id_list_details-" + rowID + "-list' /></td></tr>";
++      $('#listdetail_form').append(htmlData);
++      //increment the formid
++      rowID++;
++      //update the total forms amount
++      $('#id_list_details-TOTAL_FORMS').val(rowID);
++      //empty the selector field and focus on it
++      $('#selector').val('');
++      $('#selector').focus();
++      //stops the form from refreshing the page like it normally would.
++      e.preventDefault();
++    }); 
++    $(".ajax").colorbox({height:"650px", width:"565px", iframe:true, onClosed:function(){ 
++      parent.updateOption({{ user.id }});
++      }
++    });
++  });
++</script>
++{% endblock %}
++
++{% if perms.somesmart.add_book %}
++  {% block content %}
++    <h3>Create your custom list</h3>
++    <p>Note that while only you will be able to edit this list in the future, others will be able to pull it up and compare their own observations against the list.</p>
++    <form action="" method="post" class="form-horizontal">
++      <div class="form-row">
++        {{ form.title.label_tag }}
++        {{ form.title }}
++        {{ form.title.errors }}
++      </div>
++    <table class="table">
++      {{ form.as_table }}
++    </table>
++    <fieldset class="">      
++      <legend>Books in the list:</legend>
++      <input type="text" id="selector" name="selector" size="50px"/>
++      <input type="hidden" id="book_id" name="book_id" />
++      <input type="hidden" id="title" name="title" />
++      <input type="submit" value="Add Book" class="btn" id="add_book" />
++      <input type="hidden" name="list_details-TOTAL_FORMS" value="0" id="id_list_details-TOTAL_FORMS" /><input type="hidden" name="list_details-INITIAL_FORMS" value="0" id="id_list_details-INITIAL_FORMS" /><input type="hidden" name="list_details-MAX_NUM_FORMS" id="id_list_details-MAX_NUM_FORMS" />
++      <table class="table listdetail_form" id="listdetail_form">
++      </table>
++    </fieldset>
++    <div class="submit-row">
++      {% csrf_token %}
++      <input type="submit" value="Create List" class="submit btn btn-primary pull-right" />
++    </div>
++    </form>
++  {% endblock %}
++{% else %}
++  <p>I'm sorry, you are not authorized to update this list. Please contact the administrator for more information.</p>
++{% endif %}
++{% endblock content %}
++{% block top-right-content %}{% endblock %}
++{% block right-content %}
++  {% include "somesmart/include_book_data.html" %}
++  {% include "somesmart/include_recent_posts.html" %}
++{% endblock %}
+\ No newline at end of file
+diff --git a/templates/somesmart/base_list_summary.html b/templates/somesmart/base_list_summary.html
+new file mode 100644
+index 0000000..278c0bd
+--- /dev/null
++++ b/templates/somesmart/base_list_summary.html
+@@ -0,0 +1,52 @@
++{% extends "somesmart/base.html" %}
++{% block title %}My Reading Lists{% endblock title %}
++{% block app.scripts %}
++<script type ="text/javascript">
++function deleteItem(item_id){
++  $.ajax({
++      type: "GET",
++      url: "/delete/list/"+ item_id +"/",
++      success: function(data){
++            $("." + item_id).remove();
++          }
++      });
++  }
++$(function() {
++  $('.delete').click(function(event){ 
++    //alert(event.target.id);
++    var list_id = event.target.id;
++    if (confirm('Are you sure you want to delete this list? This cannot be undone.')) {
++      deleteItem(list_id);
++    }
++  });
++});
++$('.note_delete').tooltip({ title: 'Delete List', placement: 'right' });
++$('.note_edit').tooltip({ title: 'Edit List', placement: 'right' });
++$('.note_copy').tooltip({ title: 'Copy List', placement: 'right' });
++</script>
++{% endblock %}
++{% block content %}
++<h2>My custom lists:</h2>
++{% if list_summary %}
++    <ul>
++    {% for list in list_summary %}
++        <li class="{{ list.id }}"><a href="{{ list.get_absolute_url }}">{{ list.list_name }}</a> - {{ list.list_descr }} <a class="btn btn-mini note_edit" href="{{ list.get_edit_url }}"><i class="icon-edit"></i></a> <a class="btn btn-mini btn-danger note_delete" href="#"><i id="{{ list.id }}" class="delete icon-remove icon-white"></i></a> <a class="btn btn-mini note_copy" href="{% url list-copy list.id %}"><i class="icon-share"></i></a></li>
++        {% comment %}
++        need to add a way to get the percent complete for the list at a later date
++        <div class="completion thin">
++          <div style="width: 17%;"></div>
++          <p class="loaded"><span>17%</span> complete</p>
++        </div>
++        {% endcomment %}
++    {% endfor %}
++    </ul>
++{% else %}
++    <p>You have not created any custom lists yet. Click the link below to create your first list!</p>
++{% endif %}
++ <p><a class="btn btn-primary" href="{% url list-add %}"><i class="icon-plus icon-white"></i> New List</a></p>
++{% endblock content %}
++{% block top-right-content %}{% endblock %}
++{% block right-content %}
++  {% include "somesmart/include_book_data.html" %}
++  {% include "somesmart/include_recent_posts.html" %}
++{% endblock %}
+\ No newline at end of file
+diff --git a/urls.py b/urls.py
+index a65fc11..5e5f498 100644
+--- a/urls.py
++++ b/urls.py
+@@ -9,4 +9,5 @@ admin.autodiscover()
+ urlpatterns = patterns('',
+ 	url(r'^admin/', include(admin.site.urls)),
+ 	url(r'^', include('sssd.somesmart.urls')),
++	url(r'^', include('sssd.adventure.urls')),
+ )
+\ No newline at end of file
+-- 
+1.8.3.msysgit.0
+
