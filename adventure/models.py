@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 import os
 #from imagekit.models import ImageSpecField
 #from imagekit.processors import ResizeToFill, Adjust
@@ -25,8 +26,6 @@ class Character(models.Model):
 
 	def __unicode__(self):
 		return u"%s %s" % (self.first_name, self.last_name)	
-	def __unicode__(self):
-		return self.notes
 
 class Level(models.Model):
 	game = models.ForeignKey(Game)
@@ -59,6 +58,7 @@ class Story(models.Model):
 	level = models.ForeignKey(Level)
 	character = models.ForeignKey(Character)
 	wordgroup = models.ForeignKey(WordGroup)
+	next_level = models.ForeignKey(Level, related_name="next_level")
 	text = models.TextField()
 
 	def __unicode__(self):

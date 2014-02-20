@@ -1,0 +1,17 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Select your game and play!{% endblock title %}
+{% block content %}
+	<p>Start a new game here</p>
+	<ul class="unstyled">
+		{% for game in game_list %}
+		<!-- we always pass character 1, level 0 to start a new game -->
+		<li><a href="{% url game-view game.id 1 1 %}{{ game.slug }}">{{ game.name }}</a></li>
+		{% endfor %}
+	</ul>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="span10 offset1">
+      {% include "somesmart/include_contact.html" %}
+    </div>
+{% endblock %}

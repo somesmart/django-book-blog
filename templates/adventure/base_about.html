@@ -1,0 +1,11 @@
+{% extends "somesmart/base.html" %}
+{% block title %}About some smart, some don't adventures{% endblock title %}
+{% block content %}
+	<p>This is an experiment I've been working on to create database driven text adventure games. The idea being that you can structure the story and it's various outcomes, paths, etc. through an excel file or database table, and then use the same core "text adventure engine" to play the game. Once I get the core working, I will try to provide a way for others to create and upload their own games.</p>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="span10 offset1">
+      {% include "somesmart/include_contact.html" %}
+    </div>
+{% endblock %}

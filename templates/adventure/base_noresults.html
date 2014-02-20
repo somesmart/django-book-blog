@@ -1,0 +1,11 @@
+{% extends "somesmart/base.html" %}
+{% block top-content %}{% endblock %}
+{% block content %}
+<p class="alert alert-error">It appears you didn't enter a valid value. Please return to the previous page and try again. If you continue to receive this message, please <a href="/contact/">contact us</a>.</p>
+{% endblock %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="span10 offset1">
+      {% include "somesmart/include_contact.html" %}
+    </div>
+{% endblock %}
