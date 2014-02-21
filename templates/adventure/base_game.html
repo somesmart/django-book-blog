@@ -1,6 +1,18 @@
 {% extends "somesmart/base.html" %}
 {% block title %}{{ game_play.game }}{% endblock title %}
-{% block app.scripts %}<script type="text/javascript" src="{{ MEDIA_URL }}adventure/adventure.js"></script>{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}adventure/adventure.js"></script>
+<script type="text/javascript">
+        $(function() {
+          $("#search").autocomplete({
+              source: "{% url autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={{ game_play.level.id }}",
+              minLength: 3,
+              select: function(event, ui) {
+                window.location.href = ui.item.id;
+              }
+            });
+        })
+    </script>{% endblock %}
 {% block top-content %}{% endblock %}
 {% block content %}
 	<div class="page-header">
@@ -25,7 +37,7 @@
 			</form>
 	</div>
 	<div id="save">
-		<a id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id">Your Save Link</a>
+		<a id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>
 	</div> 
 {% endblock content %}
 {% block top-right-content %}{% endblock %}

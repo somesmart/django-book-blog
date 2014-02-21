@@ -24,13 +24,16 @@ def autocomplete(request):
 		if request.GET.has_key(u'term'):
 			value = request.GET[u'term']
 			search = request.GET[u'search']
+			game = request.GET[u'game']
+			character = request.GET[u'character']
+			level = request.GET[u'level']
 			results = []
 			if search == "word":
 				# Ignore queries shorter than length 3
 				if len(value) > 2:
-					model_results = Word.objects.filter(word_descr__icontains=value)
+					model_results = Story.objects.select_related().filter(wordgroup__group_descr__icontains=value, game__id=game, level__id=level, character__id=character)
 					for word in model_results:
-						data = {'id': word.id, 'label': word.word_descr }
+						data = {'id': word.wordgroup.id, 'label': word.wordgroup.group_descr }
 						results.append(data)
 					json = simplejson.dumps(results)
 					return HttpResponse(json, mimetype='application/json')
@@ -40,13 +43,39 @@ def autocomplete(request):
 			return HttpResponseRedirect('/noresults/')
 
 def story_line(request, word, game, character, level):
-	wordgroup = WordGroup.objects.select_related().get(word__word_descr=word)
 	results = []
-	line = Story.objects.select_related().get(game__id=game, character__id=character, level__id=level, wordgroup__id=wordgroup.id)
-	data = {'id': line.id, 'character_id': line.character.id, 'next_level': line.next_level.id, 'text': line.text }
-	results.append(data)
-	json = simplejson.dumps(results)
-	return HttpResponse(json, mimetype='application/json')
+	game = Game.objects.get(id=game)
+	character = Character.objects.get(id=character)
+	level = Level.objects.get(id=level)
+	try:
+		word_group = WordGroup.objects.select_related().get(word__word_descr=word)
+		try:
+			line = Story.objects.select_related().get(game=game, character=character, level=level, wordgroup__id=word_group.id)
+			data = {'id': line.id, 'character_id': line.character.id, 'next_level': line.next_level.id, 'text': line.text }
+			results.append(data)
+			json = simplejson.dumps(results)
+			return HttpResponse(json, mimetype='application/json')
+		except Story.DoesNotExist:
+			line = None
+			try:
+				unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
+				unknown.attempts = unknown.attempts + 1
+				unknown.save()
+			except Unknown.DoesNotExist:
+				Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
+			json = simplejson.dumps(results)
+			return HttpResponse(json, mimetype='application/json')
+	except WordGroup.DoesNotExist:
+		word_group = None
+		try:
+			unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
+			unknown.attempts = unknown.attempts + 1
+			unknown.save()
+		except Unknown.DoesNotExist:
+			unknown = None
+			Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
+		json = simplejson.dumps(results)
+		return HttpResponse(json, mimetype='application/json')
 
 def level_options(request, game, level):
     results = ''
@@ -56,9 +85,17 @@ def level_options(request, game, level):
         results = results + html
     return HttpResponse(results)    
 
-class GameView(DetailView):
+class GameView(ListView):
 	template_name='adventure/base_game.html'
 	context_object_name = 'game_play'
 
 	def get_queryset(self):
-		return Story.objects.select_related().filter(game__id=self.kwargs['pk'], character__id=self.kwargs['character'], level__id=self.kwargs['level'])
+		first = True
+		if self.request.method == "GET":
+			if self.request.GET.has_key(u'story_id'):
+				stories = Story.objects.select_related().filter(id=self.request.GET[u'story_id'])
+			else:
+				stories = Story.objects.select_related().filter(game__id=self.kwargs['pk'], level__id=self.kwargs['level'])
+		for story in stories:
+			if first:
+				return Story.objects.select_related().get(id=story.id)

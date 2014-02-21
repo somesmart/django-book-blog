@@ -47,10 +47,9 @@ $(document).ready(function(){
 		{
 			$(data).each(function(k,v){
 				//alert(v.text);
-				//set the storyText equal to the first value in the array from functions.php
 				var storyText = v.text;
-				//set the new level value from functions.php
 				var newLevel = v.next_level;
+				var story_id = v.id;
 				var divString = "<div class='message_results' id='message_results" + messageNum + "'></div>";
 				$('#game-div').append(divString);
 
@@ -69,12 +68,12 @@ $(document).ready(function(){
 				//call the charachter select function with the new level only if the new level is different from the old
 				if (newLevel != levelNumber){
 					character_select(newLevel, gameID);
-					levelNumber = newLevel;
+					//levelNumber = newLevel;
 				}
 				//$('#level').empty();
-				$('#level').val(levelNumber);
+				$('#level').val(newLevel);
 
-				var saveLink = "<a href='/adventure/game/" + gameID + "/" + character_id + "/" + levelNumber + "'>Your Save Link</a>";
+				var saveLink = "<a href='/adventure/game/" + gameID + "/" + character_id + "/" + levelNumber + "/?story_id=" + story_id + "'>Your Save Link</a>";
 				$('#save').empty();
 				$('#save').html(saveLink);
 				//alert("now level " + levelNumber);
@@ -91,7 +90,7 @@ $(document).ready(function(){
 	  });
 	} 
 	function character_select(newLevel, gameID){
-		$.post("/adventure/level/options/" + gameID + "/" + newLevel + "/", function(data){
+		$.get("/adventure/level/option/" + gameID + "/" + newLevel + "/", function(data){
 	 	if (data.length>0){
 	 		//clear the existing options
 			$('#character_select').empty();

@@ -1,6 +1,6 @@
 # Django-book-blog README
 
-## Django v 1.3.3
+## Django v 1.4.10
 
 ## Current Installed Apps:
   - django.contrib.auth

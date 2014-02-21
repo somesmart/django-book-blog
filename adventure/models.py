@@ -61,6 +61,9 @@ class Story(models.Model):
 	next_level = models.ForeignKey(Level, related_name="next_level")
 	text = models.TextField()
 
+	class Meta:
+		verbose_name_plural = "stories"
+
 	def __unicode__(self):
 		return self.text
 
