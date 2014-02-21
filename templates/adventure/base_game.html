@@ -3,15 +3,25 @@
 {% block app.scripts %}
 <script type="text/javascript" src="{{ MEDIA_URL }}adventure/adventure.js"></script>
 <script type="text/javascript">
-        $(function() {
-          $("#search").autocomplete({
-              source: "{% url autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={{ game_play.level.id }}",
-              minLength: 3,
-              select: function(event, ui) {
-                window.location.href = ui.item.id;
-              }
-            });
-        })
+$(function() {
+	$("#command").autocomplete({
+		source: "{% url adv-autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={{ game_play.level.id }}",
+		minLength: 2,
+	  });
+	$('#command').autocomplete('disable');	
+	$("#searchOn").click(function(e){
+		e.preventDefault();
+		alert("Easy Mode On!");
+		$('#command').autocomplete('enable');
+		$('#instructions').append("<li class='easy-mode'>With easy mode on you will now receive only valid autocomplete options as you begin typing</li><li class='easy-mode'><a href='' id='searchOff'>Turn easy mode off</a>");
+	});
+	$("#searchOff").click(function(e){
+		e.preventDefault();
+		alert("Easy Mode Off!");
+		$('#command').autocomplete('disable');
+		$('.easy-mode').hide();
+	});
+});
     </script>{% endblock %}
 {% block top-content %}{% endblock %}
 {% block content %}
@@ -29,12 +39,12 @@
 			<select name = "character_select" id="character_select">
 				<option value="{{ game_play.character.id }}">{{ game_play.character }}</option>
 			</select>
-					<label for="command">What? </label> 
-					<input type="text" name="command" id="command"/>
-					<input type="hidden" id="level" value="{{ game_play.level.id }}">
-					<input type="hidden" id="gameID" value="{{ game_play.game.id }}">
-					<input style="display:none" type="submit" value="go" id="search_button"/> 
-			</form>
+				<label for="command">What? </label> 
+				<input type="text" name="command" id="command"/>
+				<input type="hidden" id="level" value="{{ game_play.level.id }}">
+				<input type="hidden" id="gameID" value="{{ game_play.game.id }}">
+				<input style="display:none" type="submit" value="go" id="search_button"/> 
+		</form>
 	</div>
 	<div id="save">
 		<a id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>

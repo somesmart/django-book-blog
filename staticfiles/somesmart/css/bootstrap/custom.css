@@ -73,10 +73,9 @@ iframe {
 	border-right: 1px solid #CCC;
 	border-left: 1px solid #FFF;
 }
-
 /*jquery ui styling*/
 .ui-autocomplete {
-  top: 50px!important;
+  /*top: 50px!important;*/
 }
 
 .ui-menu .ui-menu-item a.ui-state-focus,

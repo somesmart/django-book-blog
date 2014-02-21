@@ -23,9 +23,9 @@ $(document).ready(function(){
 		if (code == 13) {
 			//sets the textbox value for use in the tryCommand function
 			var character_id = $('#character_select').val();
-		var levelNumber = $('#level').val();
-		var gameID = $('#gameID').val();
-		//alert("submit level " + levelNumber);
+			var levelNumber = $('#level').val();
+			var gameID = $('#gameID').val();
+			//alert("submit level " + levelNumber);
 			//alert("submit character " + character_id);
 			//alert("submit gameid " + gameID);
 			//alert(this.value);
