@@ -1,8 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 import os
-#from imagekit.models import ImageSpecField
-#from imagekit.processors import ResizeToFill, Adjust
 
 class Game(models.Model):
 	name = models.TextField(max_length=100)

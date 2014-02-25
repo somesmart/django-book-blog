@@ -9,7 +9,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
 from sssd.adventure.models import *
-# from sssd.adventure.forms import *
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -41,6 +40,10 @@ def autocomplete(request):
 					return HttpResponseRedirect('/noresults/')
 		else:
 			return HttpResponseRedirect('/noresults/')
+
+# ****************************************************************** #
+# *********************** adventure views ************************** #
+# ****************************************************************** #
 
 def story_line(request, word, game, character, level):
 	results = []
@@ -78,12 +81,12 @@ def story_line(request, word, game, character, level):
 		return HttpResponse(json, mimetype='application/json')
 
 def level_options(request, game, level):
-    results = ''
-    level_results = LevelCharacter.objects.select_related().filter(game__id=game, level__id=level)
-    for option in level_results:
-        html = "<option value='" + str(option.character.id) + "'>" + option.character.first_name  + ' ' + option.character.last_name + "</option>"
-        results = results + html
-    return HttpResponse(results)    
+	results = ''
+	level_results = LevelCharacter.objects.select_related().filter(game__id=game, level__id=level)
+	for option in level_results:
+		html = "<option value='" + str(option.character.id) + "'>" + option.character.first_name  + ' ' + option.character.last_name + "</option>"
+		results = results + html
+	return HttpResponse(results)	
 
 class GameView(ListView):
 	template_name='adventure/base_game.html'
@@ -99,3 +102,10 @@ class GameView(ListView):
 		for story in stories:
 			if first:
 				return Story.objects.select_related().get(id=story.id)
+
+class GameList(ListView):
+	template_name='adventure/base_index.html'
+	context_object_name = 'game_list'
+
+	def get_queryset(self):
+		return Story.objects.select_related().filter(wordgroup__group_descr='start').order_by('game__name')
