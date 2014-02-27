@@ -50,6 +50,7 @@ def story_line(request, word, game, character, level):
 	game = Game.objects.get(id=game)
 	character = Character.objects.get(id=character)
 	level = Level.objects.get(id=level)
+	not_expected = "<p>Nothing happens.</p>"
 	try:
 		word_group = WordGroup.objects.select_related().get(word__word_descr=word)
 		try:
@@ -64,8 +65,12 @@ def story_line(request, word, game, character, level):
 				unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
 				unknown.attempts = unknown.attempts + 1
 				unknown.save()
+				data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+				results.append(data)
 			except Unknown.DoesNotExist:
 				Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
+				data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+				results.append(data)
 			json = simplejson.dumps(results)
 			return HttpResponse(json, mimetype='application/json')
 	except WordGroup.DoesNotExist:
@@ -74,9 +79,13 @@ def story_line(request, word, game, character, level):
 			unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
 			unknown.attempts = unknown.attempts + 1
 			unknown.save()
+			data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+			results.append(data)
 		except Unknown.DoesNotExist:
 			unknown = None
 			Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
+			data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+			results.append(data)
 		json = simplejson.dumps(results)
 		return HttpResponse(json, mimetype='application/json')
 
