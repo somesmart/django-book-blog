@@ -22,6 +22,7 @@ urlpatterns = patterns('',
 	#charts
 	url(r'^charts/$', GlobalStats.as_view(), name='charts'),
 	url(r'^charts/(?P<chart>[-\w]+)/(?P<option>[\s\w\d]+)$', ChartGenerate.as_view(), name='chart-generate'),
+	url(r'^stats/global/$', 'sssd.somesmart.views.get_global_stats', name='global-stats'),
 	#quote pages
 	url(r'^quote/list/$', QuoteList.as_view(), name='quote-list'),
 	url(r'^quote/type/(?P<type>\d+)/$',QuoteTypeList.as_view(), name='quote-type-list'),

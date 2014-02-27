@@ -10,23 +10,7 @@
 		<div class="row-fluid">
 			<div class="stats_container">	
 				<div class="stats">
-					<div id="stats_table">
-						<div class="stat">
-							<span>Books</span>
-							<h3>{{ global_stats.book_count }}</h3>
-						</div>
-						<div class="stat">
-							<span>Pages</span>
-							<h3>{{ page_total.page_count }}</h3>
-						</div>
-						<div class="stat">
-							<span>Quotes</span>
-							<h3>{{ quote_total.quote_count }}</h3>
-						</div>
-						<div class="stat">
-							<span>Recommendations</span>
-							<h3>{{ rec_total.rec_count }}</h3>
-						</div>
+					<div id="stats_table" class="global-stats">
 					</div>
 				</div>
 			</div>
@@ -67,6 +51,22 @@
 {% block top-right-content %}{% endblock top-right-content %}
 {% block footer-content %}
   <div class="span10 offset1">
-      {% include "somesmart/include_contact.html" %}
+	  {% include "somesmart/include_contact.html" %}
   </div>
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript">
+function get_global_stats() {
+	$.ajax({
+	type: "GET",
+	url: "{% url global-stats %}",
+	success: function(data){
+		$(".global-stats").empty().append(data);
+		}
+	});
+}
+$(function() {
+	get_global_stats();
+})
+</script>
 {% endblock %}
