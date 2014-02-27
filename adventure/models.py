@@ -1,12 +1,10 @@
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.contrib.auth.models import User
 import os
 
 class Game(models.Model):
 	name = models.TextField(max_length=100)
 	slug = models.SlugField()
-	creator = models.ForeignKey(User, related_name='+')
 
 	def __unicode__(self):
 		return self.name

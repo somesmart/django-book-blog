@@ -40,14 +40,6 @@ class LevelAdmin(admin.ModelAdmin):
 
 	list_filter = ('game',)
 
-class UnknownAdmin(admin.ModelAdmin):
-	list_display = (
-		'game',
-		'level',
-		'term',
-		'attempts',
-	)	
-
 admin.site.register(Game)
 admin.site.register(Character)
 admin.site.register(Level, LevelAdmin)
@@ -55,4 +47,4 @@ admin.site.register(LevelCharacter)
 admin.site.register(WordGroup, WordGroupAdmin)
 admin.site.register(Word)
 admin.site.register(Story, StoryAdmin)
-admin.site.register(Unknown, UnknownAdmin)
+admin.site.register(Unknown)

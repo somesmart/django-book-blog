@@ -53,4 +53,4 @@ class LevelCharacterFormset(forms.models.BaseInlineFormSet):
 			characters = Character.objects.all()
 			levels = Level.objects.all()
 		
-		form.fields['character'].queryset = characters
+		form.fields['character'].queryset = characters	
