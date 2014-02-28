@@ -7,7 +7,7 @@ $(function() {
 	$("#command").autocomplete({
 		source: "{% url adv-autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={{ game_play.level.id }}",
 		minLength: 2,
-	  });
+		});
 	$('#command').autocomplete('disable');	
 	$("#searchOn").click(function(e){
 		e.preventDefault();

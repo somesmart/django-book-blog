@@ -118,3 +118,16 @@ class GameList(ListView):
 
 	def get_queryset(self):
 		return Story.objects.select_related().filter(wordgroup__group_descr='start').order_by('game__name')
+
+class WordList(ListView):
+	template_name='adventure/base_word_list.html'
+	context_object_name = 'word_list'
+
+	def get_queryset(self):
+		return Word.objects.select_related().filter(game__id=self.kwargs['game']).order_by('wordgroup', 'word_descr')
+
+	def get_context_data(self, **kwargs):
+		context = super(WordList, self).get_context_data(**kwargs)
+		context ['current_game'] = self.kwargs['game']
+		context ['game_list'] = Game.objects.exclude(id=self.kwargs['game']).filter(creator=self.request.user)
+		return context

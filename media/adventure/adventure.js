@@ -38,6 +38,7 @@ $(document).ready(function(){
 				//alert(v.text);
 				var storyText = v.text;
 				var newLevel = v.next_level;
+				var save_level = levelNumber;
 				var story_id = v.id;
 				var divString = "<div class='message_results' id='message_results" + messageNum + "'></div>";
 				$('#game-div').append(divString);
@@ -54,11 +55,12 @@ $(document).ready(function(){
 				//call the charachter select function with the new level only if the new level is different from the old
 				if (newLevel != levelNumber){
 					character_select(newLevel, gameID);
+					save_level = newLevel;
 				}
 				//$('#level').empty();
 				$('#level').val(newLevel);
 
-				var saveLink = "<a href='/adventure/game/" + gameID + "/" + character_id + "/" + levelNumber + "/?story_id=" + story_id + "'>Your Save Link</a>";
+				var saveLink = "<a href='/adventure/game/" + gameID + "/" + character_id + "/" + save_level + "/?story_id=" + story_id + "'>Your Save Link</a>";
 				$('#save').empty();
 				$('#save').html(saveLink);
 			});

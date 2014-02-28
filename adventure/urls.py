@@ -14,4 +14,5 @@ urlpatterns = patterns('',
 	url(r'^game/(?P<pk>\d+)/(?P<character>\d+)/(?P<level>\d+)/', GameView.as_view(), name='game-view'),
 	url(r'^story/(?P<word>\w+)/(?P<game>\d+)/(?P<character>\d+)/(?P<level>\d+)/', 'sssd.adventure.views.story_line', name='story-view'),
 	url(r'^level/option/(?P<game>\d+)/(?P<level>\d+)/', 'sssd.adventure.views.level_options', name='level-options'),
+	url(r'^word/(?P<game>\d+)/', login_required(WordList.as_view()), name='word-list'),
 )

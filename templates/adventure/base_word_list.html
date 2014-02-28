@@ -1,0 +1,32 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Review and copy a word list{% endblock title %}
+{% block content %}
+	<h3>Word list</h3>
+	<table class="table table-striped">
+		<tr>
+			<th>Wordgroup</th>
+			<th>Word</th>
+		</tr>
+		{% for word in word_list %}
+		<tr>
+			<th>{{ word.wordgroup }}</th>
+			<td>{{ word }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	Copy this word list to:
+	<form class="form-inline" action="word/copy/{{ current_game }}/">
+		<select class="span6">
+		{% for game in game_list %}
+			<option value="{{ game.id }}">{{ game.name }}</option>
+		{% endfor %}
+		</select>
+		<input type="submit" class="btn">
+	</form>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="span10 offset1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}
