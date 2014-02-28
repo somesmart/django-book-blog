@@ -3,7 +3,7 @@
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
    <div class="page-header">
-    <h2>{{ review.edition.book.title }}<br><small>by {{ review.edition.book.author }}</small></h2>
+    <h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
   </div>
   <div class="pull-right">
   {% with review.one_sentence|length|add:-1 as review_len %}

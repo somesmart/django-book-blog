@@ -7,7 +7,7 @@
    		<dl>
 		{% for review in review_list %}
 			<dt><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a> - {% if review.recommend %} <i class="icon-thumbs-up"></i>{% else %} <i class="icon-thumbs-down"></i>{% endif %}</dt>
-			<dd>{% if review.one_sentence %}{{ review.one_sentence }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
+			<dd>{% if review.one_sentence %}{{ review.one_sentence|safe }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
 		{% endfor %}
 		</dl>
 	{% endif %}

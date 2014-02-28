@@ -166,8 +166,7 @@ class List(models.Model):
 	user = models.ForeignKey(User, related_name="+") #this is the person who created it, and it will always be here
 	def __unicode__(self):
 		return self.list_name
-	def __unicode__(self):
-		return self.list_descr
+		return u"%s - %s" % (self.list_name, self.list_descr)	
 	def get_absolute_url(self):
 		return "/list/%i/" % self.id 	
 	def get_edit_url(self):
