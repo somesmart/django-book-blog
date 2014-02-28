@@ -73,5 +73,7 @@ urlpatterns = patterns('',
 			context_object_name='recent_reads',
 			template_name='somesmart/base_index.html')),
 	url(r'^(?P<year>\d+)/(?P<slug>[-\w]+)/', 'sssd.somesmart.views.zinnia_entry_detail', name='custom-zinnia'),
-	url(r'^feeds/$', 'sssd.somesmart.views.zinnia_latest_feeds', name='custom-zinnia-latest')
+	url(r'^feeds/$', 'sssd.somesmart.views.zinnia_latest_feeds', name='custom-zinnia-latest'),
+	url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'somesmart/base_login.html'}, name='account-login'),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
 )
