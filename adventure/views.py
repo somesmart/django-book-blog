@@ -131,3 +131,18 @@ class WordList(ListView):
 		context ['current_game'] = self.kwargs['game']
 		context ['game_list'] = Game.objects.exclude(id=self.kwargs['game']).filter(creator=self.request.user)
 		return context
+
+def copy_word_list(request, current_game):
+	current_game = Game.objects.get(id=current_game)
+	if request.method == "GET":
+		if request.GET.has_key(u'new_game'):
+			new_game = Game.objects.get(id=request.GET[u'new_game'])
+	if request.user.id == new_game.creator.id:
+		word_list = Word.objects.filter(game=current_game)
+		if word_list:
+			for item in word_list:
+				new_game_list = Word(wordgroup=item.wordgroup, game=new_game, word_descr=item.word_descr)
+				new_game_list.save()
+		return HttpResponseRedirect('/adventure/')
+	else:
+		return HttpResponseRedirect('/noresults/')

@@ -15,4 +15,5 @@ urlpatterns = patterns('',
 	url(r'^story/(?P<word>\w+)/(?P<game>\d+)/(?P<character>\d+)/(?P<level>\d+)/', 'sssd.adventure.views.story_line', name='story-view'),
 	url(r'^level/option/(?P<game>\d+)/(?P<level>\d+)/', 'sssd.adventure.views.level_options', name='level-options'),
 	url(r'^word/(?P<game>\d+)/', login_required(WordList.as_view()), name='word-list'),
+	url(r'^word/copy/(?P<current_game>\d+)/', 'sssd.adventure.views.copy_word_list', name='copy-word-list'),
 )

@@ -15,8 +15,8 @@
 		{% endfor %}
 	</table>
 	Copy this word list to:
-	<form class="form-inline" action="word/copy/{{ current_game }}/">
-		<select class="span6">
+	<form class="form-inline" action="{% url copy-word-list current_game %}">
+		<select id="new_game" name="new_game" class="span6">
 		{% for game in game_list %}
 			<option value="{{ game.id }}">{{ game.name }}</option>
 		{% endfor %}

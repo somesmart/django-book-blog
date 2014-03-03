@@ -46,13 +46,22 @@ class UnknownAdmin(admin.ModelAdmin):
 		'level',
 		'term',
 		'attempts',
-	)	
+	)
+
+class WordAdmin(admin.ModelAdmin):
+	list_display = (
+		'word_descr',
+		'wordgroup',
+		'game',
+	)
+
+	list_filter = ('game',)
 
 admin.site.register(Game)
 admin.site.register(Character)
 admin.site.register(Level, LevelAdmin)
 admin.site.register(LevelCharacter)
 admin.site.register(WordGroup, WordGroupAdmin)
-admin.site.register(Word)
+admin.site.register(Word, WordAdmin)
 admin.site.register(Story, StoryAdmin)
 admin.site.register(Unknown, UnknownAdmin)
