@@ -1,5 +1,5 @@
 {% if book.id %}<h3><a href="{% url book-view book.id %}">{{ book.title }}</a> <br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></h4>
-<table class="table table-striped">
+<table class="table table-stripe table-hover">
 	<tr>
 		<td>Originally Published: </td>
 		<td>{{ book.original_publication|date }}</td>

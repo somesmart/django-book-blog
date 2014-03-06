@@ -9,14 +9,7 @@
 		<meta name="author" content="">
 		<link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico" />
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}somesmart/css/bootstrap/bootstrap.min.css">
-		<style type="text/css">
-			body {
-				padding-top: 60px;
-				padding-bottom: 40px;
-			}
-		</style>
-		<link rel="stylesheet" href="{{ STATIC_URL }}somesmart/css/bootstrap/bootstrap-responsive.min.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}somesmart/css/bootstrap/bootstrap.min.superhero.css">
 		{% block app.css %}{% endblock %}
 		<link rel="stylesheet" href="{{ STATIC_URL }}somesmart/css/bootstrap/custom.css">
 		<!--<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css">-->
@@ -28,49 +21,48 @@
 		<!-- Fav and touch icons -->
 </head>
 {% endblock head %}
-<html>
 <body>
 {% block body %}
-<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner">
-		<div class="container">
-			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<a href="/" class="navbar-brand">sssd</a>
+			<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
-			</a>
-			<a class="brand" href="/">sssd</a>
-			<div class="nav-collapse collapse">
-				<ul class="nav">
-						<li {% if request.path == '/about/' %} class="active" {% endif %}><a href="{% url about-page %}">About</a></li>
-						<li {% if 'review' in request.path %} class="active" {% endif %}><a href="{% url review-list %}">Reviews</a></li>
-						<li {% if 'quote' in request.path %} class="active" {% endif %}><a href="{% url quote-list %}">Quotes</a></li>
-						<li {% if request.path == '/my-books/' %} class="active" {% endif %}><a href="{% url my-books %}">My Books</a></li>
-						<li {% if request.path == '/charts/' %} class="active" {% endif %}><a href="{% url charts %}">Charts</a></li>
-				</ul>
-				<form class="navbar-search pull-left">
-					<div class="input-prepend">
-						<input id="search_url" type="hidden" name="search_url">
-						<span class="add-on"><i class="icon-search"></i></span>
-						<input id="search" type="text" class="span3" placeholder="Enter title or author">
-					</div>
-				</form>
-			</div><!--/.nav-collapse -->
+			</button>
+		</div>
+		<div class="navbar-collapse collapse" id="navbar-main">
+			<ul class="nav navbar-nav">
+				<li {% if request.path == '/about/' %} class="active" {% endif %}><a href="{% url about-page %}">About</a></li>
+				<li {% if 'review' in request.path %} class="active" {% endif %}><a href="{% url review-list %}">Reviews</a></li>
+				<li {% if 'quote' in request.path %} class="active" {% endif %}><a href="{% url quote-list %}">Quotes</a></li>
+				<li {% if request.path == '/my-books/' %} class="active" {% endif %}><a href="{% url my-books %}">My Books</a></li>
+				<li {% if request.path == '/charts/' %} class="active" {% endif %}><a href="{% url charts %}">Charts</a></li>
+			</ul>
+			<form class="navbar-form navbar-right" role="search">
+				<div class="form-group">
+					<input id="search_url" type="hidden" name="search_url">
+					<span class="form-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+					<input id="search" type="text" class="form-control" placeholder="Enter title or author">
+					<button type="submit" class="btn btn-default">Search</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
-<div id="message" class="span3 offset9"></div>
+<div id="message" class="col-md-3 col-lg-offset-9"></div>
 {% block top-content %}
-<div class="span8 offset2 random-quote">
-</div>
+<div class="col-md-8 col-lg-offset-2 random-quote"></div>
 {% endblock top-content %}
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span7 offset1">
+<div class="container">
+	<div class="row">
+		<div class="col-md-8">
 		{% block content %}{% endblock %}
 		</div>
-		<div class="span4">
-			<div class="row-fluid">
+		<div class="col-md-4">
+			<div class="row">
 				{% block top-right-content %}
 					<h3>Currently Reading</h3>
 					<div class="gr-current"></div>

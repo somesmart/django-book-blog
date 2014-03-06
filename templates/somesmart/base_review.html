@@ -2,31 +2,31 @@
 {% load somesmart_extras %}
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
-   <div class="page-header">
-    <h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
-  </div>
-  <div class="pull-right">
-  {% with review.one_sentence|length|add:-1 as review_len %}
-    <a href="https://twitter.com/share" class="twitter-share-button" data-related="jasoncosta" data-lang="en" data-size="small" data-count="horizontal" data-text="{% if review_len > 117 %}{{ review.one_sentence|safe|truncchar:115 }}...{% else %}{{ review.one_sentence|safe|truncchar:review_len }}{% endif %}">Tweet</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-  {% endwith %}
-  </div>
-  <h4>A Review by {{ review.reader }} <small>finished {{ review.finished|date }}</small></h4>
-  {% if review.one_sentence %}
-  <p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
-  {% endif %}
-  <span class="label label-important">This review will contain spoilers!</span>
-  <p><strong>In many sentences:</strong></p>
-  <div class="review">{{ review.critique|safe }}</div>
-  {% for quote in review.edition.quote_set.all %}
-  	<h4>{{ quote.quote_type }}{% if quote.quote_type.id == 1 %} Quote{% endif %}</h4>
-  	{% include "somesmart/include_quote.html" %}
-  {% endfor %}
+	 <div class="page-header">
+		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
+	</div>
+	<div class="pull-right">
+	{% with review.one_sentence|length|add:-1 as review_len %}
+		<a href="https://twitter.com/share" class="twitter-share-button" data-related="jasoncosta" data-lang="en" data-size="small" data-count="horizontal" data-text="{% if review_len > 117 %}{{ review.one_sentence|safe|truncchar:115 }}...{% else %}{{ review.one_sentence|safe|truncchar:review_len }}{% endif %}">Tweet</a>
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	{% endwith %}
+	</div>
+	<h4>A Review by {{ review.reader }} <small>finished {{ review.finished|date }}</small></h4>
+	{% if review.one_sentence %}
+	<p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
+	{% endif %}
+	<span class="label label-info">This review will contain spoilers!</span>
+	<p><strong>In many sentences:</strong></p>
+	<div class="review">{{ review.critique|safe }}</div>
+	{% for quote in review.edition.quote_set.all %}
+		<h4>{{ quote.quote_type }}{% if quote.quote_type.id == 1 %} Quote{% endif %}</h4>
+		{% include "somesmart/include_quote.html" %}
+	{% endfor %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
 {% with review.edition.book as book %}
 	{% include "somesmart/include_book_data.html" %}
-  {% include "somesmart/include_recent_posts.html" %}
+	{% include "somesmart/include_recent_posts.html" %}
 {% endwith %}
 {% endblock %}

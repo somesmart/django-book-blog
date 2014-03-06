@@ -76,6 +76,7 @@
 			var options = {'title':'{{ chart_title }}',
 										'chartArea': {'width': {% if chart_type == "GeekQuotient" %}'90%'{% else %}'75%'{% endif %}, 'height': '90%'},
 										'legend': 'none',
+										'backgroundColor': 'transparent',
 										//'width':'100%',
 										'height': {% if chart_name == "Timeline" %}'100%'{% else %}400{% endif %}};
 

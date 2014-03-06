@@ -1,7 +1,7 @@
 {% if book.entry_set.all %}
 <h4>Recent Blog Posts:</h4>
   {% for entry in book.entry_set.all %}
-    <ul class="unstyled">
+    <ul class="list-unstyled">
       <li><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></li>
     </ul>
   {% endfor %}

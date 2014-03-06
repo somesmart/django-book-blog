@@ -54,3 +54,10 @@ class LevelCharacterFormset(forms.models.BaseInlineFormSet):
 			levels = Level.objects.all()
 		
 		form.fields['character'].queryset = characters
+
+
+class StoryForm(ModelForm):
+	class Meta:
+		model = Story 
+
+StoryFormSet = inlineformset_factory(Level, Story, form=StoryForm)

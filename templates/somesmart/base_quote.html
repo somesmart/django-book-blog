@@ -3,7 +3,7 @@
 {% block title %}{{ quote.edition.book.author }} Quote{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
-<p class="well well-small">This is a permanent link for this quote. It can safely be shared or bookmarked for future use.</p>
+<p class="well well-sm">This is a permanent link for this quote. It can safely be shared or bookmarked for future use.</p>
    {% include "somesmart/include_quote.html" %}
    {% with quote.quote|length|add:-1 as quote_len %}
    <a href="https://twitter.com/share" class="twitter-share-button" data-related="jasoncosta" data-lang="en" data-size="large" data-count="horizontal" data-text="{% if quote_len > 117 %}{{ quote.quote|safe|truncchar:115 }}...{% else %}{{ quote.quote|safe|truncchar:quote_len }}{% endif %}&quot;">Tweet</a>

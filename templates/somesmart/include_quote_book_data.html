@@ -1,5 +1,5 @@
 <h4>{{ quote.edition.book.title }} <small>by {{ quote.edition.book.author.first_name }} {{ quote.edition.book.author.last_name }}</small></h4>
-<ul class="unstyled">
+<ul class="list-unstyled">
 	<li>{{ quote.edition.get_format_display }} edition published {{ quote.edition.published|date }} ({{ quote.edition.pages }} pages)</li>
 	<li>Originally published {{ quote.edition.book.original_publication|date }}</li>
 </ul>

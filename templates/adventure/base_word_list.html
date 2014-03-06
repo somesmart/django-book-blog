@@ -2,7 +2,7 @@
 {% block title %}Review and copy a word list{% endblock title %}
 {% block content %}
 	<h3>Word list</h3>
-	<table class="table table-striped">
+	<table class="table table-striped table-hover">
 		<tr>
 			<th>Wordgroup</th>
 			<th>Word</th>
@@ -16,17 +16,17 @@
 	</table>
 	Copy this word list to:
 	<form class="form-inline" action="{% url copy-word-list current_game %}">
-		<select id="new_game" name="new_game" class="span6">
+		<select id="new_game" name="new_game" class="col-md-6">
 		{% for game in game_list %}
 			<option value="{{ game.id }}">{{ game.name }}</option>
 		{% endfor %}
 		</select>
-		<input type="submit" class="btn">
+		<input type="submit" class="btn btn-default">
 	</form>
 {% endblock content %}
 {% block top-right-content %}{% endblock top-right-content %}
 {% block right-content %}
-	<div class="span10 offset1">
+	<div class="col-md-10 col-lg-offset-1">
 		{% include "somesmart/include_contact.html" %}
 	</div>
 {% endblock %}

@@ -52,7 +52,8 @@ def story_line(request, word, game, character, level):
 	level = Level.objects.get(id=level)
 	not_expected = "<p>Nothing happens.</p>"
 	try:
-		word_group = WordGroup.objects.select_related().get(word__word_descr=word)
+		word = Word.objects.select_related().get(word_descr=word, game=game)
+		word_group = WordGroup.objects.get(id=word.wordgroup.id)
 		try:
 			line = Story.objects.select_related().get(game=game, character=character, level=level, wordgroup__id=word_group.id)
 			data = {'id': line.id, 'character_id': line.character.id, 'next_level': line.next_level.id, 'text': line.text }
@@ -73,7 +74,7 @@ def story_line(request, word, game, character, level):
 				results.append(data)
 			json = simplejson.dumps(results)
 			return HttpResponse(json, mimetype='application/json')
-	except WordGroup.DoesNotExist:
+	except Word.DoesNotExist:
 		word_group = None
 		try:
 			unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
@@ -146,3 +147,77 @@ def copy_word_list(request, current_game):
 		return HttpResponseRedirect('/adventure/')
 	else:
 		return HttpResponseRedirect('/noresults/')
+
+class GameCreate(CreateView):
+	template_name = 'adventure/base_game_create.html'
+	model = Game
+	#form_class = GameForm
+
+	def form_valid (self, form):
+		if form.is_valid():
+			obj = form.save(commit=False)
+			obj.creator = self.request.user
+			obj.save()
+		context = self.get_context_data()
+		story_form = context['story_form']
+		if story_form.is_valid():
+			self.object = form.save()
+			story_form.instance = self.object
+			story_form.save()
+			return HttpResponseRedirect('/adventure/')
+		else:
+			return self.render_to_response(self.get_context_data(form=form))
+
+	def form_invalid(self, form):
+		return self.render_to_response(self.get_context_data(form=form))
+
+	def get_context_data(self, **kwargs):
+		context = super(GameCreate, self).get_context_data(**kwargs)
+		if self.request.POST:
+			context['story_form'] = StoryFormSet(self.request.POST, instance=self.object)
+		else:
+			context['story_form'] = StoryFormSet(instance=self.object)
+		return context
+
+def delete_game(request, pk):
+	game_creator = Game.objects.select_related().get(id=pk)
+	if request.user.id == game_creator.user.id:
+		Game.objects.filter(id=pk).delete()
+		return HttpResponse("success")
+	else:
+		return HttpResponse("you shouldn't be here")
+
+class GameUpdate(UpdateView):
+	template_name = 'nature/base_game_update.html'
+	model = Game
+	#form_class = GameForm
+
+	def form_valid (self, form):
+		if form.is_valid():
+			obj = form.save(commit=False)
+			obj.save()
+			return HttpResponseRedirect('/list/')
+
+	def get_context_data(self, **kwargs):
+		context = super(GameUpdate, self).get_context_data(**kwargs)
+		self.game_id = self.kwargs['pk']
+		context['detail_list'] = Story.objects.select_related().filter(game__id=self.game_id).order_by('game__name')  
+		return context		
+
+def delete_game_story(request, pk):
+	story_item = Story.objects.select_related().get(id=pk)
+	if request.user.id == story_item.game.creator.id:
+		Story.objects.filter(id=pk).delete()
+		return HttpResponse("success")
+	else:
+		return HttpResponse("you shouldn't be here")
+
+def add_game_story(request, game, level, character, wordgroup, next_level, text):
+	game = Game.objects.select_related().get(id=game)
+	wordgroup = WordGroup.objects.get(id=wordgroup)
+	if request.user.id == game.creator.id:
+		new_item = Story(game=game, character=character, level=level, wordgroup=wordgroup, next_level=next_level, text=text)
+		new_item.save()
+		return HttpResponse(new_item.id)
+	else:
+		return HttpResponse("you shouldn't be here")		

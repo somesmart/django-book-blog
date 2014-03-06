@@ -5,7 +5,7 @@
 		<h2>{{ book.title }}<br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></span></h2>
 	</div>
 	<h4>Synopsis</h4>
-	<span class="label label-important">This synopsis will contain spoilers!</span>
+	<span class="label label-info">This synopsis will contain spoilers!</span>
 	<div class="review">
 		{{ book.synopsis|safe }}
 	</div>
@@ -13,7 +13,7 @@
 	<dl>
 	{% for edition in book.edition_set.all %}
 	{% for review in edition.review_set.all %}
-			<dt><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a>{% if review.recommend %} <i class="icon-thumbs-up"></i>{% else %} <i class="icon-thumbs-down"></i>{% endif %}</dt>
+			<dt><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a>{% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down"></i>{% endif %}</dt>
 			<dd>{% if review.one_sentence %}{{ review.one_sentence|safe }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
 	{% endfor %}
 	{% endfor %}

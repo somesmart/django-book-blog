@@ -1,5 +1,10 @@
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
 .well-light {
-  background-color: #F8F8FF;
+	background-color: #F8F8FF;
 }
 
 img {
@@ -27,7 +32,7 @@ iframe {
 	text-indent: 20px;
 }
 
-.icon-thumbs-down {
+.glyphicon-thumbs-down {
 	opacity: 0.7;
 }
 
@@ -37,14 +42,21 @@ iframe {
 	border: 1;
 }
 
+.input-group-addon {
+	padding: 4px 10px;
+}
+
+.form-group-addon {
+	padding: 4px 10px;
+}
+
 .stats_container{
 	margin-bottom: 2em;
 }
 
 .stats {
 	padding: 15px 15px 15px;
-	background: #FFF;
-	border: 1px solid #D5D5D5;
+	border: 1px solid #4e5d6c;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -70,8 +82,8 @@ iframe {
 	display: table-cell;
 	padding: 0;
 	position: relative;
-	border-right: 1px solid #CCC;
-	border-left: 1px solid #FFF;
+	border-right: 1px solid #4e5d6c;
+	border-left: 1px solid #4e5d6c;
 }
 /*jquery ui styling*/
 .ui-autocomplete {
@@ -79,11 +91,16 @@ iframe {
 }
 
 .ui-menu .ui-menu-item a.ui-state-focus,
-.ui-menu .ui-menu-item a.ui-state-active { 
+.ui-menu .ui-menu-item a.ui-state-active {
 	background: #2c3e50;
 	background-color: #2c3e50;
 }
 
 #search {
 	padding: 3px 0px;
+	height: 90%;
+}
+
+.row {
+	margin-left: 1%;
 }
