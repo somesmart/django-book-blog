@@ -154,6 +154,11 @@ class Currently(models.Model):
 	reader = models.ForeignKey(User, related_name='+')
 	page = models.IntegerField()
 
+class Favorite(models.Model):
+	book = models.ForeignKey(Book)
+	user = models.ForeignKey(User, related_name='+')
+	rank = models.IntegerField()
+	comment = models.TextField()
 
 # ************************************************************** #
 # ************************ list data *************************** #

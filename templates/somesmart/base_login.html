@@ -4,9 +4,9 @@
 {% if form.errors %}
 	<p>Your username and password didn't match. Please try again.</p>
 {% endif %}
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="form-horizontal">
 	{% csrf_token %}
-	<table>
+	<table class="table table-striped table-hover table-todo">
 		<tr>
 			<td>{{ form.username.label_tag }}</td>
 			<td>{{ form.username }}</td>
@@ -16,7 +16,7 @@
 			<td>{{ form.password }}</td>
 		</tr>
 	</table>
-	<input class="btn btn-sm" type="submit" value="Sign In" />
+	<input class="btn btn-default" type="submit" value="Sign In" />
 	<input type="hidden" name="next" value="/adventure/" />
 </form>
 {% endblock %}

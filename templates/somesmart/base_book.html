@@ -5,7 +5,9 @@
 		<h2>{{ book.title }}<br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></span></h2>
 	</div>
 	<h4>Synopsis</h4>
-	<span class="label label-info">This synopsis will contain spoilers!</span>
+	<div class="row">
+		<p class="col-md-5 alert alert-info">This synopsis will contain spoilers!</p>
+	</div>
 	<div class="review">
 		{{ book.synopsis|safe }}
 	</div>

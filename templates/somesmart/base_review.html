@@ -15,7 +15,9 @@
 	{% if review.one_sentence %}
 	<p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
 	{% endif %}
-	<span class="label label-info">This review will contain spoilers!</span>
+	<div class="row">
+		<p class="col-md-5 alert alert-info">This review will contain spoilers!</p>
+	</div>
 	<p><strong>In many sentences:</strong></p>
 	<div class="review">{{ review.critique|safe }}</div>
 	{% for quote in review.edition.quote_set.all %}

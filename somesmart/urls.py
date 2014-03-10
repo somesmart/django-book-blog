@@ -49,6 +49,9 @@ urlpatterns = patterns('',
 	url(r'^edit/list/(?P<pk>\d+)/$', login_required(ListUpdate.as_view(template_name='somesmart/base_course_update.html'))),
 	url(r'^delete/list/item/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list_item'),
 	url(r'^delete/list/(?P<pk>\d+)/$', 'sssd.somesmart.views.delete_list'),
+	#favorites
+	url(r'^favorites/$', FavoriteList.as_view(), name='favorite-list'),
+	url(r'^favorites/(?P<genre>[-\w]+)/$', FavoriteGenreList.as_view(), name='favorite-genre-list'),
 	#the blog
 	url(r'^blog/', include('zinnia.urls')),
 	url(r'^blog/tags/', include('zinnia.urls.tags')),
@@ -76,4 +79,5 @@ urlpatterns = patterns('',
 	url(r'^feeds/$', 'sssd.somesmart.views.zinnia_latest_feeds', name='custom-zinnia-latest'),
 	url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'somesmart/base_login.html'}, name='account-login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
+    url(r'^todo/', include('todo.urls')),
 )

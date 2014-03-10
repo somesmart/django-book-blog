@@ -60,7 +60,7 @@ $(document).ready(function(){
 				//$('#level').empty();
 				$('#level').val(newLevel);
 
-				var saveLink = "<a href='/adventure/game/" + gameID + "/" + character_id + "/" + save_level + "/?story_id=" + story_id + "'>Your Save Link</a>";
+				var saveLink = "<a class='btn btn-default' href='/adventure/game/" + gameID + "/" + character_id + "/" + save_level + "/?story_id=" + story_id + "'>Your Save Link</a>";
 				$('#save').empty();
 				$('#save').html(saveLink);
 			});

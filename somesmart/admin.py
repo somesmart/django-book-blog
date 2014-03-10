@@ -58,6 +58,13 @@ class ListAdmin(admin.ModelAdmin):
 		'list_descr',
 	)
 
+class FavoriteAdmin(admin.ModelAdmin):
+	list_display = (
+		'book',
+		'user',
+		'rank',
+	)
+
 admin.site.register(Book, BookAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Genre)
@@ -70,3 +77,4 @@ admin.site.register(Shelf)
 admin.site.register(ShelfDetail)
 admin.site.register(QuoteType)
 admin.site.register(List, ListAdmin)
+admin.site.register(Favorite, FavoriteAdmin)

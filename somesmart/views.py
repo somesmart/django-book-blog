@@ -291,6 +291,30 @@ def zinnia_latest_feeds(request):
 	return redirect('zinnia_entry_latest_feed')
 
 # ****************************************************************** #
+# *********************** favorites views ************************** #
+# ****************************************************************** #
+
+class FavoriteList(ListView):
+	template_name='somesmart/base_favorite_list.html'
+	context_object_name = 'genre_list'
+
+	def get_queryset(self):
+		return Genre.objects.all()
+
+class FavoriteGenreList(ListView):
+	template_name='somesmart/base_favorite_list.html'
+	context_object_name = 'favorite_list'
+	paginate_by = 5
+
+	def get_queryset(self):
+		return Favorite.objects.select_related().filter(book__genre__slug=self.kwargs['genre'])
+
+	def get_context_data(self, **kwargs):
+		context = super(FavoriteGenreList, self).get_context_data(**kwargs)
+		context['genre_list'] = Genre.objects.all()
+		return context
+
+# ****************************************************************** #
 # ********************** list related views ************************ #
 # ****************************************************************** #
 

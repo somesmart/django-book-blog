@@ -25,6 +25,7 @@ $(function() {
 </script>{% endblock %}
 {% block top-content %}{% endblock %}
 {% block content %}
+<div class="row">
 	<div class="page-header">
 		<h2>{{ game_play.game }}</h2>
 		<h4>by {{ game_play.game.creator }}</h4>
@@ -33,23 +34,26 @@ $(function() {
 		<div id='message_results' class='message_results'>{{ game_play|safe }}</div>
 	</div>
 	<div> 
-		<form method="get" class="form-inline">
+		<form method="get" class="form-horizontal col-md-5">
 			{% csrf_token %}
 			<!-- need a way for only the valid values to show up when available -->
 			<label>Who? </label>
-			<select name = "character_select" id="character_select">
-				<option value="{{ game_play.character.id }}">{{ game_play.character }}</option>
-			</select>
+				<select class="form-control" name="character_select" id="character_select">
+					<option value="{{ game_play.character.id }}">{{ game_play.character }}</option>
+				</select>
 				<label for="command">What? </label> 
-				<input type="text" name="command" id="command"/>
+				<input class="form-control" type="text" name="command" id="command"/>
 				<input type="hidden" id="level" value="{{ game_play.level.id }}">
 				<input type="hidden" id="gameID" value="{{ game_play.game.id }}">
 				<input style="display:none" type="submit" value="go" id="search_button"/> 
 		</form>
 	</div>
-	<div id="save">
-		<a id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>
-	</div> 
+</div>
+<div class="row">
+	<div class="pull-right" id="save">
+		<a class="btn btn-default" id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>
+	</div>
+</div>
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
