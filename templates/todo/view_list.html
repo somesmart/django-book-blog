@@ -2,6 +2,7 @@
 {% block title %}Todo List: {{ list.name }}{% endblock %}
 {% block top-content %}
 {% if perms.todo.add_list %}
+<a class="btn btn-default" href="/todo/">To-Do Home</a>
 <div class="container">
 	{% ifequal list_slug "mine" %}
 		<h1>Tasks assigned to {{ request.user }}</h1>

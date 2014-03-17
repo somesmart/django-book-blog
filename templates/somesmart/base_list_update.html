@@ -1,0 +1,105 @@
+{% extends "somesmart/base.html" %}
+{% block app.css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox/colorbox.css">
+{% endblock %}
+{% block title %}Edit Your List {% endblock title %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/colorbox/jquery.colorbox.js"></script>
+<script type ="text/javascript">
+function deleteItem(item_id){
+	$.ajax({
+			type: "GET",
+			url: "/delete/list/item/"+ item_id +"/",
+			success: function(){
+						$("." + item_id).remove();
+					}
+			});
+	}
+function addItem(list, book, title){
+	$.ajax({
+		type: "GET",
+		url: "/add/list/" + list + "/item/" + book + "/",
+		success: function(data){
+			var new_item_id = data;
+			var htmlData = "<tr class='" + new_item_id + "'><td>" + title + "</td><td><a href='#' class='btn btn-danger btn-mini note'><i id='" + new_item_id + "' class='delete glyphicon glyphicon-remove'></i></a></td></tr>";
+			$('#book_table').append(htmlData);
+			//empty the selector field and focus on it
+			$('#selector').val('');
+			$('#selector').focus();
+			//stops the form from refreshing the page like it normally would.
+		}
+	});
+}
+$(function() {
+	$("#selector").autocomplete({
+			source: "{% url autocomplete %}?search=title",
+			minLength: 3,
+			select: function(event, ui) {
+				$('#book_id').val(ui.item.id);
+				$('#title').val(ui.item.label);
+			}
+		});
+
+	$("#book_table").on("click", ".delete", function(event){ 
+		var item_id = event.target.id;
+		deleteItem(item_id);
+	});
+
+	$("#add_book").click(function(e){ 
+		//get the autocomplete values for use below
+		var book_id = $('#book_id').val();
+		var title = $('#title').val();
+		var list_id = $('#list_id').val();
+		addItem(list_id, book_id, title);		
+		e.preventDefault();
+	});
+	$(".ajax").colorbox({height:"650px", width:"565px", iframe:true, onClosed:function(){window.location.reload();}});
+	$('.note').tooltip({ title: 'Remove this book', placement: 'right' });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+	{% if list.user.id == user.id %} 
+		{% if perms.somesmart.add_list %}
+				<h3>Edit your custom list</h3><a class="btn btn-default" href="{% url list-view list.id %}">Back to the list</a>
+				<form action="" method="post" class="form-horizontal">
+					<div class="form-row">
+						{{ form.title.label_tag }}
+						{{ form.title }}
+						{{ form.title.errors }}
+					</div>
+				<table class="table table-striped"> 
+					{{ form.as_table }}
+					{% csrf_token %}
+          <tr>
+            <td><input type="submit" value="Update List Setup" class="submit" /></td>
+            <td></td>
+          </tr>
+				</table>
+				</form>
+				<div class="row">
+					<form action="#" id="autocomplete_form" class="form-horizontal">
+						<span class="col-md-10"><input class="form-control" type="text" id="selector" name="selector"/></span>
+						<input type="hidden" id="book_id" name="book_id" />
+						<input type="hidden" id="list_id" name="list_id" value="{{ list.id }}" />
+						<input type="hidden" id="title" name="title" />
+						<input type="submit" value="Add Book" id="add_book" class="btn btn-default" />
+					</form>
+          <hr>
+					<table id="book_table" class="table table-hover table-striped table-todo">
+							{% for x in detail_list %}
+								<tr class="{{ x.id }}">
+									<td class="col-md-9"><a href="{% url book-view x.book.id %}{{ x.book.title|slugify }}">{{ x.book }}</a></td>
+									<td class="col-md-2 note"><a href="#" class="btn btn-danger btn-mini note"><i id="{{ x.id }}" class="delete glyphicon glyphicon-remove note"></i></a></td>
+								</tr>
+							{% endfor %}
+					</table>
+				</div>
+			{% else %}
+				<p>I'm sorry, you are not authorized to update this list. Please contact the administrator for more information.</p>
+			{% endif %}
+	{% else %}	
+		<p>I'm sorry, you are not authorized to edit this list. Please contact the administrator for more information, or try a different list</p>
+	{% endif %}
+{% endblock %}

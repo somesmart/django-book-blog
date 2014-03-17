@@ -1,4 +1,8 @@
 {% extends "somesmart/base.html" %}
+{% load tagging_tags %}
+{% block app.css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}somesmart/css/tagmanager/tagmanager.css">
+{% endblock %}
 {% block title %}{{ book.title }}{% endblock title %}
 {% block content %}
 	<div class="page-header">
@@ -31,4 +35,65 @@
 {% block right-content %}
 	{% include "somesmart/include_book_data.html" %}
 	{% include "somesmart/include_recent_posts.html" %}
+	<div id="tags-status"></div>
+	<h4>Book Keywords</h4>
+	<form class="form-inline">
+		<input type="text" autocomplete="off" data-items="6" data-provide="typeahead" name="tagsjax" placeholder="Keywords" style="width:9em; {% if request.user.id == 2 %}{% else %}display:none;{% endif %}" class="tagManager form-control" data-original-title="">
+		{% if request.user.id == 2 %}
+		<a class="save-tags btn btn-sm btn-default">Save Keywords</a>
+		{% endif %}
+	</form>
+	<h4>Related Books</h4>
+	<div id="related-books"></div>
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/tagmanager/tagmanager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/typehead.bundle.js"></script>
+<script>
+function get_related(book){
+	$.ajax({
+		type: "GET",
+		url: '{% url related-books book.id %}',
+		success: function(data) {
+			$('#related-books').append(data);
+		}
+	});
+ }
+ $(function() {
+ 	var tagApi = jQuery(".tagManager").tagsManager({
+		prefilled: [{% tags_for_object book as prefilled_tags %}{% for tag in prefilled_tags %}"{{ tag.name }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+	});
+	jQuery("#your_pretty_id").typeahead({
+		name: 'keywords',
+		limit: 150,
+		prefetch: '{% url current-tags %}'
+	}).on('typeahead:selected', function (e, d) {
+		tagApi.tagsManager("pushTag", d.value);
+	});
+	$('.save-tags').click(function() {
+		var new_tags = $('input[name=hidden-tagsjax]').val();
+		$.ajax({
+			url: '{% url save-tags book.id %}',
+			type: 'POST',
+			data: {
+			new_tags: new_tags,
+			csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success:function (data) {
+			if (data == '1')
+			{
+				$("#tags-status")
+				.addClass("success")
+				.html("<div class='alert alert-success'>Your keywords have been saved. <a href='#'' class='close' data-dismiss='alert'>×</a></div>").fadeIn('slow');
+			}
+			else
+			{
+				$("#tags-status").addClass("error").html("Error, data could not be saved. Invalid keywords: " + data + " <a href='#'' class='close' data-dismiss='alert'>×</a>").fadeIn('slow');
+			}
+			}
+		});
+	});
+	get_related();
+ });
+ </script>
 {% endblock %}

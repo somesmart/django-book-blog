@@ -6,7 +6,7 @@
 	{% if genre_list %}
 		<ul class="list-unstyled list-inline">
 		{% for genre in genre_list %}
-			<li><a class="btn btn-default btn-sm" href="{% url favorite-genre-list genre.slug %}">{{ genre }}</a></li>
+			<li><a class="btn btn-default btn-sm" href="{% url favorite-genre-list genre.book__genre__slug %}">{{ genre.book__genre__name }}</a></li>
 		{% endfor %}
 		</ul>
 	{% endif %}
@@ -15,11 +15,11 @@
 		<div class="media">
 			<a class="pull-left" href="#">
 				{% for edition in favorite.book.edition_set.all %}
-					{% if forloop.first %}<center>{% if edition.cover %}<img class="media-object" src="{{ edition.cover.url }}" width="100px">{% else %}<img data-src="holder.js/100x150/auto" width="100px">{% endif %}</center>{% endif %}
+					{% if forloop.first %}<center>{% if edition.cover %}<img class="media-object" src="{{ edition.cover_md.url }}" width="100px">{% else %}<img data-src="holder.js/100x150/auto" width="100px">{% endif %}</center>{% endif %}
 				{% endfor %}
 			</a>
 			<div class="media-body">
-				<h4 class="media-heading"><a href="{% url book-view favorite.book.id %}">{{ favorite.book.title }}</a></h4>
+				<h4 class="media-heading"><a href="{% url book-view favorite.book.id %}{{ favorite.book.title|slugify }}">{{ favorite.book.title }}</a></h4>
 				{{ favorite.comment|safe }}
 			</div>
 		</div>

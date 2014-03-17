@@ -5,15 +5,16 @@ from django.contrib.auth.models import User
 import os
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, Adjust
+import tagging
 
 class IntegerRangeField(models.IntegerField):
-    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
-        self.min_value, self.max_value = min_value, max_value
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value, 'max_value':self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
+	def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
+		self.min_value, self.max_value = min_value, max_value
+		models.IntegerField.__init__(self, verbose_name, name, **kwargs)
+	def formfield(self, **kwargs):
+		defaults = {'min_value': self.min_value, 'max_value':self.max_value}
+		defaults.update(kwargs)
+		return super(IntegerRangeField, self).formfield(**defaults)
 
 class Genre(models.Model):
 	name = models.TextField(max_length=100)
@@ -52,16 +53,18 @@ class Book(models.Model):
 	def __unicode__(self):
 		return self.title
 
+tagging.register(Book)
+
 class Edition(models.Model):
 	def get_image_path(instance, filename):
 		return os.path.join('photos/book', str(instance.book.id), filename)
 
 	FORMAT = (
-        (1, 'Hardcover'),
-        (2, 'Paperback'),
-        (3, 'Digital'),
-        (4, 'Audio'),
-    )
+		(1, 'Hardcover'),
+		(2, 'Paperback'),
+		(3, 'Digital'),
+		(4, 'Audio'),
+	)
 
 	book = models.ForeignKey(Book)
 	isbn = models.CharField(max_length=20)
@@ -71,6 +74,7 @@ class Edition(models.Model):
 	cover = models.ImageField(upload_to=get_image_path, blank=True)
 	cover_thumbnail = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(50, 50)], image_field='cover', format='JPEG', options={'quality': 90})
 	cover_large = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(333, 500)], image_field='cover', format='JPEG', options={'quality': 90})
+	cover_md = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(100, 170)], image_field='cover', format='JPEG', options={'quality': 90})
 
 	def __unicode__(self):
 		return u"%s - %s" % (self.book.title, self.get_format_display())
@@ -127,14 +131,6 @@ class Radar(models.Model):
 	realism = models.IntegerField()
 	modernity = models.IntegerField()
 	humor = models.IntegerField()
-	# maturity = fields.IntegerRangeField(range(1,10))
-	# violence = fields.IntegerRangeField(range(1,10))
-	# action = fields.IntegerRangeField(range(1,10))
-	# epic = fields.IntegerRangeField(range(1,10))
-	# world = fields.IntegerRangeField(range(1,10))
-	# realism = fields.IntegerRangeField(range(1,10))
-	# modernity = fields.IntegerRangeField(range(1,10))
-	# humor = fields.IntegerRangeField(range(1,10))
 
 class Shelf(models.Model):
 	reader = models.ForeignKey(User, related_name='+')
@@ -164,16 +160,15 @@ class Favorite(models.Model):
 # ************************ list data *************************** #
 # ************************************************************** #
 
-#stores the list master data
 class List(models.Model):
 	list_name = models.CharField(max_length=200)
 	list_descr = models.CharField(max_length=200)
 	user = models.ForeignKey(User, related_name="+") #this is the person who created it, and it will always be here
 	def __unicode__(self):
 		return self.list_name
-		return u"%s - %s" % (self.list_name, self.list_descr)	
+		return u"%s - %s" % (self.list_name, self.list_descr)
 	def get_absolute_url(self):
-		return "/list/%i/" % self.id 	
+		return "/list/%i/" % self.id
 	def get_edit_url(self):
 		return "/edit/list/%i/" % self.id
 	def get_delete_url(self):
@@ -181,7 +176,6 @@ class List(models.Model):
 	def get_add_url(self):
 		return "/add/list/"
 
-#stores the list detail (books in a list)
 class ListDetail(models.Model):
 	list = models.ForeignKey(List, related_name="list_details")
 	book = models.ForeignKey(Book)

@@ -59,17 +59,17 @@ $(function() {
 		</table>
 		<fieldset class="">
 			<legend>Books in the list:</legend>
-			<input type="text" id="selector" name="selector" size="50px"/>
+			<span class="col-md-10"><input class="form-control" type="text" id="selector" name="selector" /></span>
 			<input type="hidden" id="book_id" name="book_id" />
 			<input type="hidden" id="title" name="title" />
-			<input type="submit" value="Add Book" class="btn" id="add_book" />
+			<input type="submit" value="Add Book" class="btn btn-default" id="add_book" />
 			<input type="hidden" name="list_details-TOTAL_FORMS" value="0" id="id_list_details-TOTAL_FORMS" /><input type="hidden" name="list_details-INITIAL_FORMS" value="0" id="id_list_details-INITIAL_FORMS" /><input type="hidden" name="list_details-MAX_NUM_FORMS" id="id_list_details-MAX_NUM_FORMS" />
-			<table class="table listdetail_form" id="listdetail_form">
+			<table class="table table-hover listdetail_form" id="listdetail_form">
 			</table>
 		</fieldset>
 		<div class="submit-row">
 			{% csrf_token %}
-			<input type="submit" value="Create List" class="submit btn btn-primary pull-right" />
+			<input type="submit" value="Create List" class="submit btn btn-default pull-right" />
 		</div>
 		</form>
 	{% endblock content %}

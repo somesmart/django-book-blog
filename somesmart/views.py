@@ -8,10 +8,10 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
-# from tagging.models import Tag, TaggedItem
 from sssd.somesmart.models import *
 from zinnia.models import Entry
 from sssd.somesmart.forms import *
+from tagging.models import Tag, TaggedItem
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -67,7 +67,7 @@ def autocomplete(request):
 			return HttpResponseRedirect('/noresults/')
 
 class BookView(DetailView):
-	queryset=Book.objects.select_related()
+	queryset = Book.objects.select_related()
 	template_name='somesmart/base_book.html'
 
 def bookinfo_php(request):
@@ -299,7 +299,7 @@ class FavoriteList(ListView):
 	context_object_name = 'genre_list'
 
 	def get_queryset(self):
-		return Genre.objects.all()
+		return Favorite.objects.select_related().values('book__genre__slug', 'book__genre__name').distinct()
 
 class FavoriteGenreList(ListView):
 	template_name='somesmart/base_favorite_list.html'
@@ -307,11 +307,11 @@ class FavoriteGenreList(ListView):
 	paginate_by = 5
 
 	def get_queryset(self):
-		return Favorite.objects.select_related().filter(book__genre__slug=self.kwargs['genre'])
+		return Favorite.objects.select_related().filter(book__genre__slug=self.kwargs['genre']).order_by('rank')
 
 	def get_context_data(self, **kwargs):
 		context = super(FavoriteGenreList, self).get_context_data(**kwargs)
-		context['genre_list'] = Genre.objects.all()
+		context['genre_list'] = Favorite.objects.select_related().values('book__genre__slug', 'book__genre__name').distinct()
 		return context
 
 # ****************************************************************** #
@@ -444,3 +444,60 @@ def copy_list(request, list):
 			new_list_detail = ListDetail(list=new_list, book=detail.book)
 			new_list_detail.save()
 	return HttpResponseRedirect('/list/')
+
+# ****************************************************************** #
+# ********************* tagging related vws ************************ #
+# ****************************************************************** #
+
+def book_tags(request, book):
+	book = Book.objects.get(id=book)
+	tags = Tag.objects.get_for_object(book)
+
+	tag_list = []
+	for tag in tags:
+		data = {'id': tag.id, 'tag': tag.name}
+		tag_list.append(data)
+
+	results = {'tags': tag_list}
+	json = simplejson.dumps(results)
+	return HttpResponse(json, mimetype='application/json')
+
+def current_tags(request):
+	tags = Tag.objects.usage_for_model(Book, counts=True, min_count=None, filters=None)
+
+	tag_list = []
+	for tag in tags:
+		data = {'id': tag.id, 'tag': tag.name, 'count': tag.count }
+		tag_list.append(data)
+
+	results = {'tags': tag_list}
+	json = simplejson.dumps(results)
+	return HttpResponse(json, mimetype='application/json')
+
+def save_tags(request, book):
+	book = Book.objects.get(id=book)
+	try:
+		Tag.objects.update_tags(book, request.POST[u'new_tags'])
+		return HttpResponse('1')
+	except:
+		return HttpResponse('0')
+
+class TagListView(ListView):
+	template_name='somesmart/base_search_tags.html'
+	context_object_name='book_list'
+
+	def get_queryset(self):
+		self.tag = Tag.objects.get(name = self.kwargs['tag'])
+		#get the books tagged with this tag
+		return TaggedItem.objects.filter(tag=self.tag)
+
+def get_related(request, book):
+	book = Book.objects.get(id=book)
+	related = TaggedItem.objects.get_related(book, Book, num=5)
+
+	related_list = "<ul class='list-unstyled'>"
+	for book in related:
+		related_list += "<li><a href='/book/" + str(book.id) + "/'>" + book.title + "</li>" 
+
+	related_list += "</ul>"
+	return HttpResponse(related_list)

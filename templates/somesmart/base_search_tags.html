@@ -1,0 +1,21 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Tag Search{% endblock title %}
+{% block content %}
+<h3>Tag search results:</h3>
+{% if book_list %}
+<div class="media">
+	{% for book in book_list %}
+		{% if forloop.counter0|divisibleby:"3" %}<div class="row"><ul class="thumbnails">{% endif %}
+		<li class="col-md-4">
+			{{ book.book }}
+		</li>
+		{% if forloop.last or forloop.counter|divisibleby:"3" %}</ul></div>{% endif %} 
+	{% endfor %}
+</div>
+{% else %}
+	<p>No books found.</p>
+{% endif %}
+{% endblock content %}
+{% block app.scripts %}
+<script src="{{ MEDIA_URL }}js/holder/holder.js"></script>
+{% endblock %}

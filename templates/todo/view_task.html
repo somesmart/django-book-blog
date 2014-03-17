@@ -2,6 +2,7 @@
 {% block title %}Task: {{ task.title }}{% endblock %}
 {% block top-content %}
 {% if perms.todo.add_list %}
+<a class="btn btn-default" href="/todo/">To-Do Home</a>
 <div class="container">
 {% if messages %}
 <ul class="messages">
@@ -58,7 +59,7 @@
 </div>
 <hr />
 <h3>Add comment</h3>
-	<textarea name="comment-body" rows="8" cols="40"></textarea>
+	<textarea class="form-control" rows="3" name="comment-body"></textarea>
 	<p><input class="btn btn-default"type="submit" value="Submit"></p>
 </form>
 <h3>Comments on this task</h3>	

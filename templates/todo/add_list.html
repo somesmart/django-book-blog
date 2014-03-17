@@ -1,6 +1,7 @@
 {% extends "todo/base.html" %}
 {% block page_heading %}{% endblock %}
 {% block title %}Add Todo List{% endblock %}
+<a class="btn btn-default" href="/todo/">To-Do Home</a>
 {% block content %}
 {% if perms.todo.add_list %}
 {% if messages %}
