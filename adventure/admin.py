@@ -39,6 +39,7 @@ class LevelAdmin(admin.ModelAdmin):
 	)
 
 	list_filter = ('game',)
+	ordering = ('game', 'level_descr')
 
 class UnknownAdmin(admin.ModelAdmin):
 	list_display = (

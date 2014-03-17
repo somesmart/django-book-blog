@@ -4,9 +4,15 @@ from django.contrib.auth.models import User
 import os
 
 class Game(models.Model):
+	STATUS = (
+		(1, 'Public'),
+		(2, 'Draft'),
+	)
+
 	name = models.TextField(max_length=100)
 	slug = models.SlugField()
 	creator = models.ForeignKey(User, related_name='+')
+	status = models.IntegerField(choices=STATUS)
 
 	def __unicode__(self):
 		return self.name
