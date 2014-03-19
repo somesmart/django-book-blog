@@ -1,21 +1,39 @@
 {% extends "somesmart/base.html" %}
 {% block title %}Tag Search{% endblock title %}
-{% block content %}
-<h3>Tag search results:</h3>
-{% if book_list %}
-<div class="media">
-	{% for book in book_list %}
-		{% if forloop.counter0|divisibleby:"3" %}<div class="row"><ul class="thumbnails">{% endif %}
-		<li class="col-md-4">
-			{{ book.book }}
-		</li>
-		{% if forloop.last or forloop.counter|divisibleby:"3" %}</ul></div>{% endif %} 
-	{% endfor %}
+{% block top-content %}
+<div class="row">
+	<div class="col-md-8 col-lg-offset-2 random-quote"></div>
+	<div class="col-md-2"></div>
 </div>
-{% else %}
-	<p>No books found.</p>
-{% endif %}
-{% endblock content %}
+<div class="row">
+	<div class="col-md-10 col-lg-offset-1">
+		<h3>Tag search results</h3>
+		{% if book_list %}
+			{% for book in book_list %}
+				{% if forloop.counter0|divisibleby:"3" %}<div class="row">{% endif %}
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h5><center><a href="{% url book-view book.object_id %}{{ book.object.title|slugify }}">{{ book }}</a></center></h5>
+							</div>
+							{% for edition in book.object.edition_set.all %}
+								{% if forloop.first %}
+									<div class="panel-body">
+										<center>{% if edition.cover %}<img src="{{ edition.cover.url }}" height="300px">{% else %}<img data-src="holder.js/200x300/auto" height="300px">{% endif %}</center>
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+					</div>
+				{% if forloop.last or forloop.counter|divisibleby:"3" %}</div>{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>No books found.</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
+{% block top-right-content %}{% endblock top-right-content %}
 {% block app.scripts %}
 <script src="{{ MEDIA_URL }}js/holder/holder.js"></script>
 {% endblock %}

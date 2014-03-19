@@ -37,7 +37,7 @@
 	{% include "somesmart/include_pagination.html" %}
 {% endblock content %}
 {% block right-content %}
-<h3>Browse Quotes by Type</h3>
+<h4 class="well well-sm">Browse Quotes by Type</h4>
 	{% if quote_stats %}
 	   {% for type in quote_stats %}
 		<p>{{ type.quote_count }} - <a href="{% url quote-type-list type.quote_type__id %}">{{ type.quote_type__name }} Quotes</a></p>

@@ -1,15 +1,21 @@
-{% if book.id %}<h3><a href="{% url book-view book.id %}">{{ book.title }}</a> <br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></h4>
-<table class="table table-stripe table-hover">
-	<tr>
-		<td>Originally Published: </td>
-		<td>{{ book.original_publication|date }}</td>
-	</tr>
+{% if book.id %}
+<h4 class="well well-sm"><a href="{% url book-view book.id %}{{ book.title|slugify }}/">{{ book.title }}</a> <br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></h4>
+<div class="row">
+<dl>
+	<dt>
+		<div class="pull-right">
+			{% for edition in book.edition_set.all %}
+				{% if forloop.first %}{% if edition.cover %}<img src="{{ edition.cover.url }}" width="100px">{% endif %}{% endif %}
+			{% endfor %}
+		</div>
+	</dt>
+	<dd>
+		<p>Originally Published {{ book.original_publication|date }}</p>
 	{% for edition in book.edition_set.all %}
-	{% if forloop.first %}{% if edition.cover %}<center><img src="{{ edition.cover.url }}" width="100px"></center>{% endif %}{% endif %}
-	<tr>
-		<td>{{ edition.get_format_display }} edition:</td>
-		<td>{{ edition.pages }} pages - {{ edition.published|date }}</td>
-	</tr>
+		<p>{{ edition.get_format_display }} edition:</p>
+		<p>{{ edition.pages }} pages - {{ edition.published|date }}</p>
 	{% endfor %}
-</table>
+	</dd>
+</dl>
+</div>
 {% endif %}

@@ -6,16 +6,34 @@
 	<a class="btn btn-primary pull-right" href="blog/?page=2">More entries &raquo;</a>
 {% endblock content %}
 {% block right-content %}
-<h3>Recent Reviews</h3>
-	{% if recent_reads %}
-		<ul class="list-unstyled">
-		{% for review in recent_reads %}
-			{% if review.reviewed > 0 %}
-			<li><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition.book.title }}</a> - {{ review.finished|date }}{% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up" title="Recommended!"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down" title="Not Recommended"></i>{% endif %}</li>
-			{% endif %}
-		{% endfor %}
-		</ul>
-	{% else %}
-		<p>No reviews.</p>
-	{% endif %}
+<h4 class="well well-sm">Recent Reviews</h4>
+{% if recent_reads %}
+	<ul class="list-unstyled">
+	{% for review in recent_reads %}
+		{% if review.reviewed > 0 %}
+		<li><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition.book.title }}</a> - {{ review.finished|date }}{% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up" title="Recommended!"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down" title="Not Recommended"></i>{% endif %}</li>
+		{% endif %}
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No reviews.</p>
+{% endif %}
+<h4 class="well well-sm">Most Used Tags</h4>
+<div id="tag-cloud"></div>
+{% endblock %}
+{% block app.scripts %}
+<script>
+function get_cloud(){
+	$.ajax({
+		type: "GET",
+		url: '{% url tag-cloud %}',
+		success: function(data) {
+			$('#tag-cloud').append(data);
+		}
+	});
+}
+$(function() {
+	get_cloud();
+});
+</script>
 {% endblock %}

@@ -1,8 +1,9 @@
 {% extends "somesmart/base.html" %}
+{% load tagging_tags %}
 {% load somesmart_extras %}
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
-	 <div class="page-header">
+	 <div>
 		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
 	</div>
 	<div class="pull-right">
@@ -30,5 +31,55 @@
 {% with review.edition.book as book %}
 	{% include "somesmart/include_book_data.html" %}
 	{% include "somesmart/include_recent_posts.html" %}
+	{% include "somesmart/include_book_tags.html" %}
 {% endwith %}
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/tagmanager/bootstrap-tagmanager.js"></script>
+<script>
+function get_related(book){
+	$.ajax({
+		type: "GET",
+		url: '{% url related-books review.edition.book.id %}',
+		success: function(data) {
+			$('#related-books').append(data);
+		}
+	});
+ }
+ $(function() {
+	jQuery(".tagManager").tagsManager({
+		prefilled: [{% tags_for_object review.edition.book as prefilled_tags %}{% for tag in prefilled_tags %}"{{ tag.name }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+		preventSubmitOnEnter: true,
+		typeahead: true,
+		typeaheadAjaxSource: '{% url current-tags %}', 
+		typeaheadAjaxPolling: false
+	});
+	{% if request.user.id == 2 %}
+	$('.save-tags').click(function() {
+		var new_tags = $('input[name=hidden-tagsjax]').val();
+		$.ajax({
+			url: '{% url save-tags review.edition.book.id %}',
+			type: 'POST',
+			data: {
+			new_tags: new_tags,
+			csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success:function (data) {
+			if (data == '1')
+			{
+				$("#tags-status")
+				.addClass("success")
+				.html("<div class='alert alert-success'>Your keywords have been saved. <a href='#'' class='close' data-dismiss='alert'>×</a></div>").fadeIn('slow');
+			}
+			else
+			{
+				$("#tags-status").addClass("error").html("Error, data could not be saved. Invalid keywords: " + data + " <a href='#'' class='close' data-dismiss='alert'>×</a>").fadeIn('slow');
+			}
+			}
+		});
+	});
+	{% endif %}
+	get_related();
+});
+</script>
 {% endblock %}

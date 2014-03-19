@@ -1,0 +1,12 @@
+<div class="row">
+	<div id="tags-status"></div>
+	<h4 class="well well-sm">Book Keywords</h4>
+	<form class="form-inline">
+		<input type="text" autocomplete="off" data-items="6" data-provide="typeahead" name="tagsjax" placeholder="Keywords" style="width:9em; margin-bottom: 5px; {% if request.user.id == 2 %}{% else %}display:none;{% endif %}" class="tagManager form-control" data-original-title="">
+	</form>
+</div>
+{% if request.user.id == 2 %}
+<div class="row">
+	<a class="save-tags btn btn-sm btn-success">Save Keywords</a>
+</div>
+{% endif %}

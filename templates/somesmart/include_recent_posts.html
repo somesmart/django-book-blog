@@ -1,8 +1,8 @@
 {% if book.entry_set.all %}
-<h4>Recent Blog Posts:</h4>
-  {% for entry in book.entry_set.all %}
-    <ul class="list-unstyled">
-      <li><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></li>
-    </ul>
-  {% endfor %}
+<h4 class="well well-sm">Recent Blog Posts</h4>
+	<ul class="list-unstyled">
+		{% for entry in book.entry_set.all %}
+			<li><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></li>
+		{% endfor %}
+	</ul>
 {% endif %}

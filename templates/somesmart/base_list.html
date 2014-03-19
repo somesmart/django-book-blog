@@ -10,7 +10,7 @@
 			</div>
 		{% endif %}
 		{% if user_read %}
-		<h3>What you've read:</h3>
+		<h3 class="well well-sm">What you've read:</h3>
 				<ul class="large_list">
 					{% for read in user_read %}
 						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -18,7 +18,7 @@
 				</ul>
 			{% endif %}
 			{% if others_read %}
-			<h3>Read by Others:</h3>
+			<h3 class="well well-sm">Read by Others:</h3>
 				<ul class="large_list">
 					{% for read in others_read %}
 						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -26,7 +26,7 @@
 				</ul>
 			{% endif %}
 			{% if never_read %}
-			<h3>To Read:</h3>
+			<h3 class="well well-sm">To Read:</h3>
 				<ul class="large_list">
 					{% for read in never_read %}
 						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>

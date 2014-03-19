@@ -12,6 +12,7 @@ from sssd.somesmart.models import *
 from zinnia.models import Entry
 from sssd.somesmart.forms import *
 from tagging.models import Tag, TaggedItem
+from tagging.utils import LOGARITHMIC
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -497,7 +498,17 @@ def get_related(request, book):
 
 	related_list = "<ul class='list-unstyled'>"
 	for book in related:
-		related_list += "<li><a href='/book/" + str(book.id) + "/'>" + book.title + "</li>" 
+		related_list += "<li><a href='/book/" + str(book.id) + "/" + slugify(book.title) + "/'>" + book.title + "</li>" 
 
 	related_list += "</ul>"
 	return HttpResponse(related_list)
+
+def get_cloud(request):
+	tags = Tag.objects.cloud_for_model(Book, steps=1, distribution=LOGARITHMIC,filters=None, min_count=4)
+
+	cloud = "<ul class='list-inline'>"
+	for tag in tags:
+		cloud += "<li><a href='/tags/search/" + tag.name + "/'>" + tag.name + " <span class='badge'>" + str(tag.count) + "</span></a></li>"
+
+	cloud += "</ul>"
+	return HttpResponse(cloud)

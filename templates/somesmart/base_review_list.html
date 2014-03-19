@@ -14,7 +14,7 @@
 	{% include "somesmart/include_pagination.html" %}
 {% endblock content %}
 {% block right-content %}
-<h3>Reviews by Genre</h3>
+<h4 class="well well-sm">Reviews by Genre</h4>
 	<ul>
 	{% for genre in genre_list %}
 		<li><a href="{% url review-genre-list genre.slug %}">{{ genre.name }}</a></li>

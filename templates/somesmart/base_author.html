@@ -8,7 +8,8 @@
 <div class="row">
 	<div class="col-md-10 col-lg-offset-1">
 		<div class="page-header">
-			<h3>{{ author.first_name }} {{ author.last_name }}</h3>
+			<h3>{{ author.first_name }} {{ author.last_name }}{% if author.parent_author %} (a pen name of {{ author.parent_author }}){% endif %}</h3>
+			<small>{% if author.birth_date %}Born: {{ author.birth_date|date }}{% endif %}{% if author.death_date %}<br>Died: {{ author.death_date|date }}{% endif %}</small>
 		</div>
 		<h3>Books by {{ author.last_name }}:</h3>
 		{% for book in author.book_set.all %}
