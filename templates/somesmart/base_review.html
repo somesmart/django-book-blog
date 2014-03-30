@@ -1,9 +1,10 @@
 {% extends "somesmart/base.html" %}
 {% load tagging_tags %}
 {% load somesmart_extras %}
+{% load admin_urls %}
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
-	 <div>
+	<div>
 		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
 	</div>
 	<div class="pull-right">
@@ -14,7 +15,7 @@
 	</div>
 	<h4>A Review by {{ review.reader }} <small>finished {{ review.finished|date }}</small></h4>
 	{% if review.one_sentence %}
-	<p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
+		<p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>
 	{% endif %}
 	<div class="row">
 		<p class="col-md-5 alert alert-info">This review will contain spoilers!</p>
@@ -25,6 +26,9 @@
 		<h4>{{ quote.quote_type }}{% if quote.quote_type.id == 1 %} Quote{% endif %}</h4>
 		{% include "somesmart/include_quote.html" %}
 	{% endfor %}
+	{% if request.user.id == review.reader.id %}
+		<a class="btn btn-default pull-right" href="{% url admin:somesmart_review_change review.id %}">Edit this review</a>
+	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
@@ -33,6 +37,10 @@
 	{% include "somesmart/include_recent_posts.html" %}
 	{% include "somesmart/include_book_tags.html" %}
 {% endwith %}
+<div class="row">
+	<h4 class="well well-sm">Related Books</h4>
+	<div id="related-books"></div>
+</div>
 {% endblock %}
 {% block app.scripts %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/tagmanager/bootstrap-tagmanager.js"></script>
@@ -45,8 +53,8 @@ function get_related(book){
 			$('#related-books').append(data);
 		}
 	});
- }
- $(function() {
+}
+$(function() {
 	jQuery(".tagManager").tagsManager({
 		prefilled: [{% tags_for_object review.edition.book as prefilled_tags %}{% for tag in prefilled_tags %}"{{ tag.name }}"{% if not forloop.last %},{% endif %}{% endfor %}],
 		preventSubmitOnEnter: true,

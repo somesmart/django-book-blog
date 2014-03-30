@@ -1,5 +1,6 @@
 {% extends "somesmart/base.html" %}
 {% load tagging_tags %}
+{% load admin_urls %}
 {% block title %}{{ book.title }}{% endblock title %}
 {% block content %}
 	<div>
@@ -29,6 +30,9 @@
 			{% include "somesmart/include_quote.html" %}
 		{% endfor %}
 	{% endfor %}
+	{% if request.user.id == 2 %}
+		<a class="btn btn-default pull-right" href="{% url admin:somesmart_book_change book.id %}">Edit this book</a>
+	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}

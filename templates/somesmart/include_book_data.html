@@ -1,5 +1,7 @@
 {% if book.id %}
+<div class="row">
 <h4 class="well well-sm"><a href="{% url book-view book.id %}{{ book.title|slugify }}/">{{ book.title }}</a> <br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></h4>
+</div>
 <div class="row">
 <dl>
 	<dt>

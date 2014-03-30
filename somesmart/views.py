@@ -486,6 +486,7 @@ def save_tags(request, book):
 class TagListView(ListView):
 	template_name='somesmart/base_search_tags.html'
 	context_object_name='book_list'
+	paginate_by = 9
 
 	def get_queryset(self):
 		self.tag = Tag.objects.get(name = self.kwargs['tag'])
@@ -498,13 +499,13 @@ def get_related(request, book):
 
 	related_list = "<ul class='list-unstyled'>"
 	for book in related:
-		related_list += "<li><a href='/book/" + str(book.id) + "/" + slugify(book.title) + "/'>" + book.title + "</li>" 
+		related_list += "<li><a href='/book/" + str(book.id) + "/" + slugify(book.title) + "/'><i class='glyphicon glyphicon-minus'></i> " + book.title + "</a></li>" 
 
 	related_list += "</ul>"
 	return HttpResponse(related_list)
 
-def get_cloud(request):
-	tags = Tag.objects.cloud_for_model(Book, steps=1, distribution=LOGARITHMIC,filters=None, min_count=4)
+def get_cloud(request, min_count):
+	tags = Tag.objects.cloud_for_model(Book, steps=1, distribution=LOGARITHMIC,filters=None, min_count=min_count)
 
 	cloud = "<ul class='list-inline'>"
 	for tag in tags:

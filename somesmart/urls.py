@@ -58,7 +58,7 @@ urlpatterns = patterns('',
 	url(r'^tags/book/(?P<book>\d+)/save/$', 'sssd.somesmart.views.save_tags', name='save-tags'),
 	url(r'^tags/book/(?P<book>\d+)/related/$', 'sssd.somesmart.views.get_related', name='related-books'),
 	url(r'^tags/search/(?P<tag>[\s\w]+)/$',TagListView.as_view(), name='search-tags'),
-	url(r'^tags/cloud/$', 'sssd.somesmart.views.get_cloud', name='tag-cloud'),
+	url(r'^tags/cloud/(?P<min_count>\d+)/$', 'sssd.somesmart.views.get_cloud', name='tag-cloud'),
 	#the blog
 	url(r'^blog/', include('zinnia.urls')),
 	url(r'^blog/tags/', include('zinnia.urls.tags')),

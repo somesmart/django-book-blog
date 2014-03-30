@@ -59,9 +59,9 @@
             <abbr class="comment-published" title="{{ node.submit_date|date:"c" }}Z">
               {{ node.submit_date|date:"SHORT_DATETIME_FORMAT" }}
             </abbr>
-            {{ node.comment|linebreaks }}
+            {{ node.comment|linebreaks|safe }}
             <p class="comment-reply">
-              <a href="#comment-form" onclick="return addComment.moveForm('comment-{{ node.pk }}-by-{{ node.user_name|slugify }}', '{{ node.pk }}', 'comment-form')">{% trans "Reply" %}</a>
+              <a class="btn btn-primary" href="#comment-form" onclick="set_reply('{{ node.pk }}')">{% trans "Reply" %}</a>
             </p>
             {% if children %}
               <div class="well well-sm">
@@ -113,3 +113,11 @@
     {% endif %}
   {% endwith %}
 {% endblock right-content %}
+
+{% block app.scripts %}
+<script type="text/javascript">
+  function set_reply(parent) {
+    $("#id_parent").val(parent );
+  }
+  </script>
+{% endblock %}

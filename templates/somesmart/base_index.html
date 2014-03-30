@@ -20,13 +20,15 @@
 {% endif %}
 <h4 class="well well-sm">Most Used Tags</h4>
 <div id="tag-cloud"></div>
+<a href="{% url zinnia_entry_latest_feed %}" class="btn btn-default">RSS Feed</a>
+<a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Fsomesmart.com%2Fblog%2Ffeeds%2Flatest%2F' class="btn btn-default" target='blank'>Feedly</a>
 {% endblock %}
 {% block app.scripts %}
 <script>
 function get_cloud(){
 	$.ajax({
 		type: "GET",
-		url: '{% url tag-cloud %}',
+		url: '{% url tag-cloud 4 %}',
 		success: function(data) {
 			$('#tag-cloud').append(data);
 		}
