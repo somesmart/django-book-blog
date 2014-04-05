@@ -28,9 +28,9 @@ def autocomplete(request):
 			level = request.GET[u'level']
 			results = []
 			if search == "word":
-				# Ignore queries shorter than length 3
-				if len(value) > 2:
-					model_results = Story.objects.select_related().filter(wordgroup__group_descr__icontains=value, game__id=game, level__id=level, character__id=character)
+				if len(value) > 0:
+					groups = WordGroup.objects.select_related().values('id').filter(word__word_descr__icontains=value).distinct()
+					model_results = Story.objects.select_related().filter(wordgroup__id__in=groups, game__id=game, level__id=level, character__id=character)
 					for word in model_results:
 						data = {'id': word.wordgroup.id, 'label': word.wordgroup.group_descr }
 						results.append(data)

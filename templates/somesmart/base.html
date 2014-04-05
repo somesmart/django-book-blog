@@ -41,6 +41,7 @@
 				<li {% if request.path == '/my-books/' %} class="active" {% endif %}><a href="{% url my-books %}">My Books</a></li>
 				<li {% if request.path == '/charts/' %} class="active" {% endif %}><a href="{% url charts %}">Charts</a></li>
 				<li {% if request.path == '/favorites/' %} class="active" {% endif %}><a href="{% url favorite-list %}">Favorites</a></li>
+				<li {% if 'adventure' in request.path %} class="active" {% endif %}><a href="{% url game-list %}">Adventure</a></li>
 			</ul>
 			<form class="navbar-form navbar-right" role="search">
 				<div class="form-group">
