@@ -11,7 +11,7 @@
     <abbr class="published" title="{{ entry.creation_date|date:"c" }}Z">{{ entry.creation_date|date:"DATE_FORMAT" }}</abbr> in {% for category in entry.categories.all %}<a href="{{ category.get_absolute_url }}">{{ category }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
     {% if entry.image %}
     <div class="entry-image">
-      <p><img src="{{ entry.image.url }}" width=180px alt="{{ entry.title }}" class="pull-right" /></p>
+      <p><img src="{{ entry.image.url }}" width="180px" alt="{{ entry.title }}" class="pull-right" /></p>
     </div>{% endif %}{% if forloop.first %}{{ entry.html_content|safe }}{% else %}{{ entry.html_content|truncatewords_html:200|safe }}{% endif %}<p><a class="btn btn-primary" href="{{ entry.get_absolute_url }}" title="{{ entry.title }}" rel="bookmark">{% if forloop.first %}Comment{% else %}Read more{% endif %} &raquo;</a></p>
     <hr>
 {% endfor %}

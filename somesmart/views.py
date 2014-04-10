@@ -72,7 +72,7 @@ class BookView(DetailView):
 	template_name='somesmart/base_book.html'
 
 def bookinfo_php(request):
-	if request.GET.has_key(u'term'):
+	if request.GET.has_key(u'bookid'):
 		isbn = request.GET[u'bookid']
 		book = Book.objects.select_related().get(edition__isbn=isbn)
 		return redirect('book-view', pk=book.id)
@@ -283,6 +283,8 @@ def zinnia_entry_detail(request, year, slug):
 		slug = 'how-to-read-literature-like-a-professor'
 	elif slug == 'the-moon-is-a-harsh':
 		slug = 'the-moon-is-a-harsh-mistress'
+	elif slug == 'of-other':
+		slug = 'of-other-worlds-essays-and-stories'
 
 	entry = Entry.published.on_site().get(slug=slug)
 	return redirect('zinnia_entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)

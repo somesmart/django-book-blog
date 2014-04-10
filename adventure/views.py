@@ -109,6 +109,8 @@ class GameView(ListView):
 				stories = Story.objects.select_related().filter(id=self.request.GET[u'story_id'])
 			else:
 				stories = Story.objects.select_related().filter(game__id=self.kwargs['pk'], level__id=self.kwargs['level'])
+		else: 
+			stories = Story.objects.select_related().filter(game__id=self.kwargs['pk'], level__id=self.kwargs['level'])
 		for story in stories:
 			if first:
 				return Story.objects.select_related().get(id=story.id)

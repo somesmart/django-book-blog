@@ -3,22 +3,22 @@
 {% block app.scripts %}
 <script type ="text/javascript">
 function deleteItem(item_id){
-  $.ajax({
-      type: "GET",
-      url: "/delete/list/"+ item_id +"/",
-      success: function(data){
-            $("." + item_id).remove();
-          }
-      });
-  }
+	$.ajax({
+			type: "GET",
+			url: "/delete/list/"+ item_id +"/",
+			success: function(data){
+						$("." + item_id).remove();
+					}
+			});
+	}
 $(function() {
-  $('.delete').click(function(event){ 
-    //alert(event.target.id);
-    var list_id = event.target.id;
-    if (confirm('Are you sure you want to delete this list? This cannot be undone.')) {
-      deleteItem(list_id);
-    }
-  });
+	$('.delete').click(function(event){ 
+		//alert(event.target.id);
+		var list_id = event.target.id;
+		if (confirm('Are you sure you want to delete this list? This cannot be undone.')) {
+			deleteItem(list_id);
+		}
+	});
 });
 $('.note_delete').tooltip({ title: 'Delete List', placement: 'right' });
 $('.note_edit').tooltip({ title: 'Edit List', placement: 'right' });
@@ -28,25 +28,25 @@ $('.note_copy').tooltip({ title: 'Copy List', placement: 'right' });
 {% block content %}
 <h2>My custom lists:</h2>
 {% if list_summary %}
-    <ul>
-    {% for list in list_summary %}
-        <li class="{{ list.id }}"><a href="{{ list.get_absolute_url }}">{{ list.list_name }}</a> - {{ list.list_descr }} <a class="btn btn-xs note_edit" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-edit"></i></a> <a class="btn btn-xs btn-danger note_delete" href="#"><i id="{{ list.id }}" class="delete glyphicon glyphicon-remove"></i></a> <a class="btn btn-xs note_copy" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i></a></li>
-        {% comment %}
-        need to add a way to get the percent complete for the list at a later date
-        <div class="completion thin">
-          <div style="width: 17%;"></div>
-          <p class="loaded"><span>17%</span> complete</p>
-        </div>
-        {% endcomment %}
-    {% endfor %}
-    </ul>
+		<ul>
+		{% for list in list_summary %}
+				<li class="{{ list.id }}"><a href="{{ list.get_absolute_url }}">{{ list.list_name }}</a> - {{ list.list_descr }} <a class="btn btn-xs note_edit" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-edit"></i></a> <a class="btn btn-xs note_delete" href="#"><i id="{{ list.id }}" class="delete glyphicon glyphicon-remove"></i></a> <a class="btn btn-xs note_copy" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i></a></li>
+				{% comment %}
+				need to add a way to get the percent complete for the list at a later date
+				<div class="completion thin">
+					<div style="width: 17%;"></div>
+					<p class="loaded"><span>17%</span> complete</p>
+				</div>
+				{% endcomment %}
+		{% endfor %}
+		</ul>
 {% else %}
-    <p>You have not created any custom lists yet. Click the link below to create your first list!</p>
+		<p>You have not created any custom lists yet. Click the link below to create your first list!</p>
 {% endif %}
  <p><a class="btn btn-primary" href="{% url list-add %}"><i class="glyphicon glyphicon-plus icon-white"></i> New List</a></p>
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
-  {% include "somesmart/include_book_data.html" %}
-  {% include "somesmart/include_recent_posts.html" %}
+	{% include "somesmart/include_book_data.html" %}
+	{% include "somesmart/include_recent_posts.html" %}
 {% endblock %}
