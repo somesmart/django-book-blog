@@ -334,7 +334,7 @@ class ListDetailView(DetailView):
 		#all the books in the list that have been read
 		self.read_ids = Review.objects.select_related().filter(edition__book__in=self.book_ids).values('edition__book').distinct()
 		#all the reads that have been read by the current user
-		self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, reader=self.request.user).values('edition__book').distinct()
+		self.user_read_ids = Review.objects.filter(edition__book__in=self.book_ids, reader=self.list.user).values('edition__book').distinct()
 		#all the reads that OTHERS have read, but not those the user has read
 		self.others_read_ids = Review.objects.filter(edition__book__in=self.book_ids).exclude(edition__book__in=self.user_read_ids).values('edition__book').distinct()
 		#distinct reads from the list the current user has read
@@ -358,7 +358,7 @@ class ListSummary(ListView):
 	template_name='somesmart/base_list_summary.html'
 	context_object_name = 'list_summary'
 	def get_queryset(self):
-		return List.objects.filter(user = self.request.user)
+		return List.objects.all()
 
 class ListCreateView(CreateView):
 	template_name = 'somesmart/base_list_create.html'
@@ -370,7 +370,6 @@ class ListCreateView(CreateView):
 			obj = form.save(commit=False)
 			obj.user = self.request.user
 			obj.save()
-		#add the option here to define a group if "is_group == True"
 		context = self.get_context_data()
 		listdetail_form = context['listdetail_form']
 		if listdetail_form.is_valid():

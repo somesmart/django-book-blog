@@ -26,11 +26,11 @@ $('.note_copy').tooltip({ title: 'Copy List', placement: 'right' });
 </script>
 {% endblock %}
 {% block content %}
-<h2>My custom lists:</h2>
+<h2>Reading lists:</h2>
 {% if list_summary %}
 		<ul>
 		{% for list in list_summary %}
-				<li class="{{ list.id }}"><a href="{{ list.get_absolute_url }}">{{ list.list_name }}</a> - {{ list.list_descr }} <a class="btn btn-xs note_edit" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-edit"></i></a> <a class="btn btn-xs note_delete" href="#"><i id="{{ list.id }}" class="delete glyphicon glyphicon-remove"></i></a> <a class="btn btn-xs note_copy" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i></a></li>
+				<li class="{{ list.id }}"><a href="{{ list.get_absolute_url }}{{ list.list_name|slugify }}">{{ list.list_name }}</a> - {{ list.list_descr }} {% if user.id = list.user.id %}<a class="btn btn-xs note_edit" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-edit"></i></a> <a class="btn btn-xs note_delete" href="#"><i id="{{ list.id }}" class="delete glyphicon glyphicon-remove"></i></a> <a class="btn btn-xs note_copy" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i></a>{% endif %}</li>
 				{% comment %}
 				need to add a way to get the percent complete for the list at a later date
 				<div class="completion thin">
@@ -43,7 +43,7 @@ $('.note_copy').tooltip({ title: 'Copy List', placement: 'right' });
 {% else %}
 		<p>You have not created any custom lists yet. Click the link below to create your first list!</p>
 {% endif %}
- <p><a class="btn btn-primary" href="{% url list-add %}"><i class="glyphicon glyphicon-plus icon-white"></i> New List</a></p>
+ {% if user.is_authenticated %}<p><a class="btn btn-primary" href="{% url list-add %}"><i class="glyphicon glyphicon-plus icon-white"></i> New List</a></p>{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}

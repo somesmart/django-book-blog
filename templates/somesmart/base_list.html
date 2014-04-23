@@ -1,16 +1,16 @@
 {% extends "somesmart/base.html" %}
 {% block title %}{{ list.list_name }}{% endblock title %}
 {% block content %}
-	<h2>{{ list.list_name }}: <a class="btn btn-small note_copy pull-right" href="{% url list-copy list.id %}">Copy this List <i class="icon-share"></i></a></h1>
+	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy pull-right" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
 	<h3>{{ list.list_descr }}</h3>
 	<div id="book_list">
 		{% if completion %}
 			<div class="completion progress">
-				<div class="bar" style="{% widthratio completion.total_user completion.total 100 %}%;">{% widthratio completion.total_user completion.total 100 %}% complete</div>
+				<div class="progress-bar" role="progressbar" style="{% widthratio completion.total_user completion.total 100 %}%;">{% widthratio completion.total_user completion.total 100 %}% complete</div>
 			</div>
 		{% endif %}
 		{% if user_read %}
-		<h3 class="well well-sm">What you've read:</h3>
+		<h3 class="well well-sm">What's been read by {{ list.user }}:</h3>
 				<ul class="large_list">
 					{% for read in user_read %}
 						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -35,11 +35,23 @@
 			{% endif %}
 	</div>
 	{% if list.user.id == user.id %} 
-	<a class="btn btn-default pull-right" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-wrench"></i> Edit List</a>
+	<a class="btn btn-default btn-sm pull-right" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-wrench"></i> Edit List</a>
 	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
 	{% include "somesmart/include_book_data.html" %}
 	{% include "somesmart/include_recent_posts.html" %}
+{% endblock %}
+{% block app.scripts %}
+<script>
+$(function() {
+	$('.completion').each(function(index) {
+		$(this).children('p').before('<div></div>');
+		$(this).children('p').addClass('loaded');
+		var completed = '{% widthratio completion.total_user completion.total 100 %}%';
+		$(this).children('div').animate({ width: completed }, 1000);
+	}); 
+});
+</script>
 {% endblock %}
