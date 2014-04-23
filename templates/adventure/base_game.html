@@ -5,7 +5,7 @@
 <script type="text/javascript">
 $(function() {
 	$("#command").autocomplete({
-		source: "{% url adv-autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={{ game_play.level.id }}",
+		source: "{% url adv-autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}",
 		minLength: 2,
 		});
 	$('#command').autocomplete('disable');	
@@ -36,14 +36,13 @@ $(function() {
 	<div> 
 		<form method="get" class="form-horizontal col-md-5">
 			{% csrf_token %}
-			<!-- need a way for only the valid values to show up when available -->
 			<label>Who? </label>
 				<select class="form-control" name="character_select" id="character_select">
 					<option value="{{ game_play.character.id }}">{{ game_play.character }}</option>
 				</select>
 				<label for="command">What? </label> 
 				<input class="form-control" type="text" name="command" id="command"/>
-				<input type="hidden" id="level" value="{{ game_play.level.id }}">
+				<input type="hidden" id="level" value="{% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}">
 				<input type="hidden" id="gameID" value="{{ game_play.game.id }}">
 				<input style="display:none" type="submit" value="go" id="search_button"/> 
 		</form>

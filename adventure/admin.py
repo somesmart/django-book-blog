@@ -58,6 +58,14 @@ class WordAdmin(admin.ModelAdmin):
 
 	list_filter = ('game',)
 
+class GenericAdmin(admin.ModelAdmin):
+	list_display = (
+		'game',
+		'wordgroup',
+	)
+
+	list_filter = ('game',)
+
 admin.site.register(Game)
 admin.site.register(Character)
 admin.site.register(Level, LevelAdmin)
@@ -66,3 +74,4 @@ admin.site.register(WordGroup, WordGroupAdmin)
 admin.site.register(Word, WordAdmin)
 admin.site.register(Story, StoryAdmin)
 admin.site.register(Unknown, UnknownAdmin)
+admin.site.register(Generic, GenericAdmin)

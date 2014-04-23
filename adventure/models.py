@@ -82,3 +82,11 @@ class Unknown(models.Model):
 
 	def __unicode__(self):
 		return self.term
+
+class Generic(models.Model):
+	game = models.ForeignKey(Game)
+	wordgroup = models.ForeignKey(WordGroup)
+	text = models.TextField()
+
+	def __unicode__(self):
+		return self.text

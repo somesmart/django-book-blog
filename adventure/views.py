@@ -61,17 +61,22 @@ def story_line(request, word, game, character, level):
 			json = simplejson.dumps(results)
 			return HttpResponse(json, mimetype='application/json')
 		except Story.DoesNotExist:
-			line = None
 			try:
-				unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
-				unknown.attempts = unknown.attempts + 1
-				unknown.save()
-				data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+				line = Generic.objects.select_related().get(game=game, wordgroup__id=word_group.id)
+				data = data = {'id': line.id, 'character_id': character.id, 'next_level': level.id, 'text': line.text }
 				results.append(data)
-			except Unknown.DoesNotExist:
-				Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
-				data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
-				results.append(data)
+			except Generic.DoesNotExist:
+				line = None
+				try:
+					unknown = Unknown.objects.get(game=game, level=level, character=character, term=word)
+					unknown.attempts = unknown.attempts + 1
+					unknown.save()
+					data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+					results.append(data)
+				except Unknown.DoesNotExist:
+					Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
+					data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
+					results.append(data)
 			json = simplejson.dumps(results)
 			return HttpResponse(json, mimetype='application/json')
 	except Word.DoesNotExist:
@@ -114,6 +119,13 @@ class GameView(ListView):
 		for story in stories:
 			if first:
 				return Story.objects.select_related().get(id=story.id)
+
+	def get_context_data(self, **kwargs):
+		context = super(GameView, self).get_context_data(**kwargs)
+		if self.request.method == "GET":
+			if self.request.GET.has_key(u'story_id'):
+				context ['next_level'] = self.kwargs['level']
+		return context
 
 class GameList(ListView):
 	template_name='adventure/base_index.html'
