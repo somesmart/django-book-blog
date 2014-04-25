@@ -1,0 +1,22 @@
+{% extends "somesmart/base.html" %}
+{% block title %}{{ event_detail.journey }}{% endblock title %}
+{% block top-content %}{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>{{ event_detail.deck }}<br><small> <a href="{% url journey-view event_detail.journey.id %}">{{ event_detail.journey }}</a></small></h4>
+		</div>
+		<div class="panel-body">
+			<div>{{ event_detail.description }}</div>
+		</div>
+	</div>
+	<div><a class="btn btn-default" href="{% url event-date-view event_detail.event_month event_detail.event_day %}">More from this day</a></div>
+</div>
+<br>
+{% include "lotr/include_day_nav.html" %}
+{% endblock content %}
+{% block top-right-content %}{% endblock %}
+{% block right-content %}
+	{% include "somesmart/include_contact.html" %}
+{% endblock %}

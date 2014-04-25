@@ -1,0 +1,33 @@
+<div>
+	{% for event in event_list %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>{{ event.third_age_year }} (3rd Age) - <a href="{% url journey-view event.journey.id %}">{{ event.journey }}</h4>
+			</div>
+			<div class="panel-body">
+				<strong><p><a href="{% url event-view event.id %}">{{ event.deck }}</a></p></strong>
+				<p>{{ event.description }}</p>
+				<p>These major characters were present</p>
+				<ul class="list-unstyled review">
+					{% for character in event.characterevent_set.all %}
+						<li>{{ character.character }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% empty %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>No events!</h4>
+			</div>
+			<div class="panel-body">
+				<p>Nothing seems to have happened on this day... (or more likely it's not in the database yet)</p>
+			</div>
+		</div>
+	{% endfor %}
+</div>
+{% for event_detail in event_list %}
+	{% if forloop.counter == 1 %}
+		{% include "lotr/include_day_nav.html" %}
+	{% endif %}
+{% endfor %}
