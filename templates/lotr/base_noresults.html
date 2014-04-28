@@ -6,6 +6,8 @@
 {% block top-right-content %}{% endblock top-right-content %}
 {% block right-content %}
 	<div class="col-md-10 col-lg-offset-1">
-      {% include "somesmart/include_contact.html" %}
-    </div>
+		{% include "lotr/include_month_warning.html" %}
+		{% include "somesmart/include_contact.html" %}
+		{% include "lotr/include_search_form.html" %}
+	</div>
 {% endblock %}

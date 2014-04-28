@@ -12,6 +12,28 @@ from sssd.lotr.models import *
 from decimal import *
 from datetime import datetime
 
+def get_dates(month, day):
+	day = int(day)
+	month = int(month)
+	prev_day = day - 1
+	next_day = day + 1
+	prev_month = month
+	next_month = month
+	if day == 30:
+		next_day = 1
+		if month == 12:
+			next_month = 1
+		else:
+			next_month = month + 1
+	if day == 1:
+		prev_day = 30
+		if month == 1:
+			prev_month = 12
+		else:
+			prev_month = month - 1
+	dates = {'prev_month': prev_month, 'next_month': next_month, 'prev_day': prev_day, 'next_day': next_day}
+	return dates
+
 class TodayEvent(ListView):
 	template_name='lotr/base_index.html'
 	context_object_name = 'event_list'
@@ -20,10 +42,24 @@ class TodayEvent(ListView):
 		self.tdy = datetime.now().date()
 		return Event.objects.select_related().filter(event_day=self.tdy.day, event_month=self.tdy.month)
 
+	def get_context_data(self, **kwargs):
+		context = super(TodayEvent, self).get_context_data(**kwargs)
+		self.tdy = datetime.now().date()
+		self.dates = get_dates(self.tdy.month, self.tdy.day)
+		context ['dates'] = self.dates
+		return context
+
 class EventView(DetailView):
 	queryset = Event.objects.select_related()
 	template_name='lotr/base_event.html'
 	context_object_name = 'event_detail'
+
+	def get_context_data(self, **kwargs):
+		context = super(EventView, self).get_context_data(**kwargs)
+		self.event = Event.objects.get(pk=self.kwargs['pk'])
+		self.dates = get_dates(self.event.event_month, self.event.event_day)
+		context ['dates'] = self.dates
+		return context
 
 class EventByDate(ListView):
 	template_name = 'lotr/base_event_by_date.html'
@@ -31,6 +67,12 @@ class EventByDate(ListView):
 
 	def get_queryset(self):
 		return Event.objects.select_related().filter(event_day=self.kwargs['day'], event_month=self.kwargs['month']).order_by('shire_year')
+
+	def get_context_data(self, **kwargs):
+		context = super(EventByDate, self).get_context_data(**kwargs)
+		self.dates = get_dates(self.kwargs['month'], self.kwargs['day'])
+		context ['dates'] = self.dates
+		return context
 
 class JourneyView(DetailView):
 	queryset = Journey.objects.select_related()

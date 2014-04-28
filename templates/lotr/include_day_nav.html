@@ -1,8 +1,8 @@
-<div class="row">
+<div>
 	<div class="pull-left">
-		<a class="btn btn-success" href="/lotr/event/date/{{ event_detail.event_month }}/{{ event_detail.event_day|add:"-1" }}/"><i class="glyphicon glyphicon-chevron-left"></i> Previous Day</a>
+		<a class="btn btn-success" href="/lotr/event/date/{{ dates.prev_month }}/{{ dates.prev_day }}/"><i class="glyphicon glyphicon-chevron-left"></i> Previous Day</a>
 	</div>	
 	<div class="pull-right">
-		<a class="btn btn-success" href="/lotr/event/date/{{ event_detail.event_month }}/{{ event_detail.event_day|add:"1" }}/"><i class="glyphicon glyphicon-chevron-right"></i> Next Day</a>
+		<a class="btn btn-success" href="/lotr/event/date/{{ dates.next_month }}/{{ dates.next_day }}/">Next Day <i class="glyphicon glyphicon-chevron-right"></i></a>
 	</div>
 </div>

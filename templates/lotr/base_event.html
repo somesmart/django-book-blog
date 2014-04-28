@@ -2,21 +2,30 @@
 {% block title %}{{ event_detail.journey }}{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
-<div class="row">
+<div><a class="btn btn-default" href="{% url event-date-view event_detail.event_month event_detail.event_day %}">More from {{ event_detail.event_month }}/{{ event_detail.event_day }}</a>{% include "lotr/include_today_link.html" %}</div>
+<br>
+<div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h4>{{ event_detail.deck }}<br><small> <a href="{% url journey-view event_detail.journey.id %}">{{ event_detail.journey }}</a></small></h4>
 		</div>
 		<div class="panel-body">
-			<div>{{ event_detail.description }}</div>
+			<p>{{ event_detail.description }}</p>
+			{% with event_detail as event %}
+			{% include "lotr/include_characters_present.html" %}
+			{% endwith %}
 		</div>
 	</div>
-	<div><a class="btn btn-default" href="{% url event-date-view event_detail.event_month event_detail.event_day %}">More from this day</a></div>
 </div>
 <br>
 {% include "lotr/include_day_nav.html" %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
+	{% include "lotr/include_month_warning.html" %}
 	{% include "somesmart/include_contact.html" %}
+	{% include "lotr/include_search_form.html" %}
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}lotr/functions.js"></script>
 {% endblock %}

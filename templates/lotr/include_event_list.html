@@ -7,12 +7,7 @@
 			<div class="panel-body">
 				<strong><p><a href="{% url event-view event.id %}">{{ event.deck }}</a></p></strong>
 				<p>{{ event.description }}</p>
-				<p>These major characters were present</p>
-				<ul class="list-unstyled review">
-					{% for character in event.characterevent_set.all %}
-						<li>{{ character.character }}</li>
-					{% endfor %}
-				</ul>
+				{% include "lotr/include_characters_present.html" %}
 			</div>
 		</div>
 	{% empty %}

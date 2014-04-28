@@ -1,0 +1,6 @@
+<p>These major characters were present</p>
+	<ul class="list-unstyled review">
+		{% for character in event.characterevent_set.all %}
+			<li>{{ character.character }}</li>
+		{% endfor %}
+	</ul>

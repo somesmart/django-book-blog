@@ -10,6 +10,12 @@ class CharacterEventInline(admin.TabularInline):
 
 class EventAdmin(admin.ModelAdmin):
 	inlines = [CharacterEventInline]
+	list_display = (
+		'deck',
+		'event_month',
+		'event_day',
+		'third_age_year',
+	)
 
 admin.site.register(Location)
 admin.site.register(Journey)

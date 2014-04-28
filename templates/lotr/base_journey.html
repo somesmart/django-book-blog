@@ -1,6 +1,8 @@
 {% extends "somesmart/base.html" %}
 {% block title %}{{ journey }}{% endblock title %}
 {% block content %}
+<div class="row">{% include "lotr/include_today_link.html" %}</div>
+<br>
 <div class="row">
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -19,6 +21,11 @@
 {% block top-right-content %}{% endblock top-right-content %}
 {% block right-content %}
 	<div class="col-md-10 col-lg-offset-1">
+		{% include "lotr/include_month_warning.html" %}
 		{% include "somesmart/include_contact.html" %}
+		{% include "lotr/include_search_form.html" %}
 	</div>
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}lotr/functions.js"></script>
 {% endblock %}
