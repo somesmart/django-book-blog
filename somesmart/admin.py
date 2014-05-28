@@ -11,8 +11,12 @@ class EditionInline(admin.TabularInline):
 	model = Edition
 	extra = 3
 
+class SeriesInline(admin.TabularInline):
+	model = SeriesDetail
+	extra = 5	
+
 class BookAdmin(admin.ModelAdmin):
-	inlines = [EditionInline]  
+	inlines = [EditionInline, SeriesInline]
 	list_display = (
 		'title',
 		'author',
@@ -65,6 +69,13 @@ class FavoriteAdmin(admin.ModelAdmin):
 		'rank',
 	)
 
+class SeriesAdmin(admin.ModelAdmin):
+	list_display = (
+		'name',
+		'count'
+	)
+
+
 admin.site.register(Book, BookAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Genre)
@@ -78,3 +89,4 @@ admin.site.register(ShelfDetail)
 admin.site.register(QuoteType)
 admin.site.register(List, ListAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
+admin.site.register(Series, SeriesAdmin)

@@ -227,3 +227,15 @@ iframe {
 .myTag a {
 	color: #EBEBEB;
 }
+
+.calendar {
+  border: 1px solid #2b3e50;
+}
+.calendar > thead > tr > th,
+.calendar > tbody > tr > th,
+.calendar > tfoot > tr > th,
+.calendar > thead > tr > td,
+.calendar > tbody > tr > td,
+.calendar > tfoot > tr > td {
+  border: 1px solid #2b3e50;
+}

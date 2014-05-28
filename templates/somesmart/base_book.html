@@ -39,6 +39,9 @@
 	{% include "somesmart/include_book_data.html" %}
 	{% include "somesmart/include_recent_posts.html" %}
 	{% include "somesmart/include_book_tags.html" %}
+	{% if series %}
+		{% include "somesmart/include_series_data.html" %}
+	{% endif %}
 	<div class="row">
 		<h4 class="well well-sm">Related Books</h4>
 		<div id="related-books"></div>

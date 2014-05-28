@@ -179,3 +179,22 @@ class List(models.Model):
 class ListDetail(models.Model):
 	list = models.ForeignKey(List, related_name="list_details")
 	book = models.ForeignKey(Book)
+
+# ************************************************************** #
+# *********************** series data ************************** #
+# ************************************************************** #
+
+class Series(models.Model):
+	name = models.CharField(max_length=200)
+	count = models.IntegerField()
+
+	def __unicode__(self):
+		return self.name
+
+class SeriesDetail(models.Model):
+	series = models.ForeignKey(Series)
+	book = models.ForeignKey(Book)
+	sequence = models.IntegerField()
+
+	def __unicode__(self):
+		return u"%s - %s, %s of %s" % (self.series, self.book, self.sequence, self.series.count)

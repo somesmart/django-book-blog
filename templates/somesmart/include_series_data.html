@@ -1,0 +1,12 @@
+<div class="row">
+	<h4 class="well well-sm">{% for s in series %}{% if forloop.first %}{{ s.series }}{% endif %}{% endfor %}</small></h4>	
+</div>
+<div class="row">
+<ul class="list list-horizontal list-unstyled">
+	{% for b in series %}
+	<li>
+		<a href="{% url book-view b.book.id %}{{ b.book.title|slugify }}/">{{ b.book.title }}</a> ({{ b.sequence }} of {{ b.series.count }})
+	</li>
+	{% endfor %}
+</ul>
+</div>

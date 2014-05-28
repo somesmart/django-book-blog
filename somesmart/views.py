@@ -71,6 +71,16 @@ class BookView(DetailView):
 	queryset = Book.objects.select_related()
 	template_name='somesmart/base_book.html'
 
+	def get_context_data(self, **kwargs):
+		context = super(BookView, self).get_context_data(**kwargs)
+		try:
+			self.dtl = SeriesDetail.objects.values('series').filter(book__id=self.kwargs['pk']).distinct()
+			self.series = SeriesDetail.objects.select_related().filter(series=self.dtl).order_by('sequence')
+		except SeriesDetail.DoesNotExist:
+			self.series = None
+		context['series'] = self.series
+		return context
+
 def bookinfo_php(request):
 	if request.GET.has_key(u'bookid'):
 		isbn = request.GET[u'bookid']
