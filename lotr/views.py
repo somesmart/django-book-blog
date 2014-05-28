@@ -34,6 +34,17 @@ def get_dates(month, day):
 	dates = {'prev_month': prev_month, 'next_month': next_month, 'prev_day': prev_day, 'next_day': next_day}
 	return dates
 
+def get_month_dates(month):
+	month = int(month)
+	prev_month = month - 1
+	next_month = month + 1
+	if month == 1:
+		prev_month = 12
+	if month == 12:
+		next_month = 1
+	dates = {'prev_month': prev_month, 'next_month': next_month}
+	return dates
+
 class TodayEvent(ListView):
 	template_name='lotr/base_index.html'
 	context_object_name = 'event_list'
@@ -72,7 +83,22 @@ class EventByDate(ListView):
 		context = super(EventByDate, self).get_context_data(**kwargs)
 		self.dates = get_dates(self.kwargs['month'], self.kwargs['day'])
 		context ['dates'] = self.dates
+		if self.kwargs['day'] == '31':
+			context ['na'] = {'value': '<p>Unfortunately the 31st does not exist in the Shire calendar. Please try a different date.</p>'}
 		return context
+
+class EventByMonth(ListView):
+	template_name = 'lotr/base_event_month.html'
+	context_object_name = 'event_list'
+
+	def get_queryset(self):
+		return Event.objects.select_related().filter(event_month=self.kwargs['month']).order_by('event_day', 'shire_year')
+
+	def get_context_data(self, **kwargs):
+		context = super(EventByMonth, self).get_context_data(**kwargs)
+		self.dates = get_month_dates(self.kwargs['month'])
+		context ['dates'] = self.dates
+		return context		
 
 class JourneyView(DetailView):
 	queryset = Journey.objects.select_related()

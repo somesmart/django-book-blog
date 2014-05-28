@@ -16,7 +16,11 @@
 				<h4>No events!</h4>
 			</div>
 			<div class="panel-body">
-				<p>Nothing seems to have happened on this day... (or more likely it's not in the database yet)</p>
+				{% if na %}
+					{{ na.value|safe }}
+				{% else %}
+					<p>Nothing seems to have happened on this day... (or more likely it's not in the database yet)</p>
+				{% endif %}
 			</div>
 		</div>
 	{% endfor %}

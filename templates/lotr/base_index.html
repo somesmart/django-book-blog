@@ -1,12 +1,12 @@
 {% extends "somesmart/base.html" %}
 {% block title %}Welcome to the Lord of the Rings Calendar!{% endblock title %}
 {% block content %}
-<p class="well well-sm">Years ago, like we all are at some time or another, I was struck with the thought "I wonder what happened on my birthday in <strong>The Lord of the Rings</strong>". This, naturally, expanded into the idea that I should provide a simple way for everyone to find out what happened on their birthday in <strong>The Lord of the Rings</strong>. Currently, I only have data from the first book (9/20 to 2/26) loaded, but hopefully I'll get to the rest eventually. If you notice any errors, let me know!</p>
-<div class="row">
+<p class="well well-sm">Like everyone at some point or another, I've often wondered "what happened on my birthday in <strong>The Lord of the Rings</strong>?" This, naturally, expanded into the idea that I should provide a simple way for everyone to find this information. Currently, I only have data from 9/20 to 3/2 loaded, but hopefully I'll get to the rest eventually. If you notice any errors, let me know!</p>
+<div>
 	<h3>Today in <strong>The Lord of the Rings</strong>:</h3>
 	{% include "lotr/include_event_list.html" %}
 </div>
-<div class="row">
+<div>
 {% include "lotr/include_search_form.html" %}
 </div>
 {% endblock content %}

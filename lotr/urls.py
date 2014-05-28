@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 	url(r'^$', TodayEvent.as_view(), name='lotr-home'),
 	url(r'^noresults/', direct_to_template, { 'template': 'lotr/base_noresults.html' }, name='no-results'),
 	url(r'^event/(?P<pk>\d+)/$', EventView.as_view(), name='event-view'),
+	url(r'^event/month/(?P<month>\d+)/', EventByMonth.as_view(), name='event-month-view'),
 	url(r'^event/date/(?P<month>\d+)/(?P<day>\d+)/$', EventByDate.as_view(), name='event-date-view'),
 	url(r'^journey/(?P<pk>\d+)/$', JourneyView.as_view(), name='journey-view'),
 )
