@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
-from django.utils import simplejson
+import json
 from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
 from django.core.urlresolvers import reverse
@@ -34,8 +34,8 @@ def autocomplete(request):
 					for word in model_results:
 						data = {'id': word.wordgroup.id, 'label': word.wordgroup.group_descr }
 						results.append(data)
-					json = simplejson.dumps(results)
-					return HttpResponse(json, mimetype='application/json')
+					json_results = json.dumps(results)
+					return HttpResponse(json_results, mimetype='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 		else:
@@ -58,8 +58,8 @@ def story_line(request, word, game, character, level):
 			line = Story.objects.select_related().get(game=game, character=character, level=level, wordgroup__id=word_group.id)
 			data = {'id': line.id, 'character_id': line.character.id, 'next_level': line.next_level.id, 'text': line.text }
 			results.append(data)
-			json = simplejson.dumps(results)
-			return HttpResponse(json, mimetype='application/json')
+			json_results = json.dumps(results)
+			return HttpResponse(json_results, mimetype='application/json')
 		except Story.DoesNotExist:
 			try:
 				line = Generic.objects.select_related().get(game=game, wordgroup__id=word_group.id)
@@ -77,8 +77,8 @@ def story_line(request, word, game, character, level):
 					Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
 					data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
 					results.append(data)
-			json = simplejson.dumps(results)
-			return HttpResponse(json, mimetype='application/json')
+			json_results = json.dumps(results)
+			return HttpResponse(json_results, mimetype='application/json')
 	except Word.DoesNotExist:
 		word_group = None
 		try:
@@ -92,8 +92,8 @@ def story_line(request, word, game, character, level):
 			Unknown(game=game, level=level, character=character, term=word, attempts=1).save()
 			data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
 			results.append(data)
-		json = simplejson.dumps(results)
-		return HttpResponse(json, mimetype='application/json')
+		json_results = json.dumps(results)
+		return HttpResponse(json_results, mimetype='application/json')
 
 def level_options(request, game, level):
 	results = ''

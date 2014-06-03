@@ -1,4 +1,5 @@
 {% extends "todo/base.html" %}
+{% load url from future %}
 {% block title %}Todo List: {{ list.name }}{% endblock %}
 {% block top-content %}
 {% if perms.todo.add_list %}
@@ -71,7 +72,7 @@
 		{% for task in task_list %}
 			<tr class="{% cycle 'row1' 'row2' %}" id="{{ task.id }}">
 				<td><input type="checkbox" name="mark_done" value="{{ task.id }}" id="mark_done_{{ task.id }}">	</td> 
-				<td><a href="{% url todo-task_detail task.id %}">{{ task.title|truncatewords:20 }}</a></td> 
+				<td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td> 
 				<td>{{ task.created_date|date:"m/d/Y" }}</td> 
 				<td>
 				{% if task.overdue_status %}<span class="overdue">{% endif %}
@@ -84,14 +85,14 @@
 				<td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
 				</td>
 				{% ifequal list_slug "mine" %}
-				<td><a href="{% url todo-incomplete_tasks task.list.id task.list.slug %}">{{ task.list }}</a></td>	
+				<td><a href="{% url 'todo-incomplete_tasks' task.list.id task.list.slug %}">{{ task.list }}</a></td>	
 				{% endifequal %}
 				<td><input type="checkbox" name="del_task" value="{{ task.id }}" id="del_task_{{ task.id }}">	</td>
 			</tr>
 		{% endfor %}
 	</table>
 	<p><input type="submit" name="mark_tasks_done" value="Update..."  class="btn btn-default"></p>
-	<p><a  class="btn btn-info" href="{% url todo-completed_tasks list_id list_slug %}">View completed tasks</a></p>
+	<p><a  class="btn btn-info" href="{% url 'todo-completed_tasks' list_id list_slug %}">View completed tasks</a></p>
 	{% endifequal %}
 	{% ifequal view_completed 1 %}
 	<h3>Completed tasks</h3> 
@@ -111,7 +112,7 @@
 		{% for task in completed_list %}
 			<tr class="{% cycle 'row1' 'row2' %}">
 				<td><input type="checkbox" name="undo_completed_task" value="{{ task.id }}" id="id_undo_completed_task{{ task.id }}">	</td>
-				<td><a href="{% url todo-task_detail task.id %}">{{ task.title|truncatewords:20 }}</a></td> 
+				<td><a href="{% url 'todo-task_detail' task.id %}">{{ task.title|truncatewords:20 }}</a></td> 
 				<td>{{ task.created_date|date:"m/d/Y" }}</td> 
 				<td>{{ task.completed_date|date:"m/d/Y" }}</td>
 				<td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
@@ -122,11 +123,11 @@
 	</table>
 	<p><input type="submit" name="deldonetasks" value="Continue..."  class="btn btn-default"></p>
 	</form> 
-	<p><a  class="btn btn-info" href="{% url todo-incomplete_tasks list_id list_slug %}">View incomplete tasks</a></p>
+	<p><a  class="btn btn-info" href="{% url 'todo-incomplete_tasks' list_id list_slug %}">View incomplete tasks</a></p>
 	{% endifequal %}
 	{% ifequal can_del 1 %}
 	{% ifnotequal list_slug "mine" %}
-		<p><a class="btn btn-danger" href="{% url todo-del_list list_id list_slug %}">Delete this list</a></p>
+		<p><a class="btn btn-danger" href="{% url 'todo-del_list' list_id list_slug %}">Delete this list</a></p>
 	{% endifnotequal %}
 	{% endifequal %}
 	{% endifequal %}
@@ -138,7 +139,7 @@ function order_tasks(data) {
 	// The JQuery plugin tableDnD provides a serialize() function which provides the re-ordered 
 	// data in a list. We pass that list as an object called "data" to a Django view 
 	// to save the re-ordered data into the database.
-	$.post("{% url todo-reorder_tasks %}", data, "json");
+	$.post("{% url 'todo-reorder_tasks' %}", data, "json");
 	return false;
 };
 $(document).ready(function() {

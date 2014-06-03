@@ -1,4 +1,5 @@
 {% extends "todo/base.html" %}
+{% load url from future %}
 {% block title %}{{ list_title }} Todo Lists{% endblock %}
 {% block content %}
 {% if perms.todo.add_list %}
@@ -16,13 +17,13 @@
 		<h3>{{ group.grouper }}</h3>
 		<ul>
 			{% for item in group.list %}
-				<li><a class="todo" href="{% url todo-incomplete_tasks item.id item.slug %}">{{ item.name }} </a> ({{ item.incomplete_tasks.count }}/{{ item.item_set.count }})</li>
+				<li><a class="todo" href="{% url 'todo-incomplete_tasks' item.id item.slug %}">{{ item.name }} </a> ({{ item.incomplete_tasks.count }}/{{ item.item_set.count }})</li>
 			{% endfor %}
 		</ul>
 	{% endfor %}
 	<div class="todo-break">
 	&nbsp;
 	</div>
-	<p><a class="btn btn-default" href="{% url todo-add_list %}">Create new todo list</a></p>
+	<p><a class="btn btn-default" href="{% url 'todo-add_list' %}">Create new todo list</a></p>
 {% endif %}
 {% endblock %}

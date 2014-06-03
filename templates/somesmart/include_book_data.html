@@ -1,6 +1,8 @@
+{% load url from future %}
+{% load tz %}
 {% if book.id %}
 <div class="row">
-<h4 class="well well-sm"><a href="{% url book-view book.id %}{{ book.title|slugify }}/">{{ book.title }}</a> <br><small>by <a href="{% url author-view book.author.id %}">{{ book.author }}</a></small></h4>
+<h4 class="well well-sm"><a href="{% url 'book-view' book.id %}{{ book.title|slugify }}/">{{ book.title }}</a> <br><small>by <a href="{% url 'author-view' book.author.id %}">{{ book.author }}</a></small></h4>
 </div>
 <div class="row">
 <dl>
@@ -12,10 +14,10 @@
 		</div>
 	</dt>
 	<dd>
-		<p>Originally Published {{ book.original_publication|date }}</p>
+		<p>Originally Published {% localtime off %}{{ book.original_publication|date }}{% endlocaltime %}</p>
 	{% for edition in book.edition_set.all %}
 		<p>{{ edition.get_format_display }} edition:</p>
-		<p>{{ edition.pages }} pages - {{ edition.published|date }}</p>
+		<p>{{ edition.pages }} pages - {% localtime off %}{{ edition.published|date }}{% endlocaltime %}</p>
 	{% endfor %}
 	</dd>
 </dl>

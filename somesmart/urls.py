@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
-from django.views.generic.simple import direct_to_template
+from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView, TemplateView
 from django.db.models import Count
 from sssd.somesmart.models import *
 from sssd.somesmart.views import *
@@ -14,11 +13,11 @@ urlpatterns = patterns('',
 			context_object_name='recent_reads',
 			template_name='somesmart/base_index.html')),
 	#about page
-	url(r'^about/$', direct_to_template, { 'template': 'somesmart/base_about.html'}, name='about-page'),
+	url(r'^about/$', TemplateView.as_view(template_name = 'somesmart/base_about.html'), name='about-page'),
 	#book details
 	url(r'^book/(?P<pk>\d+)/', BookView.as_view(), name='book-view'),
 	url(r'^author/(?P<pk>\d+)/', AuthorView.as_view(), name='author-view'),
-	url(r'^my-books/$', direct_to_template, { 'template': 'somesmart/base_mybooks.html'}, name='my-books'),
+	url(r'^my-books/$', TemplateView.as_view(template_name = 'somesmart/base_mybooks.html'), name='my-books'),
 	#charts
 	url(r'^charts/$', GlobalStats.as_view(), name='charts'),
 	url(r'^charts/(?P<chart>[-\w]+)/(?P<option>[\s\w\d]+)$', ChartGenerate.as_view(), name='chart-generate'),
@@ -65,14 +64,13 @@ urlpatterns = patterns('',
 	url(r'^blog/feeds/', include('zinnia.urls.feeds')),
 	url(r'^blog/authors/', include('zinnia.urls.authors')),
 	url(r'^blog/categories/', include('zinnia.urls.categories')),
-	url(r'^blog/discussions/', include('zinnia.urls.discussions')),
 	url(r'^blog/archives/', include('zinnia.urls.archives')),
 	url(r'^blog/', include('zinnia.urls.entries')),
 	url(r'^blog/', include('zinnia.urls.shortlink')),
 	url(r'^blog/', include('zinnia.urls.quick_entry')),
 	url(r'^comments/', include('django.contrib.comments.urls')),
 	(r'^contact/', include('contact_form.urls')),
-	url(r'noresults/', direct_to_template, { 'template': 'somesmart/base_noresults.html' }, name='no-results'),
+	url(r'noresults/', TemplateView.as_view(template_name = 'somesmart/base_noresults.html'), name='no-results'),
 	#legacy urls
 	url(r'^books/bookinfo\.php$', 'sssd.somesmart.views.bookinfo_php', name='bookinfo-php'),
 	url(r'^bookinfo\.php$', 'sssd.somesmart.views.bookinfo_php', name='bookinfo-php'),

@@ -1,11 +1,12 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Select your game and play!{% endblock title %}
 {% block content %}
 	<h3>Select a game:</h3>
 	<dl>
 		{% for game in game_list %}
 		{% if game.game.status == 1 or game.game.creator.id == request.user.id %}
-			<dt><a href="{% url game-view game.game.id game.character.id game.level.id %}{{ game.game.slug }}">{{ game.game.name }}</a></dt>
+			<dt><a href="{% url "game-view" game.game.id game.character.id game.level.id %}{{ game.game.slug }}">{{ game.game.name }}</a></dt>
 			<dd>{{ game.text|truncatewords_html:30|safe }}</dd>
 		{% endif %}
 		{% endfor %}

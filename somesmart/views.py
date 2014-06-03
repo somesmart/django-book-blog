@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
-from django.utils import simplejson
+import json
 from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
 from django.core.urlresolvers import reverse
@@ -35,8 +35,8 @@ def autocomplete(request):
 					for book in model_results:
 						data = {'id': book.id, 'label': book.title }
 						results.append(data)
-					json = simplejson.dumps(results)
-					return HttpResponse(json, mimetype='application/json')
+					json_results = json.dumps(results)
+					return HttpResponse(json_results, mimetype='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 			elif search == "primary_search":
@@ -49,8 +49,8 @@ def autocomplete(request):
 						except:
 							data = {'id': '/author/' + str(book.author.id) + '/', 'label': book.author.first_name + ' ' + book.author.last_name }
 						results.append(data)
-					json = simplejson.dumps(results)
-					return HttpResponse(json, mimetype='application/json')
+					json_results = json.dumps(results)
+					return HttpResponse(json_results, mimetype='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 			elif search == "author":
@@ -60,8 +60,8 @@ def autocomplete(request):
 					for author in model_results:
 						data = {'id': author.id, 'label': author.first_name + ' ' + author.last_name }
 						results.append(data)
-					json = simplejson.dumps(results)
-					return HttpResponse(json, mimetype='application/json')
+					json_results = json.dumps(results)
+					return HttpResponse(json_results, mimetype='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 		else:
@@ -275,9 +275,9 @@ def get_gr_current(request):
 	xmlLink=xmlLink.replace('<link>','').replace('</link>','')
 	#put it in in a dictionary
 	results = [{ 'link': xmlLink, 'status': xmlData }]
-	json = simplejson.dumps(results)
+	json_results = json.dumps(results)
 	if results:
-		return HttpResponse(json, mimetype='application/json')
+		return HttpResponse(json_results, mimetype='application/json')
 
 def get_random_quote(request):
 	random = Quote.objects.exclude(quote_type__id=3).exclude(quote_type__id=4).order_by('?')[:1].get()
@@ -471,8 +471,8 @@ def book_tags(request, book):
 		tag_list.append(data)
 
 	results = {'tags': tag_list}
-	json = simplejson.dumps(results)
-	return HttpResponse(json, mimetype='application/json')
+	json_results = json.dumps(results)
+	return HttpResponse(json_results, mimetype='application/json')
 
 def current_tags(request):
 	tags = Tag.objects.usage_for_model(Book, counts=True, min_count=None, filters=None)
@@ -483,8 +483,8 @@ def current_tags(request):
 		tag_list.append(data)
 
 	results = {'tags': tag_list}
-	json = simplejson.dumps(results)
-	return HttpResponse(json, mimetype='application/json')
+	json_results = json.dumps(results)
+	return HttpResponse(json_results, mimetype='application/json')
 
 def save_tags(request, book):
 	book = Book.objects.get(id=book)

@@ -1,23 +1,6 @@
+{% load tz %}
 <h4>{{ quote.edition.book.title }} <small>by {{ quote.edition.book.author.first_name }} {{ quote.edition.book.author.last_name }}</small></h4>
 <ul class="list-unstyled">
-	<li>{{ quote.edition.get_format_display }} edition published {{ quote.edition.published|date }} ({{ quote.edition.pages }} pages)</li>
-	<li>Originally published {{ quote.edition.book.original_publication|date }}</li>
+	<li>{{ quote.edition.get_format_display }} edition published {% localtime off %}{{ quote.edition.published|date }}{% endlocaltime %} ({{ quote.edition.pages }} pages)</li>
+	<li>Originally published {% localtime off %}{{ quote.edition.book.original_publication|date }}{% endlocaltime %}</li>
 </ul>
-{% comment %} <h3>Book Details</h3>
-<table class="table">
-	<tr>
-		<th>{{ quote.edition.book.title }}</th>
-	</tr>
-	<tr>
-		<td>{{ quote.edition.book.author.first_name }} {{ quote.edition.book.author.last_name }}</td>
-	</tr>
-	<tr>
-		<td>{{ quote.edition.published|date }}</td>
-	</tr>
-	<tr>
-		<td>{{ quote.edition.pages }}</td>
-	</tr>
-	<tr>
-		<td>{{ quote.edition.get_format_display }}</td>
-	</tr>
-</table> {% endcomment %}

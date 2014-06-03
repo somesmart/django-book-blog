@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Browse Quotes{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
@@ -40,7 +41,7 @@
 <h4 class="well well-sm">Browse Quotes by Type</h4>
 	{% if quote_stats %}
 	   {% for type in quote_stats %}
-		<p>{{ type.quote_count }} - <a href="{% url quote-type-list type.quote_type__id %}">{{ type.quote_type__name }} Quotes</a></p>
+		<p>{{ type.quote_count }} - <a href="{% url 'quote-type-list' type.quote_type__id %}">{{ type.quote_type__name }} Quotes</a></p>
 	   {% endfor %}
 	{% endif %}
 {% endblock right-content %}
@@ -56,14 +57,14 @@
 			$("#quote_title_search").show();
 		});
 	$("#quote_author_search").autocomplete({
-	  source: "{% url autocomplete %}?search=author",
+	  source: "{% url 'autocomplete' %}?search=author",
 	  minLength: 3,
 	  select: function(event, ui) {
 		window.location.href = "/quote/author/" + ui.item.id;
 	  }
 	});
 	$("#quote_title_search").autocomplete({
-	  source: "{% url autocomplete %}?search=title",
+	  source: "{% url 'autocomplete' %}?search=title",
 	  minLength: 3,
 	  select: function(event, ui) {
 		window.location.href = "/quote/book/" + ui.item.id;

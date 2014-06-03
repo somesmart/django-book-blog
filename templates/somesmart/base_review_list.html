@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Browse Reviews{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
@@ -6,7 +7,7 @@
 	{% if review_list %}
 		<dl>
 		{% for review in review_list %}
-			<dt><a href="{% url review-view review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a> - {% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down"></i>{% endif %}</dt>
+			<dt><a href="{% url 'review-view' review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a> - {% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down"></i>{% endif %}</dt>
 			<dd>{% if review.one_sentence %}{{ review.one_sentence|safe }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
 		{% endfor %}
 		</dl>
@@ -17,7 +18,7 @@
 <h4 class="well well-sm">Reviews by Genre</h4>
 	<ul>
 	{% for genre in genre_list %}
-		<li><a href="{% url review-genre-list genre.slug %}">{{ genre.name }}</a></li>
+		<li><a href="{% url 'review-genre-list' genre.slug %}">{{ genre.name }}</a></li>
 	{% endfor %}
 	</ul>
 {% endblock %}

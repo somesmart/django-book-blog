@@ -1,6 +1,6 @@
 from django.db import models
 from sssd.somesmart.models import Book
-from zinnia.models import EntryAbstractClass
+from zinnia.models.entry import EntryAbstractClass
 
 class EntryBook(EntryAbstractClass):
     book = models.ForeignKey(Book, null=True, default=None, blank=True)

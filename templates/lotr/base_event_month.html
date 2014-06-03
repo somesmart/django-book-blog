@@ -1,5 +1,6 @@
 {% extends "somesmart/base.html" %}
 {% load somesmart_extras %}
+{% load url from future %}
 {% block title %}The Lord of the Rings Calendar{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
@@ -19,7 +20,7 @@
 				<table class="table calendar">
 					<tr>
 			{% endif %}
-					<td class="calendar"><span class="pull-right">{{ day.grouper }}</span><br>{% for event in day.list %}{% with event.deck|length|add:-1 as deck_len %}<p><a href="{% url event-date-view event.event_month event.event_day %}" title="{{ event.deck }}">{% if deck_len > 50 %}{{ event.deck|truncchar:50 }}...{% else %}{{ event.deck }}{% endif %}</a></p>{% endwith %}{% endfor %}</td>
+					<td class="calendar"><span class="pull-right">{{ day.grouper }}</span><br>{% for event in day.list %}{% with event.deck|length|add:-1 as deck_len %}<p><a href="{% url 'event-date-view' event.event_month event.event_day %}" title="{{ event.deck }}">{% if deck_len > 50 %}{{ event.deck|truncchar:50 }}...{% else %}{{ event.deck }}{% endif %}</a></p>{% endwith %}{% endfor %}</td>
 				{% if forloop.counter|divisibleby:"7" %}</tr><tr>{% endif %}
 				{% if forloop.last %}
 				</tr>

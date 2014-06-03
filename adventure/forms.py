@@ -1,4 +1,6 @@
 from django import forms
+from django.forms import ModelForm
+from django.forms.models import inlineformset_factory
 
 from sssd.adventure.models import *
 
@@ -60,4 +62,4 @@ class StoryForm(ModelForm):
 	class Meta:
 		model = Story 
 
-StoryFormSet = inlineformset_factory(Level, Story, form=StoryForm)
+StoryFormSet = inlineformset_factory(Level, Story, form=StoryForm, fk_name='level')

@@ -2,10 +2,11 @@
 {% load tagging_tags %}
 {% load somesmart_extras %}
 {% load admin_urls %}
+{% load url from future %}
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
 	<div>
-		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url author-view review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
+		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url 'author-view' review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
 	</div>
 	<div class="pull-right">
 	{% with review.one_sentence|length|add:-1 as review_len %}
@@ -27,7 +28,7 @@
 		{% include "somesmart/include_quote.html" %}
 	{% endfor %}
 	{% if request.user.id == review.reader.id %}
-		<a class="btn btn-default pull-right" href="{% url admin:somesmart_review_change review.id %}">Edit this review</a>
+		<a class="btn btn-default pull-right" href="{% url 'admin:somesmart_review_change' review.id %}">Edit this review</a>
 	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
@@ -48,7 +49,7 @@
 function get_related(book){
 	$.ajax({
 		type: "GET",
-		url: '{% url related-books review.edition.book.id %}',
+		url: '{% url "related-books" review.edition.book.id %}',
 		success: function(data) {
 			$('#related-books').append(data);
 		}
@@ -59,14 +60,14 @@ $(function() {
 		prefilled: [{% tags_for_object review.edition.book as prefilled_tags %}{% for tag in prefilled_tags %}"{{ tag.name }}"{% if not forloop.last %},{% endif %}{% endfor %}],
 		preventSubmitOnEnter: true,
 		typeahead: true,
-		typeaheadAjaxSource: '{% url current-tags %}', 
+		typeaheadAjaxSource: '{% url "current-tags" %}', 
 		typeaheadAjaxPolling: false
 	});
 	{% if request.user.id == 2 %}
 	$('.save-tags').click(function() {
 		var new_tags = $('input[name=hidden-tagsjax]').val();
 		$.ajax({
-			url: '{% url save-tags review.edition.book.id %}',
+			url: '{% url "save-tags" review.edition.book.id %}',
 			type: 'POST',
 			data: {
 			new_tags: new_tags,

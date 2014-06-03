@@ -1,11 +1,12 @@
+{% load url from future %}
 <div>
 	{% for event in event_list %}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h4>{{ event.third_age_year }} (3rd Age) - <a href="{% url journey-view event.journey.id %}">{{ event.journey }}</h4>
+				<h4>{{ event.third_age_year }} (3rd Age) - <a href="{% url 'journey-view' event.journey.id %}">{{ event.journey }}</h4>
 			</div>
 			<div class="panel-body">
-				<strong><p><a href="{% url event-view event.id %}">{{ event.deck }}</a></p></strong>
+				<strong><p><a href="{% url 'event-view' event.id %}">{{ event.deck }}</a></p></strong>
 				<p>{{ event.description }}</p>
 				{% include "lotr/include_characters_present.html" %}
 			</div>

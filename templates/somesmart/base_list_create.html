@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block app.css %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox/colorbox.css">
 {% endblock %}
@@ -8,7 +9,7 @@
 <script type="text/javascript">
 $(function() {
 		$("#selector").autocomplete({
-			source: "{% url autocomplete %}?search=title",
+			source: "{% url 'autocomplete' %}?search=title",
 			minLength: 3,
 			select: function(event, ui) {
 				$('#book_id').val(ui.item.id);

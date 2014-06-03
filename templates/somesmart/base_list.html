@@ -1,7 +1,8 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}{{ list.list_name }}{% endblock title %}
 {% block content %}
-	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy pull-right" href="{% url list-copy list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
+	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy pull-right" href="{% url 'list-copy' list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
 	<h3>{{ list.list_descr }}</h3>
 	<div id="book_list">
 		{% if completion %}
@@ -13,7 +14,7 @@
 		<h3 class="well well-sm">What's been read by {{ list.user }}:</h3>
 				<ul class="large_list">
 					{% for read in user_read %}
-						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
 					{% endfor %}
 				</ul>
 			{% endif %}
@@ -21,7 +22,7 @@
 			<h3 class="well well-sm">Read by Others:</h3>
 				<ul class="large_list">
 					{% for read in others_read %}
-						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
 					{% endfor %}
 				</ul>
 			{% endif %}
@@ -29,7 +30,7 @@
 			<h3 class="well well-sm">To Read:</h3>
 				<ul class="large_list">
 					{% for read in never_read %}
-						<li><a href="{% url book-view read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
+						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
 					{% endfor %}
 				</ul>
 			{% endif %}

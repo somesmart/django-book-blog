@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Favorite Books{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
@@ -6,7 +7,7 @@
 	{% if genre_list %}
 		<ul class="list-unstyled list-inline">
 		{% for genre in genre_list %}
-			<li><a class="btn btn-default btn-sm" href="{% url favorite-genre-list genre.book__genre__slug %}">{{ genre.book__genre__name }}</a></li>
+			<li><a class="btn btn-default btn-sm" href="{% url 'favorite-genre-list' genre.book__genre__slug %}">{{ genre.book__genre__name }}</a></li>
 		{% endfor %}
 		</ul>
 	{% endif %}
@@ -19,7 +20,7 @@
 				{% endfor %}
 			</a>
 			<div class="media-body">
-				<h4 class="media-heading"><a href="{% url book-view favorite.book.id %}{{ favorite.book.title|slugify }}">{{ favorite.book.title }}</a></h4>
+				<h4 class="media-heading"><a href="{% url 'book-view' favorite.book.id %}{{ favorite.book.title|slugify }}">{{ favorite.book.title }}</a></h4>
 				{{ favorite.comment|safe }}
 			</div>
 		</div>

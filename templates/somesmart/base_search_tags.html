@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Tag Search{% endblock title %}
 {% block top-content %}
 <div class="row">
@@ -14,7 +15,7 @@
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<h5><center><a href="{% url book-view book.object_id %}{{ book.object.title|slugify }}">{{ book }}</a></center></h5>
+								<h5><center><a href="{% url 'book-view' book.object_id %}{{ book.object.title|slugify }}">{{ book }}</a></center></h5>
 							</div>
 							{% for edition in book.object.edition_set.all %}
 								{% if forloop.first %}

@@ -1,4 +1,6 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
+{% load tz %}
 {% block title %}{{ author.first_name }} {{ author.last_name }}{% endblock title %}
 {% block top-content %}
 <div class="row">
@@ -9,7 +11,7 @@
 	<div class="col-md-10 col-lg-offset-1">
 		<div class="page-header">
 			<h3>{{ author.first_name }} {{ author.last_name }}{% if author.parent_author %} (a pen name of {{ author.parent_author }}){% endif %}</h3>
-			<small>{% if author.birth_date %}Born: {{ author.birth_date|date }}{% endif %}{% if author.death_date %}<br>Died: {{ author.death_date|date }}{% endif %}</small>
+			<small>{% if author.birth_date %}Born: {% localtime off %}{{ author.birth_date|date }}{% endlocaltime %}{% endif %}{% if author.death_date %}<br>Died: {% localtime off %}{{ author.death_date|date }}{% endlocaltime %}{% endif %}</small>
 		</div>
 		<h3>Books by {{ author.last_name }}:</h3>
 		{% for book in author.book_set.all %}
@@ -17,7 +19,7 @@
 				<div class="col-md-4">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h5><center><a href="{% url book-view book.id %}{{ book.title|slugify }}">{{ book.title }}</a></center></h5>
+							<h5><center><a href="{% url 'book-view' book.id %}{{ book.title|slugify }}">{{ book.title }}</a></center></h5>
 						</div>
 						{% for edition in book.edition_set.all %}
 							{% if forloop.first %}

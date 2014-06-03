@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}{{ list_title }} to-do items{% endblock %}
 {% block content %}
 {% if perms.todo.add_list %}
@@ -6,7 +7,7 @@
 {% ifequal can_del 1 %}
 	{% if list_killed %}
 		<p> {{ list.name }} is gone.</p>
-		<a href="{% url todo-lists %}">Return to lists</a>
+		<a href="{% url 'todo-lists' %}">Return to lists</a>
 	{% else %}
 		<h1>Delete entire list: {{ list.name }} ?</h1>
 		<p>Category tally:</p>
@@ -21,7 +22,7 @@
 			<input type="hidden" name="list" value="{{ list.id }}" id="some_name">
 		<p><input type="submit" name="delete-confirm" value="Do it! &rarr;" class="btn btn-default"> </p>
 		</form>
-		<a href="{% url todo-incomplete_tasks list.id list_slug %}">Return to list: {{ list.name }}</a>
+		<a href="{% url 'todo-incomplete_tasks' list.id list_slug %}">Return to list: {{ list.name }}</a>
 	{% endif %}
 {% else %}
 	<p>Sorry, you don't have permission to delete lists. Please contact your group administrator.</p>

@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}Edit Your List {% endblock title %}
 {% block app.scripts %}
 <script type ="text/javascript">
@@ -28,7 +29,7 @@ function addItem(list, book, title){
 }
 $(function() {
 	$("#selector").autocomplete({
-			source: "{% url autocomplete %}?search=title",
+			source: "{% url 'autocomplete' %}?search=title",
 			minLength: 3,
 			select: function(event, ui) {
 				$('#book_id').val(ui.item.id);
@@ -58,7 +59,7 @@ $(function() {
 {% block content %}
 	{% if list.user.id == user.id %} 
 		{% if perms.somesmart.add_list %}
-				<h3>Edit your custom list</h3><a class="btn btn-default" href="{% url list-view list.id %}">Back to the list</a>
+				<h3>Edit your custom list</h3><a class="btn btn-default" href="{% url 'list-view' list.id %}">Back to the list</a>
 				<form action="" method="post" class="form-horizontal">
 					<div class="form-row">
 						{{ form.title.label_tag }}
@@ -86,7 +87,7 @@ $(function() {
 					<table id="book_table" class="table table-hover table-striped table-todo">
 							{% for x in detail_list %}
 								<tr class="{{ x.id }}">
-									<td class="col-md-9"><a href="{% url book-view x.book.id %}{{ x.book.title|slugify }}">{{ x.book }}</a></td>
+									<td class="col-md-9"><a href="{% url 'book-view' x.book.id %}{{ x.book.title|slugify }}">{{ x.book }}</a></td>
 									<td class="col-md-2 note"><a href="#" class="btn btn-danger btn-mini note"><i id="{{ x.id }}" class="delete glyphicon glyphicon-remove note"></i></a></td>
 								</tr>
 							{% endfor %}

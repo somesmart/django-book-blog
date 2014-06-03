@@ -1,11 +1,12 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}{{ game_play.game }}{% endblock title %}
 {% block app.scripts %}
 <script type="text/javascript" src="{{ MEDIA_URL }}adventure/adventure.js"></script>
 <script type="text/javascript">
 $(function() {
 	$("#command").autocomplete({
-		source: "{% url adv-autocomplete %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}",
+		source: "{% url 'adv-autocomplete' %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}",
 		minLength: 2,
 		});
 	$('#command').autocomplete('disable');	
@@ -50,7 +51,7 @@ $(function() {
 </div>
 <div class="row">
 	<div class="pull-right" id="save">
-		<a class="btn btn-default" id="saveLink" href="{% url game-view game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>
+		<a class="btn btn-default" id="saveLink" href="{% url 'game-view' game_play.game.id game_play.character.id game_play.level.id %}">Your Save Link</a>
 	</div>
 </div>
 {% endblock content %}

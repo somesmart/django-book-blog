@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% block title %}My Reading Lists{% endblock title %}
 {% block app.scripts %}
 <script type ="text/javascript">
@@ -43,7 +44,7 @@ $('.note_copy').tooltip({ title: 'Copy List', placement: 'right' });
 {% else %}
 		<p>You have not created any custom lists yet. Click the link below to create your first list!</p>
 {% endif %}
- {% if user.is_authenticated %}<p><a class="btn btn-primary" href="{% url list-add %}"><i class="glyphicon glyphicon-plus icon-white"></i> New List</a></p>{% endif %}
+ {% if user.is_authenticated %}<p><a class="btn btn-primary" href="{% url 'list-add' %}"><i class="glyphicon glyphicon-plus icon-white"></i> New List</a></p>{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
