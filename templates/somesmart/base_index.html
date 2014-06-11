@@ -1,6 +1,5 @@
 {% extends "somesmart/base.html" %}
 {% load zinnia_tags %}
-{% load url from future %}
 {% block title %} Welcome to some smart, some don't {% endblock title %}
 {% block content %}
 	{% get_recent_entries 10 "zinnia/home_excerpts.html" %}
