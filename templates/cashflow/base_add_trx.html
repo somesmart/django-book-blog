@@ -1,0 +1,20 @@
+{% extends "somesmart/base.html" %}
+{% load staticfiles %}
+{% block title %}Add Transaction{% endblock title %}
+{% block body %}
+<form method="POST" class="post-form" id="newTrx">
+	{% csrf_token %}
+	{{ form.media }}
+	<table class="table">
+		{{ form.as_table }}
+		<tr>
+			<td></td>
+			<td><button type="submit" class="btn btn-primary">Submit</button></td>
+		</tr>
+	</table>
+</form>
+{% endblock body %}
+{% block app.scripts %}
+	<script type="text/javascript" src="{% static 'recurrence/js/recurrence-widget.js' %}"></script>
+	<script type="text/javascript" src="{% static 'recurrence/js/recurrence.js' %}"></script>
+{% endblock %}

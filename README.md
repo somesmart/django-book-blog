@@ -1,22 +1,22 @@
 # Django-book-blog README
 
-## Django v 1.5.8
+## Django v 1.8.8
 
 ## Current Installed Apps:
-  - django.contrib.auth
-  - django.contrib.contenttypes
-  - django.contrib.sessions
-  - django.contrib.sites
-  - django.contrib.comments
-  - django.contrib.messages
-  - django.contrib.staticfiles
-  - django.contrib.admin
-  - tagging
-  - mptt
-  - zinnia
-  - appconf
-  - imagekit
-  - contact_form
+  'django.contrib.admin',
+  'django.contrib.auth',
+  'django.contrib.sites',
+  'django.contrib.contenttypes',
+  'django.contrib.sessions',
+  'django.contrib.messages',
+  'django.contrib.staticfiles',
+  'django_comments',
+  'mptt',
+  'tagging',
+  'zinnia',
+  'imagekit',
+  'contact_form',
+  'recurrence',
 
 ## Python environment requirements:
   - BeautifulSoup

@@ -1,3 +1,4 @@
+{% load url from future %}
 {% load tz %}
 {% if book.id %}
 <div class="row">
@@ -16,7 +17,7 @@
 		<p>Originally Published {% localtime off %}{{ book.original_publication|date }}{% endlocaltime %}</p>
 	{% for edition in book.edition_set.all %}
 		<p>{{ edition.get_format_display }} edition:</p>
-		<p>{{ edition.pages }} pages - {% localtime off %}{{ edition.published|date }}{% endlocaltime %}</p>
+		<p>{{ edition.pages }} pages - {{ edition.published|date }}</p>
 	{% endfor %}
 	</dd>
 </dl>

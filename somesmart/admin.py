@@ -1,11 +1,11 @@
 from django.contrib import admin
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from sssd.somesmart.models import *
+from somesmart.models import *
 from tagging.forms import TagField
-from zinnia.models import Entry
-from zinnia.admin import EntryAdmin
+# from zinnia.models import Entry
+# from zinnia.admin import EntryAdmin
 
 class EditionInline(admin.TabularInline):
 	model = Edition

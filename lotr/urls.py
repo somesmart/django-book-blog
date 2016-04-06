@@ -1,9 +1,9 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView, TemplateView
 from django.db.models import Count
-from sssd.lotr.models import *
-from sssd.lotr.views import *
+from lotr.models import *
+from lotr.views import *
 
 urlpatterns = patterns('',
 	url(r'^$', TodayEvent.as_view(), name='lotr-home'),

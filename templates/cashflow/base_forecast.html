@@ -1,0 +1,208 @@
+{% extends "somesmart/base.html" %}
+{% load staticfiles %}
+{% block title %}Cashflow Forecast{% endblock title %}
+{% block app.css %}
+	<link rel="stylesheet" href="{% static 'colorbox/colorbox.css' %}">
+{% endblock app.css %}
+{% block content %}
+	<dl style="display:none">
+		{% for trx in forecast_trx %}
+		{% if trx.budget.creator.id == request.user.id %}
+			<dt class="item"><a href="{% url "view-trx" trx.id %}"><span class="date">{{ trx.date }}</span></a></dt>
+			<dd class="actual trx">{{ trx.amount }}</dd>
+		{% endif %}
+		{% endfor %}
+		{% for acct in account_balance %}
+			<dt class="balance">{{ acct.account.balance }}</dt>
+			<dd>{{ acct.account }} - {{ acct.account.balance_date }}</dd>
+		{% endfor %}
+		{% for trx in recurring_trx %}
+			<dt class="item"><a href="{% url "view-trx" trx.id %}"><span class="date">{{ trx.date }}</span></a></dt>
+			<dd class="recurring trx">{{ trx.amount }}</dd>
+		{% endfor %}
+	</dl>
+	<p><a id="uploader" class="ajax cboxElement upload btn btn-primary" href="{% url 'add-trx' '1' %}">Add a New Transaction</a></p>
+	<p>Current account balance: <span id="total_balance"></span></p>
+	<p>90 Day forecasted balance: <span id="forecast_balance"></span></p>
+	<div id="output"></div>
+	<canvas id="myChart" width="800" height="400"></canvas>
+	<canvas id="myBarChart" width="800" height="400"></canvas>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{% static 'colorbox/jquery.colorbox.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script src="{% static 'js/moment.js' %}"></script>
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script>
+var data = [
+{% for trx in account_balance %}
+	{TrxDate: "{{ trx.account.balance_date|date:'c' }}", Category: "Balance", Source: "Beginning Balance", Value: "{{ trx.account.balance }}"}{% if forloop.last and not forecast_trx and not recurring_trx %}{% else %},{% endif %}
+{% endfor %}
+{% for trx in forecast_trx %}
+	{TrxDate: "{{ trx.date|date:'c' }}", Category: "{{ trx.category }}", Source: "{{ trx.source }}", Value: "{{ trx.amount }}"}{% if forloop.last and not recurring_trx %}{% else %},{% endif %}
+{% endfor %}
+{% for trx in recurring_trx %}
+	{TrxDate: "{{ trx.date|date:'c' }}", Category: "{{ trx.category }}", Source: "{{ trx.source }}", Value: "{{ trx.amount }}"}{% if forloop.last %}{% else %},{% endif %}
+{% endfor %}
+];
+
+var running_total = 0;
+var day_total = 0;
+var amt = 0;
+var date_old = '';
+var trx_date = '';
+var data_total = [];
+var len = data.length;
+
+data = _.sortBy(data, 'TrxDate');
+
+$(data).each(function(k,v){
+	trx_date = v.TrxDate;
+	amt = parseFloat(v.Value);
+	if (date_old == trx_date || date_old == ''){
+		day_total = amt + day_total;
+	} else {
+		data_total.push({
+			TrxDate: date_old,
+			RunningTotal: running_total,
+			DayTotal: day_total
+		});
+		day_total = amt;
+	}
+	date_old = trx_date;
+	running_total = amt + running_total;
+	if (k == len - 1) {
+		if (day_total == 0){
+			day_total = amt;
+		}
+		data_total.push({
+			TrxDate: date_old,
+			RunningTotal: running_total,
+			DayTotal: day_total
+		});
+	}
+});
+
+var chart_dates = [];
+var running_total = [];
+for (var i = 0; i < data_total.length; i++) {
+	running_total.push(data_total[i].RunningTotal);
+	chart_dates.push(data_total[i].TrxDate);
+}
+
+var chart_data = {
+	labels: chart_dates,
+	datasets: [
+		{
+			label: "Daily Cashflow",
+			fillColor: "rgba(220,220,220,0.2)",
+			strokeColor: "rgba(220,220,220,1)",
+			pointColor: "rgba(220,220,220,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(220,220,220,1)",
+			data: running_total
+		}
+	]
+};
+
+var data_category = [];
+var category = '';
+var old_category = '';
+var cat_total = 0;
+var cat_amt = 0;
+
+data = _.sortBy(data, 'Category');
+
+console.log(data);
+
+$(data).each(function(k,v){
+	category = v.Category;
+	cat_amt = parseFloat(v.Value);
+	if (category == old_category || old_category == ''){
+		cat_total = cat_amt + cat_total;
+	} else {
+		data_category.push({
+			Category: old_category,
+			CategoryTotal: cat_total
+		});
+		cat_total = cat_amt;
+	}
+	old_category = category;
+	if (k == len - 1) {
+		if (cat_total == 0){
+			cat_total = cat_amt;
+		}
+		data_category.push({
+			Category: old_category,
+			CategoryTotal: cat_total
+		});
+	}
+});
+console.log(data_category);
+
+var bar_categories = [];
+var category_totals = [];
+for (var i = 0; i < data_category.length; i++) {
+	bar_categories.push(data_category[i].Category);
+	category_totals.push(data_category[i].CategoryTotal);
+}
+console.log(category_totals);
+console.log(bar_categories);
+
+var bar_data = {
+	labels: bar_categories,
+	datasets: [
+		{
+			label: "Categories",
+			fillColor: "rgba(220,220,220,0.2)",
+			strokeColor: "rgba(220,220,220,1)",
+			pointColor: "rgba(220,220,220,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(220,220,220,1)",
+			data: category_totals
+		}
+	]
+};
+
+var ctx = document.getElementById("myChart");
+var ctx_bar = document.getElementById("myBarChart");
+
+var myLineChart = new Chart(ctx, {
+	type: 'line',
+	data: chart_data
+});
+
+var myBarChart = new Chart(ctx_bar, {
+	type: 'bar',
+	data: bar_data
+});
+
+$(function() {
+	var total = 0;
+	var forecast = 0;
+	$('.balance').each(function() { total += parseFloat($.text([this])); });
+	$('.trx').each(function() { forecast += parseFloat($.text([this])); });
+	$('#total_balance').html(total.toFixed(2));
+	$('#forecast_balance').html(forecast.toFixed(2));
+
+	jQuery(".ajax").colorbox({
+	  iframe:true,
+	  height:"600px",
+	  width:"500px",
+	  innerheight:"100%",
+	  innerwidth:"100%"
+	  // onClosed:function(){
+	  // 	get_image_list(); 
+	  // }
+	});
+});
+</script>
+{% endblock %}

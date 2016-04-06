@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from sssd.lotr.models import *
+from lotr.models import *
 
 class CharacterEventInline(admin.TabularInline):
 	model = CharacterEvent

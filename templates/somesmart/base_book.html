@@ -1,6 +1,7 @@
 {% extends "somesmart/base.html" %}
 {% load tagging_tags %}
 {% load admin_urls %}
+{% load url from future %}
 {% block title %}{{ book.title }}{% endblock title %}
 {% block content %}
 	<div>
@@ -48,7 +49,7 @@
 	</div>
 {% endblock %}
 {% block app.scripts %}
-<script type="text/javascript" src="{{ MEDIA_URL }}js/tagmanager/bootstrap-tagmanager.js"></script>
+<script type="text/javascript" src="http://somesmart.com/staticfiles/js/tagmanager/bootstrap-tagmanager.js"></script>
 <script>
 function get_related(book){
 	$.ajax({

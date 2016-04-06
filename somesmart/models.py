@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 import os
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, Adjust
-import tagging
+from tagging.registry import register
 
 class IntegerRangeField(models.IntegerField):
 	def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
@@ -53,7 +53,7 @@ class Book(models.Model):
 	def __unicode__(self):
 		return self.title
 
-tagging.register(Book)
+register(Book)
 
 class Edition(models.Model):
 	def get_image_path(instance, filename):
@@ -72,9 +72,9 @@ class Edition(models.Model):
 	pages = models.IntegerField()
 	format = models.IntegerField(choices=FORMAT)
 	cover = models.ImageField(upload_to=get_image_path, blank=True)
-	cover_thumbnail = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(50, 50)], image_field='cover', format='JPEG', options={'quality': 90})
-	cover_large = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(333, 500)], image_field='cover', format='JPEG', options={'quality': 90})
-	cover_md = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(100, 170)], image_field='cover', format='JPEG', options={'quality': 90})
+	cover_thumbnail = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(50, 50)], source='cover', format='JPEG', options={'quality': 90})
+	cover_large = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(333, 500)], source='cover', format='JPEG', options={'quality': 90})
+	cover_md = ImageSpecField([Adjust(contrast=1.2, sharpness=1.1), ResizeToFill(100, 170)], source='cover', format='JPEG', options={'quality': 90})
 
 	def __unicode__(self):
 		return u"%s - %s" % (self.book.title, self.get_format_display())
