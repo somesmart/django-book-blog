@@ -502,7 +502,8 @@ class TagListView(ListView):
 	def get_queryset(self):
 		self.tag = Tag.objects.get(name = self.kwargs['tag'])
 		#get the books tagged with this tag
-		return TaggedItem.objects.select_related().filter(tag=self.tag)
+		self.tagged_books = TaggedItem.objects.filter(tag=self.tag).values('object_id')
+		return Book.objects.select_related().filter(id__in= self.tagged_books).order_by('title')
 
 def get_related(request, book):
 	book = Book.objects.get(id=book)

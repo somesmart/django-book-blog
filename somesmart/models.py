@@ -53,8 +53,6 @@ class Book(models.Model):
 	def __unicode__(self):
 		return self.title
 
-register(Book)
-
 class Edition(models.Model):
 	def get_image_path(instance, filename):
 		return os.path.join('photos/book', str(instance.book.id), filename)
@@ -198,3 +196,5 @@ class SeriesDetail(models.Model):
 
 	def __unicode__(self):
 		return u"%s - %s, %s of %s" % (self.series, self.book, self.sequence, self.series.count)
+
+register(Book)
