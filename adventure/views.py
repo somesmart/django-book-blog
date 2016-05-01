@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
-from sssd.adventure.models import *
+from adventure.models import *
 from decimal import *
 from datetime import datetime
 import urllib2
@@ -35,7 +35,7 @@ def autocomplete(request):
 						data = {'id': word.wordgroup.id, 'label': word.wordgroup.group_descr }
 						results.append(data)
 					json_results = json.dumps(results)
-					return HttpResponse(json_results, mimetype='application/json')
+					return HttpResponse(json_results, content_type='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 		else:
@@ -59,7 +59,7 @@ def story_line(request, word, game, character, level):
 			data = {'id': line.id, 'character_id': line.character.id, 'next_level': line.next_level.id, 'text': line.text }
 			results.append(data)
 			json_results = json.dumps(results)
-			return HttpResponse(json_results, mimetype='application/json')
+			return HttpResponse(json_results, content_type='application/json')
 		except Story.DoesNotExist:
 			try:
 				line = Generic.objects.select_related().get(game=game, wordgroup__id=word_group.id)
@@ -78,7 +78,7 @@ def story_line(request, word, game, character, level):
 					data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
 					results.append(data)
 			json_results = json.dumps(results)
-			return HttpResponse(json_results, mimetype='application/json')
+			return HttpResponse(json_results, content_type='application/json')
 	except Word.DoesNotExist:
 		word_group = None
 		try:
@@ -93,7 +93,7 @@ def story_line(request, word, game, character, level):
 			data = {'id': 1, 'character_id': character.id, 'next_level': level.id, 'text': not_expected}
 			results.append(data)
 		json_results = json.dumps(results)
-		return HttpResponse(json_results, mimetype='application/json')
+		return HttpResponse(json_results, content_type='application/json')
 
 def level_options(request, game, level):
 	results = ''

@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
-from sssd.lotr.models import *
+from lotr.models import *
 from decimal import *
 from datetime import datetime
 

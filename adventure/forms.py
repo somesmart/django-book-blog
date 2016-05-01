@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 
-from sssd.adventure.models import *
+from adventure.models import *
 
 class StoryDetailFormset(forms.models.BaseInlineFormSet):
 	def __init__(self, *args, **kwargs):
@@ -60,6 +60,7 @@ class LevelCharacterFormset(forms.models.BaseInlineFormSet):
 
 class StoryForm(ModelForm):
 	class Meta:
-		model = Story 
+		model = Story
+		fields = '__all__'
 
 StoryFormSet = inlineformset_factory(Level, Story, form=StoryForm, fk_name='level')

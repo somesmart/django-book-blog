@@ -1,28 +1,6 @@
 {% extends "somesmart/base.html" %}
+{% load staticfiles %}
 {% block title %}{{ game_play.game }}{% endblock title %}
-{% block app.scripts %}
-<script type="text/javascript" src="{{ MEDIA_URL }}adventure/adventure.js"></script>
-<script type="text/javascript">
-$(function() {
-	$("#command").autocomplete({
-		source: "{% url 'adv-autocomplete' %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}",
-		minLength: 2,
-		});
-	$('#command').autocomplete('disable');	
-	$("#searchOn").click(function(e){
-		e.preventDefault();
-		alert("Easy Mode On!");
-		$('#command').autocomplete('enable');
-		$('#instructions').append("<li class='easy-mode'>With easy mode on you will now receive only valid autocomplete options as you begin typing</li><li class='easy-mode'><a href='' id='searchOff'>Turn easy mode off</a>");
-	});
-	$("#searchOff").click(function(e){
-		e.preventDefault();
-		alert("Easy Mode Off!");
-		$('#command').autocomplete('disable');
-		$('.easy-mode').hide();
-	});
-});
-</script>{% endblock %}
 {% block top-content %}{% endblock %}
 {% block content %}
 <div class="row">
@@ -57,4 +35,28 @@ $(function() {
 {% block top-right-content %}{% endblock %}
 {% block right-content %}
 	{% include "adventure/include_instructions.html" %}
+{% endblock %}
+{% block app.scripts %}
+<script type="text/javascript" src="{% static 'adventure/adventure.js' %}"></script>
+<script type="text/javascript">
+$(function() {
+	$("#command").autocomplete({
+		source: "{% url 'adv-autocomplete' %}?search=word&game={{ game_play.game.id }}&character={{ game_play.character.id }}&level={% if next_level %}{{ next_level }}{% else %}{{ game_play.level.id }}{% endif %}",
+		minLength: 2,
+		});
+	$('#command').autocomplete('disable');	
+	$("#searchOn").click(function(e){
+		e.preventDefault();
+		alert("Easy Mode On!");
+		$('#command').autocomplete('enable');
+		$('#instructions').append("<li class='easy-mode'>With easy mode on you will now receive only valid autocomplete options as you begin typing</li><li class='easy-mode'><a href='' id='searchOff'>Turn easy mode off</a>");
+	});
+	$("#searchOff").click(function(e){
+		e.preventDefault();
+		alert("Easy Mode Off!");
+		$('#command').autocomplete('disable');
+		$('.easy-mode').hide();
+	});
+});
+</script>
 {% endblock %}

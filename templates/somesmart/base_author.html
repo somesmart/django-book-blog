@@ -1,4 +1,5 @@
 {% extends "somesmart/base.html" %}
+{% load url from future %}
 {% load tz %}
 {% block title %}{{ author.first_name }} {{ author.last_name }}{% endblock title %}
 {% block top-content %}
@@ -36,5 +37,5 @@
 {% endblock top-content %}
 {% block top-right-content %}{% endblock top-right-content %}
 {% block app.scripts %}
-	<script type="text/javascript" src="{{ MEDIA_URL }}js/holder/holder.js"></script>
+	<script type="text/javascript" src="http://somesmart.com/staticfiles/js/holder/holder.js"></script>
 {% endblock %}

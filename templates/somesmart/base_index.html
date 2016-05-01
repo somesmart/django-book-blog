@@ -1,5 +1,6 @@
 {% extends "somesmart/base.html" %}
-{% load zinnia_tags %}
+{% load zinnia %}
+{% load url from future %}
 {% block title %} Welcome to some smart, some don't {% endblock title %}
 {% block content %}
 	{% get_recent_entries 10 "zinnia/home_excerpts.html" %}
@@ -20,11 +21,11 @@
 {% endif %}
 <h4 class="well well-sm">Most Used Tags</h4>
 <div id="tag-cloud"></div>
-<a href="{% url 'zinnia_entry_latest_feed' %}" class="btn btn-default">RSS Feed</a>
+{# <a href="{% url 'zinnia_entry_latest_feed' %}" class="btn btn-default">RSS Feed</a> #}
 <a href='http://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Fsomesmart.com%2Fblog%2Ffeeds%2Flatest%2F' class="btn btn-default" target='blank'>Feedly</a>
 {% endblock %}
 {% block app.scripts %}
-<script>
+<script type="text/javascript">
 function get_cloud(){
 	$.ajax({
 		type: "GET",

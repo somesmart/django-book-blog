@@ -1,11 +1,9 @@
 {% extends "zinnia/base.html" %}
-{% load i18n comments zinnia_tags mptt_tags %}
+{% load i18n comments zinnia %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block meta-description %}{% if object.excerpt %}{{ object.excerpt|striptags }}{% else %}{{ object.content|striptags|truncatewords:100 }}{% endif %}{% endblock %}
-
-{% block meta-keywords %}{% if object.tags %}{{ object.tags }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block link %}
   {{ block.super }}
@@ -42,33 +40,27 @@
     <h3>{% trans "Comments" %}</h3>
     {% with comment_list=object.comments %}
     {% if comment_list.count %}
-      {% recursetree comment_list %}
-       <div id="comment_{{ node.pk }}" class="media comment vcard {% cycle box1,box2 %}{% if node.user in object.authors.all %} post-author{% endif %}">
+      {% for comment in comment_list %}
+        <div id="comment_{{ comment.pk }}" class="media comment vcard {% cycle box1,box2 %}{% if comment.user in object.authors.all %} post-author{% endif %}">
           <a class="pull-left" href="">
-          <img src="{% get_gravatar node.email 60 "G" %}" class="gravatar photo media-object" alt="{{ node.user_name }}"/></a>
+          <img src="{% get_gravatar comment.email 60 "G" %}" class="gravatar photo media-object" alt="{{ comment.user_name }}"/>
           <div class="media-body comment-info">
-            {% if node.url %}
-            <a href="{{ node.url }}" rel="external nofollow"
-                     class="fn url">{{ node.user_name }}</a>
+            {% if comment.url %}
+            <a href="{{ comment.url }}" rel="external nofollow"
+                     class="fn url">{{ comment.user_name }}</a>
             {% else %}
-            <b>{{ node.user_name }}</b>
+            <h4 class="media-heading">{{ comment.user_name }}</h4>
             {% endif %}
             {% trans "on" %}
-            <abbr class="comment-published" title="{{ node.submit_date|date:"c" }}Z">
-              {{ node.submit_date|date:"SHORT_DATETIME_FORMAT" }}
+            <abbr class="comment-published" title="{{ comment.submit_date|date:"c" }}Z">
+              {{ comment.submit_date|date:"SHORT_DATETIME_FORMAT" }}
             </abbr>
-            {{ node.comment|linebreaks|safe }}
-            <p class="comment-reply">
-              <a class="btn btn-primary" href="#comment-form" onclick="set_reply('{{ node.pk }}')">{% trans "Reply" %}</a>
-            </p>
-            {% if children %}
-              <div class="well well-sm">
-                {{ children }}
-              </div>
-            {% endif %}
+            {% block comment-content %}
+            {{ comment.comment|linebreaks }}
+            {% endblock comment-content %}
           </div>
         </div>
-      {% endrecursetree %}
+      {% endfor %}
       {% if not object.comments_are_open %}
         <p>{% trans "Comments are closed." %}</p>
       {% endif %}

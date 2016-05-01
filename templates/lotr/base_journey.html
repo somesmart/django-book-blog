@@ -1,5 +1,4 @@
 {% extends "somesmart/base.html" %}
-{% load humanize %}
 {% block title %}{{ journey }}{% endblock title %}
 {% block content %}
 <div class="row">{% include "lotr/include_today_link.html" %}</div>
@@ -12,7 +11,7 @@
 		<div class="panel-body">
 			<dl class="list-unstyled">
 				{% for event in journey.event_set.all %}
-					<dt>{{ event.get_event_month_display }} {{ event.event_day|ordinal }}</dt><dd><a href="{% url 'event-view' event.id %}">{{ event.deck }}</a></dd>
+					<dt>{{ event.get_event_month_display }} {{ event.event_day|date:"l" }}</dt><dd><a href="{% url 'event-view' event.id %}">{{ event.deck }}</a></dd>
 				{% endfor %}
 			</dl>
 		</div>

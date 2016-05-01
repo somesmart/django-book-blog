@@ -8,9 +8,9 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
-from sssd.somesmart.models import *
+from somesmart.models import *
 from zinnia.models import Entry
-from sssd.somesmart.forms import *
+from somesmart.forms import *
 from tagging.models import Tag, TaggedItem
 from tagging.utils import LOGARITHMIC
 from decimal import *
@@ -36,7 +36,7 @@ def autocomplete(request):
 						data = {'id': book.id, 'label': book.title }
 						results.append(data)
 					json_results = json.dumps(results)
-					return HttpResponse(json_results, mimetype='application/json')
+					return HttpResponse(json_results, content_type='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 			elif search == "primary_search":
@@ -50,7 +50,7 @@ def autocomplete(request):
 							data = {'id': '/author/' + str(book.author.id) + '/', 'label': book.author.first_name + ' ' + book.author.last_name }
 						results.append(data)
 					json_results = json.dumps(results)
-					return HttpResponse(json_results, mimetype='application/json')
+					return HttpResponse(json_results, content_type='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 			elif search == "author":
@@ -61,7 +61,7 @@ def autocomplete(request):
 						data = {'id': author.id, 'label': author.first_name + ' ' + author.last_name }
 						results.append(data)
 					json_results = json.dumps(results)
-					return HttpResponse(json_results, mimetype='application/json')
+					return HttpResponse(json_results, content_type='application/json')
 				else:
 					return HttpResponseRedirect('/noresults/')
 		else:
@@ -277,7 +277,7 @@ def get_gr_current(request):
 	results = [{ 'link': xmlLink, 'status': xmlData }]
 	json_results = json.dumps(results)
 	if results:
-		return HttpResponse(json_results, mimetype='application/json')
+		return HttpResponse(json_results, content_type='application/json')
 
 def get_random_quote(request):
 	random = Quote.objects.exclude(quote_type__id=3).exclude(quote_type__id=4).order_by('?')[:1].get()
@@ -297,8 +297,8 @@ def zinnia_entry_detail(request, year, slug):
 		slug = 'of-other-worlds-essays-and-stories'
 
 	entry = Entry.published.on_site().get(slug=slug)
-	return redirect('zinnia_entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
-	#return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
+	return redirect('zinnia:entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
+	return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
 
 def zinnia_latest_feeds(request):
 	return redirect('zinnia_entry_latest_feed')
@@ -472,7 +472,7 @@ def book_tags(request, book):
 
 	results = {'tags': tag_list}
 	json_results = json.dumps(results)
-	return HttpResponse(json_results, mimetype='application/json')
+	return HttpResponse(json_results, content_type='application/json')
 
 def current_tags(request):
 	tags = Tag.objects.usage_for_model(Book, counts=True, min_count=None, filters=None)
@@ -484,7 +484,7 @@ def current_tags(request):
 
 	results = {'tags': tag_list}
 	json_results = json.dumps(results)
-	return HttpResponse(json_results, mimetype='application/json')
+	return HttpResponse(json_results, content_type='application/json')
 
 def save_tags(request, book):
 	book = Book.objects.get(id=book)
@@ -502,7 +502,8 @@ class TagListView(ListView):
 	def get_queryset(self):
 		self.tag = Tag.objects.get(name = self.kwargs['tag'])
 		#get the books tagged with this tag
-		return TaggedItem.objects.filter(tag=self.tag)
+		self.tagged_books = TaggedItem.objects.filter(tag=self.tag).values('object_id')
+		return Book.objects.select_related().filter(id__in= self.tagged_books).order_by('title')
 
 def get_related(request, book):
 	book = Book.objects.get(id=book)

@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from sssd.adventure.models import *
-from sssd.adventure.forms import StoryDetailFormset, LevelCharacterFormset
+from adventure.models import *
+from adventure.forms import StoryDetailFormset, LevelCharacterFormset
 
 class WordInline(admin.TabularInline):
 	model = Word

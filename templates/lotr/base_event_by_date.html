@@ -1,11 +1,10 @@
 {% extends "somesmart/base.html" %}
-{% load humanize %}
 {% block title %}The Lord of the Rings Calendar{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
 {% include "lotr/include_today_link.html" %}
 <div class="row">
-	<h3>{% for event in event_list %}{% if forloop.counter == 1 %}<a href="{% url 'event-month-view' event.event_month %}">{{ event.get_event_month_display }}</a> {{ event.event_day|ordinal }}{% endif %} in{% endfor %} <strong>The Lord of the Rings</strong></h3>
+	<h3>{% for event in event_list %}{% if forloop.counter == 1 %}<a href="{% url 'event-month-view' event.event_month %}">{{ event.get_event_month_display }}</a> {{ event.event_day|date:"l" }}{% endif %} in{% endfor %} <strong>The Lord of the Rings</strong></h3>
 	{% include "lotr/include_event_list.html" %}
 </div>
 {% endblock content %}

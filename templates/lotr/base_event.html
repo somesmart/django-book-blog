@@ -1,9 +1,8 @@
 {% extends "somesmart/base.html" %}
-{% load humanize %}
 {% block title %}{{ event_detail.journey }}{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
-<div><a class="btn btn-default" href="{% url 'event-date-view' event_detail.event_month event_detail.event_day %}">More from {{ event_detail.get_event_month_display }} {{ event_detail.event_day|ordinal }}</a>{% include "lotr/include_today_link.html" %}</div>
+<div><a class="btn btn-default" href="{% url 'event-date-view' event_detail.event_month event_detail.event_day %}">More from {{ event_detail.get_event_month_display }} {{ event_detail.event_day|date:"l" }}</a>{% include "lotr/include_today_link.html" %}</div>
 <br>
 <div>
 	<div class="panel panel-default">
