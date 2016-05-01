@@ -1,6 +1,6 @@
 # Django-book-blog README
 
-## Django v 1.8.8
+## Django v 1.8.12
 
 ## Current Installed Apps:
   'django.contrib.admin',

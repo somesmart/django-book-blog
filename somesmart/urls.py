@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 	url(r'^adventure/', include('adventure.urls')),
 	url(r'^cashflow/', include('cashflow.urls')),
 	url(r'^lotr/', include('lotr.urls')),
+	url(r'^nature/', include('nature.urls')),
 	#home page
 	url(r'^$',
 		ListView.as_view(
@@ -85,5 +86,5 @@ urlpatterns = patterns('',
 	url(r'^feeds/$', 'somesmart.views.zinnia_latest_feeds', name='custom-zinnia-latest'),
 	url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'somesmart/base_login.html'}, name='account-login'),
 	url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
-	# url(r'^todo/', include('todo.urls'))
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+	url(r'^todo/', include('todo.urls'))
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

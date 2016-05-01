@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
 from somesmart.models import *
-#from zinnia.models import Entry
+from zinnia.models import Entry
 from somesmart.forms import *
 from tagging.models import Tag, TaggedItem
 from tagging.utils import LOGARITHMIC
@@ -296,9 +296,9 @@ def zinnia_entry_detail(request, year, slug):
 	elif slug == 'of-other':
 		slug = 'of-other-worlds-essays-and-stories'
 
-	#entry = Entry.published.on_site().get(slug=slug)
-	#return redirect('zinnia_entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
-	#return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
+	entry = Entry.published.on_site().get(slug=slug)
+	return redirect('zinnia:entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
+	return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
 
 def zinnia_latest_feeds(request):
 	return redirect('zinnia_entry_latest_feed')
