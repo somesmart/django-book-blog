@@ -2,7 +2,7 @@
 {% load tagging_tags %}
 {% load somesmart_extras %}
 {% load admin_urls %}
-{% load url from future %}
+
 {% block title %}{{ review.edition.book.title }} Review{% endblock title %}
 {% block content %}
 	<div>
@@ -44,7 +44,6 @@
 </div>
 {% endblock %}
 {% block app.scripts %}
-<script type="text/javascript" src="http://somesmart.com/staticfiles/js/tagmanager/bootstrap-tagmanager.js"></script>
 <script>
 function get_related(book){
 	$.ajax({

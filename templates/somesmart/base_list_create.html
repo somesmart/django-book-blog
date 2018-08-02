@@ -1,11 +1,11 @@
 {% extends "somesmart/base.html" %}
-{% load url from future %}
+
 {% block app.css %}
 <link rel="stylesheet" href="{% static 'somesmart/css/colorbox/colorbox.css' %}">
 {% endblock %}
 {% block title %}Create Your List {% endblock title %}
 {% block app.scripts %}
-<script type="text/javascript" src="http://somesmart.com/staticfiles/js/colorbox/jquery.colorbox.js"></script>
+<script type="text/javascript" src="https://somesmart.com/static/js/colorbox/jquery.colorbox.js"></script>
 <script type="text/javascript">
 $(function() {
 		$("#selector").autocomplete({

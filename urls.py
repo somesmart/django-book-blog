@@ -7,11 +7,11 @@ from somesmart.views import *
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-	# url(r'^admin/', include(admin.site.urls)),
+urlpatterns = [
+	url(r'^admin/', include(admin.site.urls)),
 	url(r'^adventure/', include('adventure.urls')),
 	url(r'^cashflow/', include('cashflow.urls')),
 	url(r'^lotr/', include('lotr.urls')),
 	url(r'^nature/', include('nature.urls')),
 	url(r'^', include('somesmart.urls')),
-) + staticfiles_urlpatterns() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + staticfiles_urlpatterns() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
