@@ -261,7 +261,7 @@ class ShelfView(DetailView):
 	template_name='somesmart/base_shelf.html'
 
 def get_gr_current(request):
-	response = urllib2.urlopen('http://www.goodreads.com/user_status/list/293378-scott-forbes?format=rss')
+	response = urllib2.urlopen('https://www.goodreads.com/user_status/list/293378-scott-forbes?format=rss')
 	gr_xml = response.read()
 	#close the file
 	response.close()

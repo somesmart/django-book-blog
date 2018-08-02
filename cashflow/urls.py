@@ -12,7 +12,7 @@ js_info_dict = {
 	'packages': ('recurrence', ),
 }
 
-urlpatterns = patterns('',
+urlpatterns = [
 	url(r'^$', RecentTransactions.as_view(), name='recent-transactions'),
 	# url(r'^autocomplete/$','cashflow.views.autocomplete', name='cash-autocomplete'),
 	url(r'^noresults/', TemplateView.as_view(template_name = 'cashflow/base_noresults.html'), name='no-results'),
@@ -24,4 +24,4 @@ urlpatterns = patterns('',
 	url(r'^source/add/(?P<name>[\w ]+)/$', 'cashflow.views.add_source', name='add-source'),
 	url(r'success/', 'cashflow.views.success', name='post-success'),
 	(r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
-) + staticfiles_urlpatterns()
+] + staticfiles_urlpatterns()

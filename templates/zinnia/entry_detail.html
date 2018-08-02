@@ -77,7 +77,8 @@
 
   {% block entry-comments-form %}
   {% if object.comments_are_open %}
-    {% render_comment_form for object %}
+    {# {% render_comment_form for object %} #}
+    <p>{% trans "Comments are closed." %}</p>
   {% endif %}
   {% endblock %}
 
