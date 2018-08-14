@@ -1,0 +1,16 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Ornament Page{% endblock title %}
+{% block content %}
+<a href="{% url 'ornament-list' %}" class="btn btn-default">Back Home</a>
+	<h3>{{ ornament.name }}</h3>
+	<img src="{{ ornament.image.url }}" class="img-responsive">
+	<a href="{{ ornament.image.url }}">Secondary Image</a>
+	<p>Given to <a href="{% url 'receiver-view' ornament.receiver.id %}{{ ornament.receiver|slugify }}">{{ ornament.receiver }}</a> by <a href="{% url 'giver-view' ornament.giver.id %}{{ ornament.giver|slugify }}">{{ ornament.giver }}</a> for Christmas <a href="{% url 'ornament-year' ornament.year %}">{{ ornament.year }}</a>
+	<p>{{ ornament.description|safe }}</p>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}

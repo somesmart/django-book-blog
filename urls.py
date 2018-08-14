@@ -13,5 +13,6 @@ urlpatterns = [
 	url(r'^cashflow/', include('cashflow.urls')),
 	url(r'^lotr/', include('lotr.urls')),
 	url(r'^nature/', include('nature.urls')),
+	url(r'^ornaments/', include('ornaments.urls')),
 	url(r'^', include('somesmart.urls')),
 ] + staticfiles_urlpatterns() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,22 @@
+{% extends "somesmart/base.html" %}
+{% block title %}{{ giver }}'s Gifts{% endblock title %}
+{% block content %}
+	<h3>{{ giver }}'s Gifts</h3>
+	{% for ornament in giver.ornament_set.all %}
+		<div class="media">
+			<a class="media-left pull-left" href="{{ ornament.image.url }}">
+				<img src="{{ ornament.image_thumbnail.url }}">
+			</a>
+			<div class="media-body">
+				<h4 class="media-heading"><a href="{% url 'ornament-view' ornament.id %}">{{ ornament.name }}</a> - given to <a href="{% url 'receiver-view' ornament.receiver.id %}{{ ornament.receiver|slugify }}">{{ ornament.receiver }}</a> for Christmas <a href="{% url 'ornament-year' ornament.year %}">{{ ornament.year }}</a></h4>
+				{{ ornament.notes }}
+			</div>
+		</div>
+	{% endfor %}
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}
