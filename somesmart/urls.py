@@ -18,6 +18,7 @@ urlpatterns = [
 	# url(r'^cashflow/', include('cashflow.urls')),
 	url(r'^lotr/', include('lotr.urls')),
 	url(r'^nature/', include('nature.urls')),
+	url(r'^ornaments/', include('ornaments.urls')),
 	#home page
 	url(r'^$',
 		ListView.as_view(

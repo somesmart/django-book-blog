@@ -1,0 +1,34 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Ornaments Home Page{% endblock title %}
+{% block content %}
+	<h3>Givers</h3>
+	<ul>
+		{% for giver in giver_list %}
+			<li><a href="{% url 'giver-view' giver.id %}">{{ giver }}</a></li>
+		{% endfor %}
+	</ul>
+	<h3>Recipients</h3>
+	<ul>
+		{% for receiver in receiver_list %}
+			<li><a href="{% url 'receiver-view' receiver.id %}">{{ receiver }}</a></li>
+		{% endfor %}
+	</ul>
+	<h3>This Year's Ornaments</h3>
+	{% for ornament in ornament_list %}
+		<div class="media">
+			<a class="media-left pull-left" href="{{ ornament.image.url }}">
+				<img src="{{ ornament.image_thumbnail.url }}">
+			</a>
+			<div class="media-body">
+				<h4 class="media-heading"><a href="{% url 'ornament-view' ornament.id %}">{{ ornament.name }}</a> - given to <a href="{% url 'receiver-view' ornament.receiver.id %}{{ ornament.receiver|slugify }}">{{ ornament.receiver }}</a></h4>
+				{{ ornament.notes }}
+			</div>
+		</div>
+	{% endfor %}
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}
