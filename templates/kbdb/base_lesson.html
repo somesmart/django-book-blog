@@ -1,11 +1,27 @@
 {% extends "somesmart/base.html" %}
 {% block title %}{{ lesson }}{% endblock title %}
 {% block content %}
-<a href="{% url 'lesson-list' %}" class="btn btn-default">Back To all Lessons/a>
-	<h3>{{ lesson }} <small>: a {{ lesson.lesson_type }} Round</small></h3>
+<a href="{% url 'lesson-list' %}" class="btn btn-default">Back To all Lessons</a>
+	<h3>{{ lesson }} <small>: a {{ lesson.lesson_type }} Lesson</small></h3>
 	{# Add information here about all the rounds in the lesson #}
-	{# {% for round in lesson.round_set.all %}
-	{% endfor %} #}
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Round</th>
+				<th>Round Type</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for round in lesson.lessonround_set.all %}
+				<tr>
+					<th scope="row">{{ round.round_number }}</th>
+					<td><a href="{% url 'round-view' round.round.id %}">{{ round.round }}</a></td>
+					<td>{{ round.round.round_type }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock content %}
 {% block top-right-content %}{% endblock top-right-content %}
 {% block right-content %}

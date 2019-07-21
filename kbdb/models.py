@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from markdownx.models import MarkdownxField
 import os
 
 class RoundType(models.Model):
@@ -19,7 +20,7 @@ class Round(models.Model):
 	""" The name of the round and a full description if necessary """
 	round_type = models.ForeignKey(RoundType, on_delete=models.CASCADE)
 	name = models.CharField(max_length=100)
-	description = models.CharField(max_length=200)
+	description = MarkdownxField(blank=True)
 
 	def __str__(self):
 		return self.name
@@ -41,6 +42,9 @@ class Lesson(models.Model):
 	""" The lesson you are conducting """
 	date = models.DateField()
 	lesson_type = models.ForeignKey(LessonType, on_delete=models.CASCADE)
+
+	def __str__(self):
+		return str(self.date)
 
 class LessonRound(models.Model):
 	""" The rounds that make up the lesson you are conducting """
