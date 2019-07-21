@@ -1,6 +1,6 @@
 # Django-book-blog README
 
-## Django v 1.8.12
+## Django v 2.2.3
 
 ## Current Installed Apps:
   'django.contrib.admin',
@@ -10,13 +10,21 @@
   'django.contrib.sessions',
   'django.contrib.messages',
   'django.contrib.staticfiles',
+  'haystack',
   'django_comments',
+  'djangojs',
   'mptt',
   'tagging',
   'zinnia',
   'imagekit',
+  'todo',
+  'somesmart',
+  'cashflow',
+  'adventure',
   'contact_form',
   'recurrence',
+  'lotr',
+  'kbdb',
 
 ## Python environment requirements:
   - BeautifulSoup

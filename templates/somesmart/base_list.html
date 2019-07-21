@@ -1,5 +1,5 @@
 {% extends "somesmart/base.html" %}
-{% load url from future %}
+
 {% block title %}{{ list.list_name }}{% endblock title %}
 {% block content %}
 	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy pull-right" href="{% url 'list-copy' list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}

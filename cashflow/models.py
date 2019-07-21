@@ -1,6 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from recurrence.fields import RecurrenceField
 from datetime import datetime, date
 import os
@@ -13,10 +13,10 @@ class Budget(models.Model):
 
 	name = models.TextField(max_length=100)
 	slug = models.SlugField()
-	creator = models.ForeignKey(User, related_name='+')
+	creator = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	status = models.IntegerField(choices=STATUS)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.name
 
 	def save(self, *args, **kwargs):
@@ -32,7 +32,7 @@ class Category(models.Model):
 	class Meta:
 		verbose_name_plural = "categories"
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.description
 
 class Account(models.Model):
@@ -40,38 +40,38 @@ class Account(models.Model):
 	balance = models.DecimalField(max_digits=15, decimal_places=2)
 	balance_date = models.DateField()
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.name
 
 class BudgetAccount(models.Model):
-	budget = models.ForeignKey(Budget)
-	account = models.ForeignKey(Account)
+	budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
+	account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 class BudgetDetail(models.Model):
-	budget = models.ForeignKey(Budget)
-	category = models.ForeignKey(Category)
+	budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	amount = models.DecimalField(max_digits=15, decimal_places=2)
 	savings = models.BooleanField()
 
 class Source(models.Model):
 	name = models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.name
 
 class Transaction(models.Model):
-	budget = models.ForeignKey(Budget)
+	budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
 	date = models.DateField()
-	category = models.ForeignKey(Category)
-	account = models.ForeignKey(Account)
-	source = models.ForeignKey(Source)
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
+	account = models.ForeignKey(Account, on_delete=models.CASCADE)
+	source = models.ForeignKey(Source, on_delete=models.CASCADE)
 	amount = models.DecimalField(max_digits=15, decimal_places=2)
 	note = models.CharField(max_length=150, null=True, default=None, blank=True)
 	reconciled = models.BooleanField()
 	recurring = models.BooleanField()
 	recurrences = RecurrenceField()
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.note
 
 	def save(self, *args, **kwargs):

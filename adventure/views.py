@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import json
 from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 from adventure.models import *
 from decimal import *
 from datetime import datetime
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString
 
 # ****************************************************************** #
@@ -20,12 +20,12 @@ from xml.dom.minidom import parseString
 
 def autocomplete(request):
 	if request.method == "GET":
-		if request.GET.has_key(u'term'):
-			value = request.GET[u'term']
-			search = request.GET[u'search']
-			game = request.GET[u'game']
-			character = request.GET[u'character']
-			level = request.GET[u'level']
+		if 'term' in request.GET:
+			value = request.GET['term']
+			search = request.GET['search']
+			game = request.GET['game']
+			character = request.GET['character']
+			level = request.GET['level']
 			results = []
 			if search == "word":
 				if len(value) > 0:
@@ -110,8 +110,8 @@ class GameView(ListView):
 	def get_queryset(self):
 		first = True
 		if self.request.method == "GET":
-			if self.request.GET.has_key(u'story_id'):
-				stories = Story.objects.select_related().filter(id=self.request.GET[u'story_id'])
+			if 'story_id' in self.request.GET:
+				stories = Story.objects.select_related().filter(id=self.request.GET['story_id'])
 			else:
 				stories = Story.objects.select_related().filter(game__id=self.kwargs['pk'], level__id=self.kwargs['level'])
 		else: 
@@ -123,7 +123,7 @@ class GameView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super(GameView, self).get_context_data(**kwargs)
 		if self.request.method == "GET":
-			if self.request.GET.has_key(u'story_id'):
+			if 'story_id' in self.request.GET:
 				context ['next_level'] = self.kwargs['level']
 		return context
 
@@ -150,8 +150,8 @@ class WordList(ListView):
 def copy_word_list(request, current_game):
 	current_game = Game.objects.get(id=current_game)
 	if request.method == "GET":
-		if request.GET.has_key(u'new_game'):
-			new_game = Game.objects.get(id=request.GET[u'new_game'])
+		if 'new_game' in request.GET:
+			new_game = Game.objects.get(id=request.GET['new_game'])
 	if request.user.id == new_game.creator.id:
 		word_list = Word.objects.filter(game=current_game)
 		if word_list:

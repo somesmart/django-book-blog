@@ -1,0 +1,17 @@
+{% extends "somesmart/base.html" %}
+{% block title %}Lessons{% endblock title %}
+{% block content %}
+	<h3>Lessons</h3>
+	<ul>
+		{% for lesson in lesson_list %}
+			<li><a href="{% url 'lesson-view' lesson.id %}">{{ lesson }}</a>: {{ lesson.date }}</li>
+			{# Add information here about the number of rounds in the lesson? #}
+		{% endfor %}
+	</ul>
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}

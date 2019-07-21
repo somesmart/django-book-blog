@@ -8,24 +8,24 @@ class Location(models.Model):
 	x_position = models.DecimalField(max_digits=15, decimal_places=9, default=0)
 	y_postion = models.DecimalField(max_digits=15, decimal_places=9, default=0)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.name
 
 class Journey(models.Model):
 	short_description = models.CharField(max_length=250)
 	long_description = models.TextField()
-	start_location = models.ForeignKey(Location, related_name='journey_start')
-	end_location = models.ForeignKey(Location, related_name='journey_end')
+	start_location = models.ForeignKey(Location, related_name='journey_start', on_delete=models.CASCADE)
+	end_location = models.ForeignKey(Location, related_name='journey_end', on_delete=models.CASCADE)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.short_description
 
 class Character(models.Model):
 	first_name = models.CharField(max_length=100, blank=True)
 	last_name = models.CharField(max_length=100, blank=True)
 
-	def __unicode__(self):
-		return u"%s %s" % (self.first_name, self.last_name)
+	def __str__(self):
+		return "%s %s" % (self.first_name, self.last_name)
 
 class Event(models.Model):
 
@@ -65,11 +65,11 @@ class Event(models.Model):
 	group_size = models.IntegerField()
 	x_position = models.DecimalField(max_digits=15, decimal_places=9, default=0)
 	y_postion = models.DecimalField(max_digits=15, decimal_places=9, default=0)
-	journey = models.ForeignKey(Journey)
+	journey = models.ForeignKey(Journey, on_delete=models.CASCADE)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.deck
 
 class CharacterEvent(models.Model):
-	event = models.ForeignKey(Event)
-	character =	models.ForeignKey(Character)
+	event = models.ForeignKey(Event, on_delete=models.CASCADE)
+	character =	models.ForeignKey(Character, on_delete=models.CASCADE)

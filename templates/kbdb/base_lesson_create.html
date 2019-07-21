@@ -1,0 +1,84 @@
+{% extends "somesmart/base.html" %}
+{% load static %}
+{% block app.css %}
+<link rel="stylesheet" href="{% static "somesmart/css/colorbox/colorbox.css" %}">
+{% endblock %}
+{% block title %}Create Your Lesson{% endblock title %}
+{% block app.scripts %}
+<script type="text/javascript" src="https://somesmart.com/static/js/colorbox/jquery.colorbox.js"></script>
+<script type="text/javascript">
+$(function() {
+		$("#selector").autocomplete({
+			source: "{% url 'autocomplete' %}?search=round",
+			minLength: 3,
+			select: function(event, ui) {
+				$('#round_id').val(ui.item.id);
+				$('#name').val(ui.item.label);
+			}
+		});
+		var rowID;
+		//set the starting value at 0
+		rowID = 0;
+
+		$("#add_round").click(function(e){ 
+			//get the autocomplete values for use below
+			var round_id = $('#round_id').val();
+			var name = $('#name').val();
+			//generate the new formset html
+			var htmlData = "<tr><th><label for='id_lessonrounds-" + rowID +"-round'>Round:</label></th><td><input type='hidden' name='lessonrounds-" + rowID + "-round' id='id_lessonrounds-" + rowID + "-round' value='" + round_id + "'>" + name + "</td><td><label for='id_lessonrounds-" + rowID + "-DELETE'>Delete:</label><input type='checkbox' name='lessonrounds-" + rowID + "-DELETE' id='id_lessonrounds-" + rowID + "-DELETE' /><input type='hidden' name='lessonrounds-" + rowID + "-lesson' id='id_lessonrounds-" + rowID + "-lesson' /></td></tr>";
+			$('#lessonround_form').append(htmlData);
+			//increment the formid
+			rowID++;
+			//update the total forms amount
+			$('#id_lessonrounds-TOTAL_FORMS').val(rowID);
+			//empty the selector field and focus on it
+			$('#selector').val('');
+			$('#selector').focus();
+			//stops the form from refreshing the page like it normally would.
+			e.preventDefault();
+		}); 
+		$(".ajax").colorbox({height:"650px", width:"565px", iframe:true, onClosed:function(){ 
+			parent.updateOption({{ user.id }});
+			}
+		});
+	});
+</script>
+{% endblock %}
+
+{% if perms.kbdb.add_lesson %}
+	{% block content %}
+		<h3>Create your new lesson</h3>
+		<p>Note that while only you will be able to edit this lesson in the future, others will be able to pull it up and compare their own lessons.</p>
+		<form action="" method="post" class="form-horizontal">
+			<div class="form-row">
+				{{ form.name.label_tag }}
+				{{ form.name }}
+				{{ form.name.errors }}
+			</div>
+		<table class="table">
+			{{ form.as_table }}
+		</table>
+		<fieldset class="">
+			<legend>Rounds in the Lesson:</legend>
+			<span class="col-md-10"><input class="form-control" type="text" id="selector" name="selector" /></span>
+			<input type="hidden" id="round_id" name="round_id" />
+			<input type="hidden" id="name" name="name" />
+			<input type="submit" value="Add Round" class="btn btn-default" id="add_round" />
+			<input type="hidden" name="lessonrounds-TOTAL_FORMS" value="0" id="id_lessonrounds-TOTAL_FORMS" /><input type="hidden" name="lessonrounds-INITIAL_FORMS" value="0" id="id_lessonrounds-INITIAL_FORMS" /><input type="hidden" name="lessonrounds-MAX_NUM_FORMS" id="id_lessonrounds-MAX_NUM_FORMS" />
+			<table class="table table-hover lessonround_form" id="lessonround_form">
+			</table>
+		</fieldset>
+		<div class="submit-row">
+			{% csrf_token %}
+			<input type="submit" value="Create Lesson" class="submit btn btn-default pull-right" />
+		</div>
+		</form>
+	{% endblock content %}
+{% else %}
+	<p>I'm sorry, you are not authorized to update this lesson. Please contact the administrator for more information.</p>
+{% endif %}
+{% block top-right-content %}{% endblock %}
+{% block right-content %}
+	{% include "somesmart/include_book_data.html" %}
+	{% include "somesmart/include_recent_posts.html" %}
+{% endblock %}

@@ -41,7 +41,7 @@
     {% with comment_list=object.comments %}
     {% if comment_list.count %}
       {% for comment in comment_list %}
-        <div id="comment_{{ comment.pk }}" class="media comment vcard {% cycle box1,box2 %}{% if comment.user in object.authors.all %} post-author{% endif %}">
+        <div id="comment_{{ comment.pk }}" class="media comment vcard {% cycle 'box1' 'box2' %}{% if comment.user in object.authors.all %} post-author{% endif %}">
           <a class="pull-left" href="">
           <img src="{% get_gravatar comment.email 60 "G" %}" class="gravatar photo media-object" alt="{{ comment.user_name }}"/>
           <div class="media-body comment-info">
@@ -77,7 +77,8 @@
 
   {% block entry-comments-form %}
   {% if object.comments_are_open %}
-    {% render_comment_form for object %}
+    {# {% render_comment_form for object %} #}
+    <p>{% trans "Comments are closed." %}</p>
   {% endif %}
   {% endblock %}
 

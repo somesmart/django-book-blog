@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import json
 from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -15,7 +15,7 @@ from tagging.models import Tag, TaggedItem
 from tagging.utils import LOGARITHMIC
 from decimal import *
 from datetime import datetime
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString
 
 # ****************************************************************** #
@@ -24,9 +24,9 @@ from xml.dom.minidom import parseString
 
 def autocomplete(request):
 	if request.method == "GET":
-		if request.GET.has_key(u'term'):
-			value = request.GET[u'term']
-			search = request.GET[u'search']
+		if 'term' in request.GET:
+			value = request.GET['term']
+			search = request.GET['search']
 			results = []
 			if search == "title":
 				# Ignore queries shorter than length 3
@@ -68,22 +68,22 @@ def autocomplete(request):
 			return HttpResponseRedirect('/noresults/')
 
 class BookView(DetailView):
-	queryset = Book.objects.select_related()
+	model = Book
 	template_name='somesmart/base_book.html'
 
-	def get_context_data(self, **kwargs):
-		context = super(BookView, self).get_context_data(**kwargs)
-		try:
-			self.dtl = SeriesDetail.objects.values('series').filter(book__id=self.kwargs['pk']).distinct()
-			self.series = SeriesDetail.objects.select_related().filter(series=self.dtl).order_by('sequence')
-		except SeriesDetail.DoesNotExist:
-			self.series = None
-		context['series'] = self.series
-		return context
+	# def get_context_data(self, **kwargs):
+	# 	context = super(BookView, self).get_context_data(**kwargs)
+	# 	try:
+	# 		self.dtl = SeriesDetail.objects.values('series').filter(book__id=self.kwargs['pk']).distinct()
+	# 		self.series = SeriesDetail.objects.select_related().filter(series=self.dtl).order_by('sequence')
+	# 	except SeriesDetail.DoesNotExist:
+	# 		self.series = None
+	# 	context['series'] = self.series
+	# 	return context
 
 def bookinfo_php(request):
-	if request.GET.has_key(u'bookid'):
-		isbn = request.GET[u'bookid']
+	if 'bookid' in request.GET:
+		isbn = request.GET['bookid']
 		book = Book.objects.select_related().get(edition__isbn=isbn)
 		return redirect('book-view', pk=book.id)
 	else:
@@ -261,7 +261,7 @@ class ShelfView(DetailView):
 	template_name='somesmart/base_shelf.html'
 
 def get_gr_current(request):
-	response = urllib2.urlopen('http://www.goodreads.com/user_status/list/293378-scott-forbes?format=rss')
+	response = urllib.request.urlopen('https://www.goodreads.com/user_status/list/293378-scott-forbes?format=rss')
 	gr_xml = response.read()
 	#close the file
 	response.close()
@@ -489,7 +489,7 @@ def current_tags(request):
 def save_tags(request, book):
 	book = Book.objects.get(id=book)
 	try:
-		Tag.objects.update_tags(book, request.POST[u'new_tags'])
+		Tag.objects.update_tags(book, request.POST['new_tags'])
 		return HttpResponse('1')
 	except:
 		return HttpResponse('0')

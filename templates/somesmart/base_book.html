@@ -1,11 +1,13 @@
 {% extends "somesmart/base.html" %}
 {% load tagging_tags %}
 {% load admin_urls %}
-{% load url from future %}
+
 {% block title %}{{ book.title }}{% endblock title %}
 {% block content %}
 	<div>
-		<h2>{{ book.title }}<br><small>by <a href="{% url 'author-view' book.author.id %}">{{ book.author }}</a></small></span></h2>
+		<h2>{{ book.title }}
+			{# <br><small>by <a href="{% url 'author-view' related.author.id %}">{{ book.author }}</a></small></span></h2> #}
+		</h2>
 	</div>
 	{% if book.synopsis %}
 	<h4>Synopsis</h4>
@@ -19,10 +21,10 @@
 	<h4>Reviews</h4>
 	<dl>
 	{% for edition in book.edition_set.all %}
-	{% for review in edition.review_set.all %}
+		{% for review in edition.review_set.all %}
 			<dt><a href="{% url 'review-view' review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition }}</a>{% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down"></i>{% endif %}</dt>
 			<dd>{% if review.one_sentence %}{{ review.one_sentence|safe }}{% else %}{{ review.critique|truncatewords_html:30|safe }}{% endif %} - {{ review.finished|date }}</dd>
-	{% endfor %}
+		{% endfor %}
 	{% endfor %}
 	</dl>
 	<h4>Quotes</h4>
@@ -40,16 +42,14 @@
 	{% include "somesmart/include_book_data.html" %}
 	{% include "somesmart/include_recent_posts.html" %}
 	{% include "somesmart/include_book_tags.html" %}
-	{% if series %}
-		{% include "somesmart/include_series_data.html" %}
-	{% endif %}
+	{% include "somesmart/include_series_data.html" %}
 	<div class="row">
 		<h4 class="well well-sm">Related Books</h4>
 		<div id="related-books"></div>
 	</div>
 {% endblock %}
 {% block app.scripts %}
-<script type="text/javascript" src="http://somesmart.com/staticfiles/js/tagmanager/bootstrap-tagmanager.js"></script>
+<script type="text/javascript" src="https://somesmart.com/static/js/tagmanager/bootstrap-tagmanager.js"></script>
 <script>
 function get_related(book){
 	$.ajax({

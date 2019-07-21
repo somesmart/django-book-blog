@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import json
 from django.db.models import Q, Count, Sum
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -12,7 +12,7 @@ from cashflow.models import *
 from cashflow.forms import TrxForm
 from decimal import *
 from datetime import datetime, date, timedelta
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString
 
 def success(request):

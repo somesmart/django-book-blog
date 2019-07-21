@@ -1,0 +1,14 @@
+{% extends "somesmart/base.html" %}
+{% block title %}{{ Round }}{% endblock title %}
+{% block content %}
+<a href="{% url 'round-list' %}" class="btn btn-default">Back To all Rounds</a>
+	<h3>{{ round }} <small>: a {{ round.round_type }} Round</small></h3>
+	{# Add information here about the last time it was used in a lesson and the # of times it has been used #}
+	{# Add information here about all the lessons it has been used in #}
+{% endblock content %}
+{% block top-right-content %}{% endblock top-right-content %}
+{% block right-content %}
+	<div class="col-md-10 col-lg-offset-1">
+		{% include "somesmart/include_contact.html" %}
+	</div>
+{% endblock %}
