@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 import json
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Count, Sum, Min, Max
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, FormView
 from django.urls import reverse
 from django.template import RequestContext
@@ -27,9 +27,9 @@ def autocomplete(request):
 			results = []
 			if search == "round":
 				if len(value) > 0:
-					rounds = Round.objects.select_related().values('id').filter(name__icontains=value).distinct()
-					for round in rounds:
-						data = {'id': word.id, 'label': round.name }
+					rounds = Round.objects.filter(name__icontains=value)
+					for rnd in rounds:
+						data = {'id': rnd.id, 'label': rnd.name }
 						results.append(data)
 					json_results = json.dumps(results)
 					return HttpResponse(json_results, content_type='application/json')
@@ -58,7 +58,8 @@ class LessonView(DetailView):
 
 class LessonListView(ListView):
 	template_name='kbdb/base_lesson_list.html'
-	queryset= Lesson.objects.select_related().order_by('-date')
+	queryset=Lesson.objects.select_related().order_by('-date')
+	# queryset=Lesson.objects.select_related().order_by('-date').annotate(round_count=Count('lessonround__round'))
 	context_object_name = 'lesson_list'
 	paginate_by = 25
 

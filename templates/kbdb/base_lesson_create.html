@@ -9,7 +9,7 @@
 <script type="text/javascript">
 $(function() {
 		$("#selector").autocomplete({
-			source: "{% url 'autocomplete' %}?search=round",
+			source: "{% url 'kbdb-autocomplete' %}?search=round",
 			minLength: 3,
 			select: function(event, ui) {
 				$('#round_id').val(ui.item.id);

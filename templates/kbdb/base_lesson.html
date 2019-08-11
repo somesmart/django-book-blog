@@ -10,6 +10,7 @@
 				<th>#</th>
 				<th>Round</th>
 				<th>Round Type</th>
+				<th>Times Used</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -18,6 +19,7 @@
 					<th scope="row">{{ round.round_number }}</th>
 					<td><a href="{% url 'round-view' round.round.id %}">{{ round.round }}</a></td>
 					<td>{{ round.round.round_type }}</td>
+					<td>{# {{ round_count }} #}</td>
 				</tr>
 			{% endfor %}
 		</tbody>
