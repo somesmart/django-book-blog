@@ -21,7 +21,7 @@ django-imagekit==4.0.2
 django-js-asset==1.1.0
 django-mptt==0.9.0
 django-recurrence==1.6.0
-django-registration==3.0
+django-registration==3.1.2
 django-tagging==0.4.6
 django-todo==2.4.6
 django-xmlrpc==0.1.8
