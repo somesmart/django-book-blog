@@ -21,6 +21,7 @@ urlpatterns = [
 	url(r'^ornaments/', include('ornaments.urls')),
 	url(r'^kbdb/', include('kbdb.urls')),
 	url(r'^markdownx/', include('markdownx.urls')),
+	#url(r'^wger/', include('wger.urls')),
 	#home page
 	url(r'^$',
 		ListView.as_view(

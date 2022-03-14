@@ -12,11 +12,12 @@ class StoryDetailFormset(forms.models.BaseInlineFormSet):
 	
 	# We need to override the constructor (and the associated property) for the
 	# empty form, so dynamic forms work.
-	def _get_empty_form(self, **kwargs):
-		form = super(StoryDetailFormset, self)._get_empty_form(**kwargs)
-		self.update_choices(form)
-		return form
-	empty_form = property(_get_empty_form)
+	@property
+	def get_empty_form(self, **kwargs):
+		if self.instance is not None:
+			form = super(StoryDetailFormset, self).empty_form(parent_instance=self.instance)
+			self.update_choices(form)
+			return form
 	
 	# This updates one form's 'character' and 'level' field queryset, if there is a game
 	# associated with the formset. Otherwise, make the choice list contain all levels and characters
@@ -40,11 +41,12 @@ class LevelCharacterFormset(forms.models.BaseInlineFormSet):
 		for form in self.forms:
 			self.update_choices(form)
 	
-	def _get_empty_form(self, **kwargs):
-		form = super(LevelCharacterFormset, self)._get_empty_form(**kwargs)
-		self.update_choices(form)
-		return form
-	empty_form = property(_get_empty_form)
+	@property
+	def get_empty_form(self, **kwargs):
+		if self.instance is not None:
+			form = super(LevelCharacterFormset, self).empty_form(parent_instance=self.instance)
+			self.update_choices(form)
+			return form
 	
 	def update_choices(self, form):
 		if 'game' in self.data:
