@@ -1,7 +1,7 @@
 import os
 import sys
 
-path='/home/somesmart'
+path='/home/scott/somesmart'
 
 if path not in sys.path:
   sys.path.append(path)

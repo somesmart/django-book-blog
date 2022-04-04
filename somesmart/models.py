@@ -8,6 +8,7 @@ from imagekit.processors import ResizeToFill, Adjust
 from tagging.registry import register
 
 class IntegerRangeField(models.IntegerField):
+	id = models.BigAutoField(primary_key=True)
 	def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
 		self.min_value, self.max_value = min_value, max_value
 		models.IntegerField.__init__(self, verbose_name, name, **kwargs)
@@ -17,6 +18,7 @@ class IntegerRangeField(models.IntegerField):
 		return super(IntegerRangeField, self).formfield(**defaults)
 
 class Genre(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	name = models.TextField(max_length=100)
 	slug = models.SlugField()
 
@@ -31,6 +33,7 @@ class Genre(models.Model):
 		super(Genre, self).save(*args, **kwargs)
 
 class Author(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	last_name = models.CharField(max_length=200)
 	first_name = models.CharField(max_length=200)
 	birth_date = models.DateTimeField(null=True, default=None, blank=True)
@@ -42,6 +45,7 @@ class Author(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)	
 
 class Book(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	title = models.CharField(max_length=200)
 	author = models.ForeignKey(Author, on_delete=models.CASCADE)
 	original_publication = models.DateTimeField()
@@ -54,6 +58,7 @@ class Book(models.Model):
 		return self.title
 
 class Edition(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	def get_image_path(instance, filename):
 		return os.path.join('photos/book', str(instance.book.id), filename)
 
@@ -78,6 +83,7 @@ class Edition(models.Model):
 		return "%s - %s" % (self.book.title, self.get_format_display())
 
 class Review(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	reader = models.ForeignKey(get_user_model(), related_name="+", on_delete=models.CASCADE)
 	started = models.DateTimeField()
 	finished = models.DateTimeField()
@@ -92,16 +98,19 @@ class Review(models.Model):
 #I should consider doing this as a tagging module of some sort. The advantage of having it being "keywords" like this
 #is we can also attribute the tag/keyword to the user.
 class Keyword(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 	reader = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	keyword = models.CharField(max_length=100)
 
 class QuoteType(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	name = models.CharField(max_length=50)
 	def __str__(self):
 		return self.name
 
 class Quote(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
 	reader = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	quote_type = models.ForeignKey(QuoteType, on_delete=models.CASCADE)
@@ -112,6 +121,7 @@ class Quote(models.Model):
 		return self.quote
 
 class Note(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
 	reader = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	note = models.TextField()
@@ -120,6 +130,7 @@ class Note(models.Model):
 		return self.note
 
 class Radar(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 	maturity = models.IntegerField()
 	violence = models.IntegerField()
@@ -131,6 +142,7 @@ class Radar(models.Model):
 	humor = models.IntegerField()
 
 class Shelf(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	reader = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	name = models.CharField(max_length=100)
 	private = models.BooleanField()
@@ -139,16 +151,19 @@ class Shelf(models.Model):
 		return self.name
 
 class ShelfDetail(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
 #will probably be able to do this just by pulling in the current status from goodreads
 class Currently(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
 	reader = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	page = models.IntegerField()
 
 class Favorite(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 	user = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
 	rank = models.IntegerField()
@@ -159,6 +174,7 @@ class Favorite(models.Model):
 # ************************************************************** #
 
 class List(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	list_name = models.CharField(max_length=200)
 	list_descr = models.CharField(max_length=200)
 	user = models.ForeignKey(get_user_model(), related_name="+", on_delete=models.CASCADE) #this is the person who created it, and it will always be here
@@ -175,6 +191,7 @@ class List(models.Model):
 		return "/add/list/"
 
 class ListDetail(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	list = models.ForeignKey(List, related_name="list_details", on_delete=models.CASCADE)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
@@ -183,6 +200,7 @@ class ListDetail(models.Model):
 # ************************************************************** #
 
 class Series(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	name = models.CharField(max_length=200)
 	count = models.IntegerField()
 
@@ -190,6 +208,7 @@ class Series(models.Model):
 		return self.name
 
 class SeriesDetail(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	series = models.ForeignKey(Series, on_delete=models.CASCADE)
 	book = models.ForeignKey(Book, on_delete=models.CASCADE)
 	sequence = models.IntegerField()

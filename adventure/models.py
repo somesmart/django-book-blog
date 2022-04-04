@@ -8,7 +8,7 @@ class Game(models.Model):
 		(1, 'Public'),
 		(2, 'Draft'),
 	)
-
+	id = models.BigAutoField(primary_key=True)
 	name = models.TextField(max_length=100)
 	slug = models.SlugField()
 	creator = models.ForeignKey(get_user_model(), related_name='+', on_delete=models.CASCADE)
@@ -25,6 +25,7 @@ class Game(models.Model):
 		super(Game, self).save(*args, **kwargs)
 
 class Character(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	last_name = models.CharField(max_length=200, null=True, default=None, blank=True)
 	first_name = models.CharField(max_length=200, null=True, default=None, blank=True)
@@ -34,6 +35,7 @@ class Character(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)	
 
 class Level(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	level_descr = models.CharField(max_length=200)
 
@@ -41,17 +43,20 @@ class Level(models.Model):
 		return self.level_descr
 
 class LevelCharacter(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	level = models.ForeignKey(Level, on_delete=models.CASCADE)
 	character = models.ForeignKey(Character, on_delete=models.CASCADE)
 
 class WordGroup(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	group_descr = models.CharField(max_length=100)
 
 	def __str__(self):
 		return self.group_descr
 
 class Word(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	wordgroup = models.ForeignKey(WordGroup, on_delete=models.CASCADE)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	word_descr = models.CharField(max_length=100)
@@ -60,6 +65,7 @@ class Word(models.Model):
 		return self.word_descr
 
 class Story(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	level = models.ForeignKey(Level, on_delete=models.CASCADE)
 	character = models.ForeignKey(Character, on_delete=models.CASCADE)
@@ -74,6 +80,7 @@ class Story(models.Model):
 		return self.text
 
 class Unknown(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	level = models.ForeignKey(Level, on_delete=models.CASCADE)
 	character = models.ForeignKey(Character, on_delete=models.CASCADE)
@@ -84,6 +91,7 @@ class Unknown(models.Model):
 		return self.term
 
 class Generic(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	game = models.ForeignKey(Game, on_delete=models.CASCADE)
 	wordgroup = models.ForeignKey(WordGroup, on_delete=models.CASCADE)
 	text = models.TextField()

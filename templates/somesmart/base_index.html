@@ -1,10 +1,10 @@
 {% extends "somesmart/base.html" %}
-{% load zinnia %}
 
 {% block title %} Welcome to some smart, some don't {% endblock title %}
 {% block content %}
-	{% get_recent_entries 10 "zinnia/home_excerpts.html" %}
-	<a class="btn btn-primary pull-right" href="blog/?page=2">More entries &raquo;</a>
+	{# {% get_recent_entries 10 "zinnia/home_excerpts.html" %} #}
+	<p> The blog is currently under maintenance and will hopefully be back soon!</p><hr>
+	{# <a class="btn btn-primary pull-right" href="blog/?page=2">More entries &raquo;</a> #}
 {% endblock content %}
 {% block right-content %}
 <h4 class="well well-sm">Recent Reviews</h4>

@@ -6,17 +6,36 @@ from somesmart.models import *
 from tagging.forms import TagField
 # from zinnia.models import Entry
 # from zinnia.admin import EntryAdmin
+from django.contrib import admin
+import nested_admin
 
-class EditionInline(admin.TabularInline):
+class QuoteInline(nested_admin.NestedTabularInline):
+	model = Quote
+	extra = 5
+
+class ReveiwInline(nested_admin.NestedTabularInline):
+	model = Review
+	extra = 1
+
+class EditionInline(nested_admin.NestedTabularInline):
 	model = Edition
-	extra = 3
+	extra = 1
+	inlines = [QuoteInline, ReveiwInline]
 
-class SeriesInline(admin.TabularInline):
+class SeriesInline(nested_admin.NestedTabularInline):
 	model = SeriesDetail
-	extra = 5	
+	extra = 1
 
-class BookAdmin(admin.ModelAdmin):
-	inlines = [EditionInline, SeriesInline]
+class RadarInline(nested_admin.NestedTabularInline):
+	model = Radar
+	extra = 1
+
+class FavoriteInline(nested_admin.NestedTabularInline):
+	model = Favorite
+	extra = 1
+
+class BookAdmin(nested_admin.NestedModelAdmin):
+	inlines = [EditionInline, SeriesInline, RadarInline, FavoriteInline]
 	list_display = (
 		'title',
 		'author',
@@ -75,11 +94,14 @@ class SeriesAdmin(admin.ModelAdmin):
 		'count'
 	)
 
+class AuthorAdmin(admin.ModelAdmin):
+    ordering = ['last_name', 'first_name']
+
 
 admin.site.register(Book, BookAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Genre)
-admin.site.register(Author)
+admin.site.register(Author, AuthorAdmin)
 admin.site.register(Keyword)
 admin.site.register(Quote, QuoteAdmin)
 admin.site.register(Radar, RadarAdmin)

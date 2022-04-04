@@ -1,6 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
-from markdownx.models import MarkdownxField
+from django_markdown.models import MarkdownField
 import os
 
 class RoundType(models.Model):
@@ -20,7 +20,7 @@ class Round(models.Model):
 	""" The name of the round and a full description if necessary """
 	round_type = models.ForeignKey(RoundType, on_delete=models.CASCADE)
 	name = models.CharField(max_length=100)
-	description = MarkdownxField(blank=True)
+	description = MarkdownField(blank=True)
 
 	def __str__(self):
 		return self.name

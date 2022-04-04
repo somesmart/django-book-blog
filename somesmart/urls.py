@@ -19,8 +19,8 @@ urlpatterns = [
 	url(r'^lotr/', include('lotr.urls')),
 	url(r'^nature/', include('nature.urls')),
 	url(r'^ornaments/', include('ornaments.urls')),
-	url(r'^kbdb/', include('kbdb.urls')),
-	url(r'^markdownx/', include('markdownx.urls')),
+	# url(r'^kbdb/', include('kbdb.urls')),
+	#url(r'^markdownx/', include('markdownx.urls')),
 	#url(r'^wger/', include('wger.urls')),
 	#home page
 	url(r'^$',
@@ -75,7 +75,7 @@ urlpatterns = [
 	url(r'^tags/search/(?P<tag>[\w ]+)/$',somesmart_views.TagListView.as_view(), name='search-tags'),
 	url(r'^tags/cloud/(?P<min_count>\d+)/$', somesmart_views.get_cloud, name='tag-cloud'),
 	#the blog
-	url(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
+	# url(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
 	url(r'^comments/', include('django_comments.urls')),
 	url(r'^contact/', include('contact_form.urls')),
 	url(r'noresults/', TemplateView.as_view(template_name = 'somesmart/base_noresults.html'), name='no-results'),
@@ -88,8 +88,8 @@ urlpatterns = [
 			queryset=Review.objects.select_related().annotate(reviewed=Count('id')).order_by('-finished')[:10],
 			context_object_name='recent_reads',
 			template_name='somesmart/base_index.html')),
-	url(r'^(?P<year>\d+)/(?P<slug>[-\w]+)/', somesmart_views.zinnia_entry_detail, name='custom-zinnia'),
-	url(r'^feeds/$', somesmart_views.zinnia_latest_feeds, name='custom-zinnia-latest'),
+	# url(r'^(?P<year>\d+)/(?P<slug>[-\w]+)/', somesmart_views.zinnia_entry_detail, name='custom-zinnia'),
+	# url(r'^feeds/$', somesmart_views.zinnia_latest_feeds, name='custom-zinnia-latest'),
 	url(r'^accounts/login/$', auth_views.LoginView, {'template_name': 'somesmart/base_login.html'}, name='account-login'),
 	url(r'^accounts/logout/$', auth_views.LogoutView, {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
 	#url(r'^todo/', include('todo.urls'))

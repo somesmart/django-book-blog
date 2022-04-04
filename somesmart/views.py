@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from django.db.models import Q, Count, Sum
@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
 from somesmart.models import *
-from zinnia.models import Entry
+# from zinnia.models import Entry
 from somesmart.forms import *
 from tagging.models import Tag, TaggedItem
 from tagging.utils import LOGARITHMIC
@@ -94,7 +94,7 @@ def get_global_stats(request):
 	page_total = Edition.objects.aggregate(page_count=Sum('pages'))
 	quote_total = Quote.objects.aggregate(quote_count=Count('id'))
 	rec_total = Review.objects.filter(recommend=True).aggregate(rec_count=Count('id'))
-	return render_to_response('somesmart/include_global_stats.html', {'global_stats' : book_total, 'page_total': page_total, 'quote_total': quote_total, 'rec_total': rec_total })
+	return render(request, 'somesmart/include_global_stats.html', {'global_stats' : book_total, 'page_total': page_total, 'quote_total': quote_total, 'rec_total': rec_total })
 
 class GlobalStats(ListView):
 	template_name='somesmart/base_charts.html'
@@ -281,27 +281,27 @@ def get_gr_current(request):
 
 def get_random_quote(request):
 	random = Quote.objects.exclude(quote_type__id=3).exclude(quote_type__id=4).order_by('?')[:1].get()
-	return render_to_response('somesmart/include_quote.html', {'quote' : random})
+	return render(request, 'somesmart/include_quote.html', {'quote' : random})
 
-def zinnia_entry_detail(request, year, slug):
-	#fixing an annoying typo for legacy urls
-	if slug == 'beyond-the-blue-event-horizon-hechee-saga':
-		slug = 'beyond-the-blue-event-horizon-heechee-saga'
-	elif slug == 'first-line-extremely':
-		slug = 'first-line-extremely-loud-and-incredibly-close'
-	elif slug == 'how-to-read-literature':
-		slug = 'how-to-read-literature-like-a-professor'
-	elif slug == 'the-moon-is-a-harsh':
-		slug = 'the-moon-is-a-harsh-mistress'
-	elif slug == 'of-other':
-		slug = 'of-other-worlds-essays-and-stories'
+# def zinnia_entry_detail(request, year, slug):
+# 	#fixing an annoying typo for legacy urls
+# 	if slug == 'beyond-the-blue-event-horizon-hechee-saga':
+# 		slug = 'beyond-the-blue-event-horizon-heechee-saga'
+# 	elif slug == 'first-line-extremely':
+# 		slug = 'first-line-extremely-loud-and-incredibly-close'
+# 	elif slug == 'how-to-read-literature':
+# 		slug = 'how-to-read-literature-like-a-professor'
+# 	elif slug == 'the-moon-is-a-harsh':
+# 		slug = 'the-moon-is-a-harsh-mistress'
+# 	elif slug == 'of-other':
+# 		slug = 'of-other-worlds-essays-and-stories'
 
-	entry = Entry.published.on_site().get(slug=slug)
-	return redirect('zinnia:entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
-	return render_to_response('zinnia/legacy_entry_detail.html', {'object': entry})
+# 	entry = Entry.published.on_site().get(slug=slug)
+# 	return redirect('zinnia:entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
+# 	return render(request, 'zinnia/legacy_entry_detail.html', {'object': entry})
 
-def zinnia_latest_feeds(request):
-	return redirect('zinnia_entry_latest_feed')
+# def zinnia_latest_feeds(request):
+# 	return redirect('zinnia_entry_latest_feed')
 
 # ****************************************************************** #
 # *********************** favorites views ************************** #
@@ -388,10 +388,10 @@ class ListCreateView(CreateView):
 			listdetail_form.save()
 			return HttpResponseRedirect('/list/')
 		else:
-			return self.render_to_response(self.get_context_data(form=form))
+			return self.render(request, self.get_context_data(form=form))
 
 	def form_invalid(self, form):
-		return self.render_to_response(self.get_context_data(form=form))
+		return self.render(request, self.get_context_data(form=form))
 
 	def get_context_data(self, **kwargs):
 		context = super(ListCreateView, self).get_context_data(**kwargs)

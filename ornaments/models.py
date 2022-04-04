@@ -9,6 +9,7 @@ def get_image_path(instance, filename):
 		return os.path.join('photos/ornament', str(instance.year), filename)
 
 class Giver(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	first_name = models.TextField(max_length=100)
 	last_name = models.TextField(max_length=100)
 
@@ -16,6 +17,7 @@ class Giver(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)
 
 class Receiver(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	first_name = models.TextField(max_length=100)
 	last_name = models.TextField(max_length=100)
 
@@ -23,6 +25,7 @@ class Receiver(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)
 
 class Ornament(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	name = models.TextField(max_length=100)
 	slug = models.SlugField(null=True, default=None, blank=True)
 	giver = models.ForeignKey(Giver, on_delete=models.CASCADE)

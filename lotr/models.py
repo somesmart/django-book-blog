@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import os
 
 class Location(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	name = models.CharField(max_length=100)
 	x_position = models.DecimalField(max_digits=15, decimal_places=9, default=0)
 	y_postion = models.DecimalField(max_digits=15, decimal_places=9, default=0)
@@ -12,6 +13,7 @@ class Location(models.Model):
 		return self.name
 
 class Journey(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	short_description = models.CharField(max_length=250)
 	long_description = models.TextField()
 	start_location = models.ForeignKey(Location, related_name='journey_start', on_delete=models.CASCADE)
@@ -21,6 +23,7 @@ class Journey(models.Model):
 		return self.short_description
 
 class Character(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	first_name = models.CharField(max_length=100, blank=True)
 	last_name = models.CharField(max_length=100, blank=True)
 
@@ -28,6 +31,7 @@ class Character(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)
 
 class Event(models.Model):
+	id = models.BigAutoField(primary_key=True)
 
 	DAY_OF_WEEK = (
 		(1, 'Sunday'),
@@ -71,5 +75,6 @@ class Event(models.Model):
 		return self.deck
 
 class CharacterEvent(models.Model):
+	id = models.BigAutoField(primary_key=True)
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
 	character =	models.ForeignKey(Character, on_delete=models.CASCADE)

@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from django.db.models import Q, Count, Sum, Min, Max
@@ -74,10 +74,10 @@ class LessonCreateView(CreateView):
 		if listdetail_form.is_valid():
 			return HttpResponseRedirect('/lesson/')
 		else:
-			return self.render_to_response(self.get_context_data(form=form))
+			return self.render(request, self.get_context_data(form=form))
 
 	def form_invalid(self, form):
-		return self.render_to_response(self.get_context_data(form=form))
+		return self.render(request, self.get_context_data(form=form))
 
 	def get_context_data(self, **kwargs):
 		context = super(LessonCreateView, self).get_context_data(**kwargs)
