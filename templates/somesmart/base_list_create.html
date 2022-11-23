@@ -26,7 +26,7 @@ $(function() {
 			var title = $('#title').val();
 			//generate the new formset html
 			var htmlData = "<tr><th><label for='id_list_details-" + rowID +"-book'>Book:</label></th><td><input type='hidden' name='list_details-" + rowID + "-book' id='id_list_details-" + rowID + "-book' value='" + book_id + "'>" + title + "</td><td><label for='id_list_details-" + rowID + "-DELETE'>Delete:</label><input type='checkbox' name='list_details-" + rowID + "-DELETE' id='id_list_details-" + rowID + "-DELETE' /><input type='hidden' name='list_details-" + rowID + "-list' id='id_list_details-" + rowID + "-list' /></td></tr>";
-			$('#listdetail_form').append(htmlData);
+			$.find('#listdetail_form').append(htmlData);
 			//increment the formid
 			rowID++;
 			//update the total forms amount

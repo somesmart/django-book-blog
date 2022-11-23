@@ -19,7 +19,7 @@ function addItem(list, book, title){
 		success: function(data){
 			var new_item_id = data;
 			var htmlData = "<tr class='" + new_item_id + "'><td>" + title + "</td><td><a href='#' class='btn btn-danger btn-mini note'><i id='" + new_item_id + "' class='delete glyphicon glyphicon-remove'></i></a></td></tr>";
-			$('#book_table').append(htmlData);
+			$.find('#book_table').append(htmlData);
 			//empty the selector field and focus on it
 			$('#selector').val('');
 			$('#selector').focus();

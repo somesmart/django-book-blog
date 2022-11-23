@@ -62,7 +62,7 @@ $(document).ready(function(){
 
 				var saveLink = "<a class='btn btn-default' href='/adventure/game/" + gameID + "/" + character_id + "/" + save_level + "/?story_id=" + story_id + "'>Your Save Link</a>";
 				$('#save').empty();
-				$('#save').html(saveLink);
+				$.find('#save').html(saveLink);
 			});
 		}
 	});
@@ -74,7 +74,7 @@ $(document).ready(function(){
 			$('#character_select').empty();
 
 			//set the new character select options.
-			$('#character_select').html(data);
+			$.find('#character_select').html(data);
 		}
 	});
 	}
