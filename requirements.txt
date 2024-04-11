@@ -28,7 +28,7 @@ django-xmlrpc==0.1.8
 django.js==0.8.1
 funcsigs==0.4
 future==0.18.3
-idna==2.5
+idna==3.7
 josepy==1.1.0
 Markdown==2.6.11
 MarkupSafe==1.1.0
