@@ -1,6 +1,6 @@
 # Django-book-blog README
 
-## Django v 2.2.23
+## Django v 3.2.25
 
 ## Current Installed Apps:
   'django.contrib.admin',
