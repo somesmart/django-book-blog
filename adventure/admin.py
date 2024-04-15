@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.conf.urls import *
 from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from adventure.models import *
 from adventure.forms import StoryDetailFormset, LevelCharacterFormset
 

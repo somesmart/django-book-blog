@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.conf.urls import *
 from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from somesmart.models import *
 from tagging.forms import TagField
 # from zinnia.models import Entry
