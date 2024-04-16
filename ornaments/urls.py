@@ -1,4 +1,5 @@
 from django.conf.urls import *
+from django.urls import include, re_path
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView, TemplateView
 from django.db.models import Count

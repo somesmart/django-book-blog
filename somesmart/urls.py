@@ -1,4 +1,5 @@
 from django.conf.urls import *
+from django.urls import include, re_path
 from django.views.generic import *
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
@@ -17,7 +18,7 @@ urlpatterns = [
 	re_path(r'^adventure/', include('adventure.urls')),
 	# re_path(r'^cashflow/', include('cashflow.urls')),
 	re_path(r'^lotr/', include('lotr.urls')),
-	re_path(r'^nature/', include('nature.urls')),
+	#re_path(r'^nature/', include('nature.urls')),
 	re_path(r'^ornaments/', include('ornaments.urls')),
 	# re_path(r'^kbdb/', include('kbdb.urls')),
 	#re_path(r'^markdownx/', include('markdownx.urls')),
@@ -77,7 +78,7 @@ urlpatterns = [
 	#the blog
 	# re_path(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
 	re_path(r'^comments/', include('django_comments.urls')),
-	re_path(r'^contact/', include('contact_form.urls')),
+	re_path(r'^contact/', include('django_contact_form.urls')),
 	re_path(r'noresults/', TemplateView.as_view(template_name = 'somesmart/base_noresults.html'), name='no-results'),
 	#legacy urls
 	re_path(r'^books/bookinfo\.php$', somesmart_views.bookinfo_php, name='bookinfo-php'),
