@@ -3,7 +3,7 @@
 {% block content %}
 {% if perms.todo.add_list %}
 {# Only admins can delete lists. #}
-{% ifequal can_del 1 %}
+{% if can_del == 1 %}
 	{% if list_killed %}
 		<p> {{ list.name }} is gone.</p>
 		<a href="{% url 'todo-lists' %}">Return to lists</a>
@@ -25,6 +25,6 @@
 	{% endif %}
 {% else %}
 	<p>Sorry, you don't have permission to delete lists. Please contact your group administrator.</p>
-{% endifequal %}
+{% endif %}
 {% endif %}
 {% endblock %}

@@ -11,7 +11,7 @@
 	{% endfor %}
 </ul>
 {% endif %}
-{% ifequal auth_ok 1 %}
+{% if auth_ok == 1 %}
 <h2>{{ task }}</h2>
 <form action="" method="POST">
 {% csrf_token %}	
@@ -71,7 +71,7 @@
 <p>No Comments</p>
 {% endfor %}
 </div>
-{% endifequal %}
+{% endif %}
 </div>
 {% endif %}
 {% endblock %}
