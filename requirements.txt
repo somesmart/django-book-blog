@@ -9,7 +9,7 @@ chardet==3.0.4
 ConfigArgParse==0.11.0
 configobj==5.0.6
 confusable-homoglyphs==3.2.0
-cryptography==42.0.4
+cryptography==43.0.1
 Django==3.2.25
 django-appconf==1.0.2
 django-autoslug==1.9.4
