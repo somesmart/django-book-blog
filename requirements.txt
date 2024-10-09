@@ -10,7 +10,7 @@ ConfigArgParse==0.11.0
 configobj==5.0.6
 confusable-homoglyphs==3.2.0
 cryptography==42.0.4
-Django==3.2.25
+Django==4.2.16
 django-appconf==1.0.2
 django-autoslug==1.9.4
 django-blog-zinnia==0.20
