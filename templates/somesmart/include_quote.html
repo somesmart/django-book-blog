@@ -1,8 +1,11 @@
-
-<blockquote>
-	<p>{{ quote.quote|safe }} <a href="{% url 'quote-view' quote.id %}"><i class="glyphicon glyphicon-share-alt"></i></a></p>
-	<small><a href="{% url 'author-view' quote.edition.book.author.id %}{{ quote.edition.book.author.first_name|slugify }}-{{ quote.edition.book.author.last_name|slugify }}">{{ quote.edition.book.author.first_name }} {{ quote.edition.book.author.last_name }}</a>{% if quote.quote_type.id == 2 %} the <a href="{% url 'quote-type-list' quote.quote_type.id %}">First Line</a> of {% else %}{% if quote.quote_type.id == 3 %} the <a href="{% url 'quote-type-list' quote.quote_type.id %}">Last Line</a> of {% endif %} in {% endif %}<cite title="{{ quote.edition.book.title }}"><a href="{% url 'book-view' quote.edition.book.id %}{{ quote.edition.book.title|slugify }}">{{ quote.edition.book.title }}</a></cite></small>
-	{% for note in quote.note_set.all %}
-		<small><cite>{{ note.reader }} notes: {{ note }}</cite></small>
-	{% endfor %}
-</blockquote>
+<figure>
+	<blockquote class="blockquote">
+		<p class="mb-0">{{ quote.quote|safe }} <a href="{% url 'quote-view' quote.id %}"><i class="glyphicon glyphicon-share-alt"></i></a></p>
+	</blockquote>
+	<figcaption class="blockquote-footer">
+		<a class = "text-primary" href="{% url 'author-view' quote.edition.book.author.id %}{{ quote.edition.book.author.first_name|slugify }}-{{ quote.edition.book.author.last_name|slugify }}">{{ quote.edition.book.author.first_name }} {{ quote.edition.book.author.last_name }}</a>{% if quote.quote_type.id == 2 %} the <a class = "text-primary" href="{% url 'quote-type-list' quote.quote_type.id %}">First Line</a> of {% else %}{% if quote.quote_type.id == 3 %} the <a class = "text-primary" href="{% url 'quote-type-list' quote.quote_type.id %}">Last Line</a> of {% endif %} in {% endif %}<cite title="{{ quote.edition.book.title }}"><a class = "text-primary" href="{% url 'book-view' quote.edition.book.id %}{{ quote.edition.book.title|slugify }}">{{ quote.edition.book.title }}</a></cite>
+		{% for note in quote.note_set.all %}
+			<cite>{{ note.reader }} notes: {{ note }}</cite>
+		{% endfor %}
+	</figcaption>
+</figure>

@@ -1,5 +1,5 @@
 from django.conf.urls import *
-from django.urls import include, re_path
+from django.urls import include, re_path, path
 from django.views.generic import *
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
@@ -10,6 +10,9 @@ from django.contrib.auth import views as auth_views
 from somesmart.models import *
 from somesmart import views as somesmart_views
 from tagging.views import TaggedObjectList
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail import urls as wagtail_urls
+from wagtail.documents import urls as wagtaildocs_urls
 
 admin.autodiscover()
 
@@ -24,11 +27,11 @@ urlpatterns = [
 	#re_path(r'^markdownx/', include('markdownx.urls')),
 	#re_path(r'^wger/', include('wger.urls')),
 	#home page
-	re_path(r'^$',
-		ListView.as_view(
-			queryset=Review.objects.select_related().annotate(reviewed=Count('id')).order_by('-finished')[:10],
-			context_object_name='recent_reads',
-			template_name='somesmart/base_index.html')),
+	re_path(r'^$', somesmart_views.HomePage.as_view(), name= 'home-page'),
+		# ListView.as_view(
+		# 	queryset=Review.objects.select_related().annotate(reviewed=Count('id')).order_by('-finished')[:10],
+		# 	context_object_name='recent_reads',
+		# 	template_name='somesmart/base_index.html')),
 	#about page
 	re_path(r'^about/$', TemplateView.as_view(template_name = 'somesmart/base_about.html'), name='about-page'),
 	#book details
@@ -76,6 +79,9 @@ urlpatterns = [
 	re_path(r'^tags/search/(?P<tag>[\w ]+)/$',somesmart_views.TagListView.as_view(), name='search-tags'),
 	re_path(r'^tags/cloud/(?P<min_count>\d+)/$', somesmart_views.get_cloud, name='tag-cloud'),
 	#the blog
+	re_path('pages/feed/', somesmart_views.BlogFeed(), name='rss-feed'),
+	re_path('cms/', include(wagtailadmin_urls)),
+    re_path('pages/', include(wagtail_urls)),
 	# re_path(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
 	re_path(r'^comments/', include('django_comments.urls')),
 	re_path(r'^contact/', include('django_contact_form.urls')),
@@ -91,7 +97,7 @@ urlpatterns = [
 			template_name='somesmart/base_index.html')),
 	# re_path(r'^(?P<year>\d+)/(?P<slug>[-\w]+)/', somesmart_views.zinnia_entry_detail, name='custom-zinnia'),
 	# re_path(r'^feeds/$', somesmart_views.zinnia_latest_feeds, name='custom-zinnia-latest'),
-	re_path(r'^accounts/login/$', auth_views.LoginView, {'template_name': 'somesmart/base_login.html'}, name='account-login'),
-	re_path(r'^accounts/logout/$', auth_views.LogoutView, {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
+	re_path(r'^accounts/login/$', auth_views.LoginView.as_view(), {'template_name': 'somesmart/base_login.html'}, name='account-login'),
+	re_path(r'^accounts/logout/$', auth_views.LogoutView.as_view(), {'template_name': 'somesmart/base_logged_out.html'}, name='account-logout'),
 	#re_path(r'^todo/', include('todo.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

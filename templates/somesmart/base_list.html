@@ -2,7 +2,7 @@
 
 {% block title %}{{ list.list_name }}{% endblock title %}
 {% block content %}
-	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy pull-right" href="{% url 'list-copy' list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
+	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy float-end" href="{% url 'list-copy' list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
 	<h3>{{ list.list_descr }}</h3>
 	<div id="book_list">
 		{% if completion %}
@@ -11,7 +11,7 @@
 			</div>
 		{% endif %}
 		{% if user_read %}
-		<h3 class="well well-sm">What's been read by {{ list.user }}:</h3>
+		<h3 class="alert alert-secondary">What's been read by {{ list.user }}:</h3>
 				<ul class="large_list">
 					{% for read in user_read %}
 						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -19,7 +19,7 @@
 				</ul>
 			{% endif %}
 			{% if others_read %}
-			<h3 class="well well-sm">Read by Others:</h3>
+			<h3 class="alert alert-secondary">Read by Others:</h3>
 				<ul class="large_list">
 					{% for read in others_read %}
 						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -27,7 +27,7 @@
 				</ul>
 			{% endif %}
 			{% if never_read %}
-			<h3 class="well well-sm">To Read:</h3>
+			<h3 class="alert alert-secondary">To Read:</h3>
 				<ul class="large_list">
 					{% for read in never_read %}
 						<li><a href="{% url 'book-view' read.book.id %}{{ read.book.title|slugify }}">{{ read.book }}</a></li>
@@ -36,7 +36,7 @@
 			{% endif %}
 	</div>
 	{% if list.user.id == user.id %} 
-	<a class="btn btn-default btn-sm pull-right" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-wrench"></i> Edit List</a>
+	<a class="btn btn-default btn-sm float-end" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-wrench"></i> Edit List</a>
 	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}

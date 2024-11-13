@@ -1,0 +1,50 @@
+{% extends "somesmart/base.html" %}
+
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-blogpage{% endblock %}
+
+{% block content %}
+    <h1 class="text-success">{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+
+    <div class="intro alert alert-secondary">{{ page.intro }}</div>
+
+    {% for block in page.body %}
+        {% if block.block_type == 'heading' %}
+            <h1>{{ block.value }}</h1>
+        {% elif block.block_type == 'image' %}
+            <section class="mx-auto d-block block-{{ block.block_type }}">
+                {% image block.value width-600 %}
+            </section>
+        {% elif block.block_type == 'blockquote' %}
+            <section class="block-{{ block.block_type }}">
+                <figure>
+                    <blockquote class="blockquote px-5">
+                        {% include_block block %}
+                    </blockquote>
+                </figure>   
+            </section>
+        {% else %}
+            <section class="block-{{ block.block_type }}">
+                <p class="mb-0">{% include_block block %}</p>
+            </section>
+        {% endif %}
+    {% endfor %}
+
+    <p><a href="{{ page.get_parent.url }}">Return to blog</a></p>
+
+{% endblock %}
+{% block top-right-content %}{% endblock %}
+{% block right-content %}
+<div class="row">
+{% if page.get_book_type_display == 'Currently Reading' %}<h4 class="alert alert-success">When I wrote this post I was reading:</h4>{% endif %}
+</div>
+{% with book=page.book %}
+    {% include "somesmart/include_book_data.html" %}
+    {% include "somesmart/include_recent_posts.html" %}
+    {% include "somesmart/include_book_tags.html" %}
+    {% include "somesmart/include_series_data.html" %}
+{% endwith %}
+{% endblock %}

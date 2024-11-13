@@ -8,8 +8,9 @@ from django.template import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.template.defaultfilters import slugify
+from django.contrib.syndication.views import Feed
 from somesmart.models import *
-# from zinnia.models import Entry
+from blog.models import *
 from somesmart.forms import *
 from tagging.models import Tag, TaggedItem
 from tagging.utils import LOGARITHMIC
@@ -66,6 +67,34 @@ def autocomplete(request):
 					return HttpResponseRedirect('/noresults/')
 		else:
 			return HttpResponseRedirect('/noresults/')
+
+class HomePage(ListView):
+	queryset = BlogPage.objects.live().order_by('-date')
+	context_object_name = "blog_page"
+	template_name = 'somesmart/base_index.html'
+	paginate_by = 10
+
+	def get_context_data(self, **kwargs):
+		context = super(HomePage, self).get_context_data(**kwargs)
+		context['recent_reads'] = Review.objects.select_related().annotate(reviewed=Count('id')).order_by('-finished')[:10]
+		return context
+
+class BlogFeed(Feed):
+    title = "Some smart, some don't blog"
+    link = "/pages/feed/"
+    description = "Get the latest blog posts here!"
+
+    def items(self):
+        return BlogPage.objects.live().order_by('-date')[:5]
+
+    def item_title(self, item):
+        return item.title
+
+    def item_description(self, item):
+        return item.body
+
+    def item_link(self, item):
+        return item.get_url()
 
 class BookView(DetailView):
 	model = Book
@@ -282,26 +311,6 @@ def get_gr_current(request):
 def get_random_quote(request):
 	random = Quote.objects.exclude(quote_type__id=3).exclude(quote_type__id=4).order_by('?')[:1].get()
 	return render(request, 'somesmart/include_quote.html', {'quote' : random})
-
-# def zinnia_entry_detail(request, year, slug):
-# 	#fixing an annoying typo for legacy urls
-# 	if slug == 'beyond-the-blue-event-horizon-hechee-saga':
-# 		slug = 'beyond-the-blue-event-horizon-heechee-saga'
-# 	elif slug == 'first-line-extremely':
-# 		slug = 'first-line-extremely-loud-and-incredibly-close'
-# 	elif slug == 'how-to-read-literature':
-# 		slug = 'how-to-read-literature-like-a-professor'
-# 	elif slug == 'the-moon-is-a-harsh':
-# 		slug = 'the-moon-is-a-harsh-mistress'
-# 	elif slug == 'of-other':
-# 		slug = 'of-other-worlds-essays-and-stories'
-
-# 	entry = Entry.published.on_site().get(slug=slug)
-# 	return redirect('zinnia:entry_detail', year=entry.creation_date.strftime('%Y'), month=entry.creation_date.strftime('%m'), day=entry.creation_date.strftime('%d'), slug=entry.slug)
-# 	return render(request, 'zinnia/legacy_entry_detail.html', {'object': entry})
-
-# def zinnia_latest_feeds(request):
-# 	return redirect('zinnia_entry_latest_feed')
 
 # ****************************************************************** #
 # *********************** favorites views ************************** #

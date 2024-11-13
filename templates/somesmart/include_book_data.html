@@ -2,24 +2,13 @@
 {% load tz %}
 {% if book.id %}
 <div class="row">
-<h4 class="well well-sm"><a href="{% url 'book-view' book.id %}{{ book.title|slugify }}/">{{ book.title }}</a> <br><small>by <a href="{% url 'author-view' book.author.id %}">{{ book.author }}</a></small></h4>
-</div>
-<div class="row">
-<dl>
-	<dt>
-		<div class="pull-right">
-			{% for edition in book.edition_set.all %}
-				{% if forloop.first %}{% if edition.cover %}<img src="{{ edition.cover.url }}" width="100px">{% endif %}{% endif %}
-			{% endfor %}
-		</div>
-	</dt>
-	<dd>
-		<p>Originally Published {% localtime off %}{{ book.original_publication|date }}{% endlocaltime %}</p>
-	{% for edition in book.edition_set.all %}
-		<p>{{ edition.get_format_display }} edition:</p>
-		<p>{{ edition.pages }} pages - {{ edition.published|date }}</p>
-	{% endfor %}
-	</dd>
-</dl>
+    <h4 class="alert alert-secondary"><a class="text-primary" href="{% url 'book-view' book.id %}{{ book.title|slugify }}/">{{ book.title }}</a><br><small>by <a class="text-primary text-body-secondary" href="{% url 'author-view' book.author.id %}">{{ book.author }}</a></small></h4>
+    <p>
+    	{% for edition in book.edition_set.all %}
+			{% if forloop.first %}{% if edition.cover %}<img class="float-start" src="{{ edition.cover.url }}" width="100px">{% endif %}{% endif %}
+		{% endfor %}<strong>Original Publication</strong> <br> <span class="ps-2">{% localtime off %}{{ book.original_publication|date }}{% endlocaltime %}</span>
+		{% for edition in book.edition_set.all %}<br><strong>{{ edition.get_format_display }} edition</strong> <br><span class="ps-2">{{ edition.published|date }}</span><br><span class="ps-2">{{ edition.pages }} pages</span>
+		{% endfor %}
+	</p>
 </div>
 {% endif %}

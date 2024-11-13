@@ -34,7 +34,7 @@
 		{% endfor %}
 	{% endfor %}
 	{% if request.user.id == 2 %}
-		<a class="btn btn-default pull-right" href="{% url 'admin:somesmart_book_change' book.id %}">Edit this book</a>
+		<a class="btn btn-default float-end" href="{% url 'admin:somesmart_book_change' book.id %}">Edit this book</a>
 	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
@@ -44,7 +44,7 @@
 	{% include "somesmart/include_book_tags.html" %}
 	{% include "somesmart/include_series_data.html" %}
 	<div class="row">
-		<h4 class="well well-sm">Related Books</h4>
+		<h4 class="alert alert-secondary">Related Books</h4>
 		<div id="related-books"></div>
 	</div>
 {% endblock %}
@@ -66,7 +66,8 @@ function get_related(book){
 		preventSubmitOnEnter: true,
 		typeahead: true,
 		typeaheadAjaxSource: '{% url "current-tags" %}', 
-		typeaheadAjaxPolling: false
+		typeaheadAjaxPolling: false,
+		tagClass: 'badge rounded-pill bg-dark'
 	});
 	{% if request.user.id == 2 %}
 	$('.save-tags').click(function() {

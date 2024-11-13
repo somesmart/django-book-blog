@@ -45,7 +45,7 @@ class Author(models.Model):
 		return "%s %s" % (self.first_name, self.last_name)	
 
 class Book(models.Model):
-	id = models.BigAutoField(primary_key=True)
+	id = models.AutoField(primary_key=True)
 	title = models.CharField(max_length=200)
 	author = models.ForeignKey(Author, on_delete=models.CASCADE)
 	original_publication = models.DateTimeField()

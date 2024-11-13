@@ -1,6 +1,6 @@
 body {
-	padding-top: 60px;
 	padding-bottom: 40px;
+	font-size: 20px;
 }
 
 .well-light {
@@ -98,7 +98,6 @@ iframe {
 
 #search {
 	padding: 3px 0px;
-	height: 90%;
 }
 
 .row {

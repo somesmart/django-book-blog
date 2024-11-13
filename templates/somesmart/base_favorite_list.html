@@ -3,25 +3,18 @@
 {% block title %}Favorite Books{% endblock title %}
 {% block top-content %}{% endblock %}
 {% block content %}
-<p class="well well-sm">While you can find various books that I enjoy and recommend from the blog and reviews on the site, searching through all of that can be rather daunting. This page will be an up to date list of my favorite books to read and to recommend by genre. This may also include books I don't yet have a database or blog entry on, but still want to share with others. If you've found that you've read all the books listed in a genre, the rest of the site may be for you!</p>
-	{% if genre_list %}
-		<ul class="list-unstyled list-inline">
-		{% for genre in genre_list %}
-			<li><a class="btn btn-default btn-sm" href="{% url 'favorite-genre-list' genre.book__genre__slug %}">{{ genre.book__genre__name }}</a></li>
-		{% endfor %}
-		</ul>
-	{% endif %}
+<p class="alert alert-secondary">While you can find various books that I enjoy and recommend from the blog and reviews on the site, searching through all of that can be rather daunting. This page will be an up to date list of my favorite books to read and to recommend by genre. This may also include books I don't yet have a database or blog entry on, but still want to share with others. If you've found that you've read all the books listed in a genre, the rest of the site may be for you!</p>
 	{% if favorite_list %}
 		{% for favorite in favorite_list %}
-		<div class="media">
-			<a class="pull-left" href="#">
-				{% for edition in favorite.book.edition_set.all %}
-					{% if forloop.first %}<center>{% if edition.cover %}<img class="media-object" src="{{ edition.cover_md.url }}" width="100px">{% else %}<img data-src="holder.js/100x150/auto" width="100px">{% endif %}</center>{% endif %}
-				{% endfor %}
-			</a>
-			<div class="media-body">
-				<h4 class="media-heading"><a href="{% url 'book-view' favorite.book.id %}{{ favorite.book.title|slugify }}">{{ favorite.book.title }}</a></h4>
-				{{ favorite.comment|safe }}
+		<div class="row py-2">
+			<div class="media">
+					{% for edition in favorite.book.edition_set.all %}
+						{% if forloop.first %}<center>{% if edition.cover %}<img class="media-object float-start" src="{{ edition.cover_md.url }}" width="100px">{% else %}<img data-src="holder.js/100x150/auto" width="100px">{% endif %}</center>{% endif %}
+					{% endfor %}
+				<div class="media-body">
+					<h4 class="media-heading"><a href="{% url 'book-view' favorite.book.id %}{{ favorite.book.title|slugify }}">{{ favorite.book.title }}</a></h4>
+					{{ favorite.comment|safe }}
+				</div>
 			</div>
 		</div>
 		{% endfor %}
@@ -30,4 +23,13 @@
 {% endblock content %}
 {% block app.scripts %}
 	<script type="text/javascript" src="https://somesmart.com/static/js/holder/holder.js"></script>
+{% endblock %}
+{% block right-content %}
+	{% if genre_list %}
+		<ul class="list-group row">
+		{% for genre in genre_list %}
+			<li class="list-group-item"><a class="" href="{% url 'favorite-genre-list' genre.book__genre__slug %}">{{ genre.book__genre__name }}</a></li>
+		{% endfor %}
+		</ul>
+	{% endif %}
 {% endblock %}

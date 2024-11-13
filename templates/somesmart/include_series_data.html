@@ -1,5 +1,5 @@
 <div class="row">
-	<h4 class="well well-sm">{% for s in book.seriesdetail_set.all %}{% if forloop.first %}{{ s.series }}{% endif %}{% endfor %}</small></h4>	
+	<h4 class="alert alert-secondary">{% for s in book.seriesdetail_set.all %}{% if forloop.first %}{{ s.series }}{% endif %}{% endfor %}</small></h4>	
 </div>
 <div class="row">
 <ul class="list list-horizontal list-unstyled">

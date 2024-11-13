@@ -1,42 +1,68 @@
 {% extends "somesmart/base.html" %}
-
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 {% block title %} Welcome to some smart, some don't {% endblock title %}
 {% block content %}
-	{# {% get_recent_entries 10 "zinnia/home_excerpts.html" %} #}
-	<p> The blog is currently under maintenance and will hopefully be back soon!</p><hr>
-	{# <a class="btn btn-primary pull-right" href="blog/?page=2">More entries &raquo;</a> #}
+<div class="row">
+	{% for post in blog_page %}
+        <h4><a class = "text-success" href="{% pageurl post %}">{{ post.title }}</a> - {{ post.date }}</h4>
+        <div class="intro alert alert-secondary">{{ post.intro }}</div>
+        {% if forloop.first %}
+	        {% for block in post.body %}
+		        {% if block.block_type == 'heading' %}
+		            <h1>{{ block.value }}</h1>
+		        {% elif block.block_type == 'image' %}
+		            <section class="mx-auto d-block block-{{ block.block_type }}">
+		                {% image block.value width-600 %}
+		            </section>
+		        {% elif block.block_type == 'blockquote' %}
+		            <section class="block-{{ block.block_type }}">
+		                <figure>
+		                    <blockquote class="blockquote px-5">
+		                        {% include_block block %}
+		                    </blockquote>
+		                </figure>   
+		            </section>
+		        {% else %}
+		            <section class="block-{{ block.block_type }}">
+		                <p class="mb-0">{% include_block block %}</p>
+		            </section>
+		        {% endif %}
+		    {% endfor %}
+		{% endif %}
+    {% endfor %}
+    {% include "somesmart/include_pagination.html" %}
+</div>
 {% endblock content %}
 {% block right-content %}
-<h4 class="well well-sm">Recent Reviews</h4>
+<div class="alert alert-secondary">Recent Reviews</div>
 {% if recent_reads %}
 	<ul class="list-unstyled">
 	{% for review in recent_reads %}
 		{% if review.reviewed > 0 %}
-		<li><a href="{% url 'review-view' review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition.book.title }}</a> - {{ review.finished|date }}{% if review.recommend %} <i class="glyphicon glyphicon-thumbs-up" title="Recommended!"></i>{% else %} <i class="glyphicon glyphicon-thumbs-down" title="Not Recommended"></i>{% endif %}</li>
+		<li><a class = "text-primary" href="{% url 'review-view' review.id %}{{ review.edition.book.title|slugify }}">{{ review.edition.book.title }}</a> - {{ review.finished|date }}{% if review.recommend %} <i class="bi-hand-thumbs-up" title="Recommended!"></i>{% else %} <i class="bi-hand-thumbs-down" title="Not Recommended"></i>{% endif %}</li>
 		{% endif %}
 	{% endfor %}
 	</ul>
 {% else %}
 	<p>No reviews.</p>
 {% endif %}
-<h4 class="well well-sm">Most Used Tags</h4>
-<div id="tag-cloud"></div>
-{# <a href="{% url 'zinnia_entry_latest_feed' %}" class="btn btn-default">RSS Feed</a> #}
-<a href='https://cloud.feedly.com/#subscription%2Ffeed%2Fhttp%3A%2F%2Fsomesmart.com%2Fblog%2Ffeeds%2Flatest%2F' class="btn btn-default" target='blank'>Feedly</a>
+<!-- <div class="alert alert-secondary">Most Used Tags</div>
+<div id="tag-cloud"></div>-->
 {% endblock %}
 {% block app.scripts %}
-<script type="text/javascript">
-function get_cloud(){
-	$.ajax({
-		type: "GET",
-		url: '{% url "tag-cloud" 4 %}',
-		success: function(data) {
-			$('#tag-cloud').append(data);
-		}
-	});
-}
-$(function() {
-	get_cloud();
-});
-</script>
+<!-- <script type="text/javascript">
+// function get_cloud(){
+// 	$.ajax({
+// 		type: "GET",
+// 		url: '{% url "tag-cloud" 4 %}',
+// 		success: function(data) {
+// 			$('#tag-cloud').append(data);
+// 		}
+// 	});
+// }
+// $(function() {
+// 	get_cloud();
+// });
+</script> -->
 {% endblock %}
