@@ -81,7 +81,7 @@ urlpatterns = [
 	#the blog
 	re_path('pages/feed/', somesmart_views.BlogFeed(), name='rss-feed'),
 	re_path('cms/', include(wagtailadmin_urls)),
-    re_path('pages/', include(wagtail_urls)),
+	re_path('pages/', include(wagtail_urls)),
 	# re_path(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
 	re_path(r'^comments/', include('django_comments.urls')),
 	re_path(r'^contact/', include('django_contact_form.urls')),
