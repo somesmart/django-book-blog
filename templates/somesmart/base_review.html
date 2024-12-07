@@ -8,12 +8,6 @@
 	<div>
 		<h2>{{ review.edition.book.title }}<br><small>by <a href="{% url 'author-view' review.edition.book.author.id %}">{{ review.edition.book.author }}</a></small></h2>
 	</div>
-	<div class="float-end">
-	{% with review.one_sentence|length|add:-1 as review_len %}
-		<a href="https://twitter.com/share" class="twitter-share-button" data-related="jasoncosta" data-lang="en" data-size="small" data-count="horizontal" data-text="{% if review_len > 117 %}{{ review.one_sentence|safe|truncchar:115 }}...{% else %}{{ review.one_sentence|safe|truncchar:review_len }}{% endif %}">Tweet</a>
-		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-	{% endwith %}
-	</div>
 	<h4>A Review by {{ review.reader }} <small>finished {{ review.finished|date }}</small></h4>
 	{% if review.one_sentence %}
 		<p><strong>In one sentence:</strong> {{ review.one_sentence|safe }}</p>

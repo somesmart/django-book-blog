@@ -2,7 +2,7 @@
 
 {% block title %}{{ list.list_name }}{% endblock title %}
 {% block content %}
-	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy float-end" href="{% url 'list-copy' list.id %}"><i class="glyphicon glyphicon-share"></i> Copy List</a></h2>{% endif %}
+	<h2>{{ list.list_name }}: {% if user.is_authenticated %}<a class="btn btn-default btn-sm note_copy float-end" href="{% url 'list-copy' list.id %}"><i class="bi-share"></i> Copy List</a></h2>{% endif %}
 	<h3>{{ list.list_descr }}</h3>
 	<div id="book_list">
 		{% if completion %}
@@ -36,7 +36,7 @@
 			{% endif %}
 	</div>
 	{% if list.user.id == user.id %} 
-	<a class="btn btn-default btn-sm float-end" href="{{ list.get_edit_url }}"><i class="glyphicon glyphicon-wrench"></i> Edit List</a>
+	<a class="btn btn-default btn-sm float-end" href="{{ list.get_edit_url }}"><i class="bi-pencil-square"></i> Edit List</a>
 	{% endif %}
 {% endblock content %}
 {% block top-right-content %}{% endblock %}
