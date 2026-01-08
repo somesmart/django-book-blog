@@ -61,7 +61,7 @@ soupsieve==1.9.2
 sqlparse==0.5.0
 unattended-upgrades==0.1
 Unidecode==1.1.1
-urllib3==2.6.0
+urllib3==2.6.3
 Whoosh==2.7.4
 zope.component==4.3.0
 zope.event==4.2.0
